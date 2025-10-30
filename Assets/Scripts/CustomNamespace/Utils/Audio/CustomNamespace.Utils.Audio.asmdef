@@ -1,0 +1,17 @@
+{
+    "name": "CustomNamespace.Utils.Audio",
+    "rootNamespace": "",
+    "references": [
+        "GUID:a3aab014a8e3ef4438300f4c5a6e46fd",
+        "GUID:ecd059b573046fe409f5d0e442af6dc3"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

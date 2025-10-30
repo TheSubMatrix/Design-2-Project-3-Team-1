@@ -1,0 +1,16 @@
+{
+    "name": "CustomNamespace.Logging",
+    "rootNamespace": "",
+    "references": [
+        "GUID:feed37f66159d4147ba92c09dde5e08a"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
