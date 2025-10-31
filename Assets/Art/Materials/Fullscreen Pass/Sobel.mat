@@ -118,8 +118,8 @@ Material:
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _Metallic: 0
-    - _NormalSensitivity: 0.37
-    - _NormalThreshold: 0.1
+    - _NormalSensitivity: 0.63
+    - _NormalThreshold: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.005
     - _QueueOffset: 0
@@ -130,7 +130,7 @@ Material:
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _Surface: 0
-    - _ThicknessScale: 2.21
+    - _ThicknessScale: 5
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
