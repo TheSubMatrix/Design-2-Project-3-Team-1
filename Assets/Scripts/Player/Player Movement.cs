@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
@@ -20,13 +21,22 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float m_groundAngle = 45f;
     [Header("Jump Settings")]
     [SerializeField] float m_jumpHeight = 2;
+    [Header("Snap Settings")]
+    [SerializeField] float m_snapDistance = 0.1f;
+    [SerializeField] float m_maxSnapSpeed = 100f;
+    [SerializeField] LayerMask m_snapLayers;
     
     Vector2 m_desiredMoveDirection;
     Vector2 m_modifiedVelocity;
     Vector2 m_contactNormal;
+    Vector2 m_steepNormal;
     bool m_desiresJump;
-    uint m_groundedContacts = 0;
+    uint m_groundedContacts;
+    uint m_steepContacts;
+    uint m_stepsSinceLastGrounded;
+    uint m_stepsSinceLastJump;
     bool IsGrounded => m_groundedContacts > 0;
+    bool OnSteep => m_steepContacts > 0;
     float GroundDotProduct => Mathf.Cos(m_groundAngle * Mathf.Deg2Rad);
     
     void OnEnable()
@@ -56,12 +66,16 @@ public class PlayerMovement : MonoBehaviour
     }
     void FixedUpdate()
     {
+        m_stepsSinceLastGrounded += 1;
+        m_stepsSinceLastJump += 1;
         m_modifiedVelocity = m_playerRB.linearVelocity;
         AdjustMovementVelocity();
-        if (m_desiresJump)
+        if (IsGrounded || SnapToGround() || CheckSteepContacts())
         {
-            if (IsGrounded)
+            m_stepsSinceLastGrounded = 0;
+            if (m_desiresJump)
             {
+                m_stepsSinceLastJump = 0;
                 float jumpSpeed = Mathf.Sqrt(-2f * Physics2D.gravity.y * m_jumpHeight);
                 float alignedSpeed = Vector2.Dot(m_modifiedVelocity, m_contactNormal);
                 if (alignedSpeed > 0)
@@ -69,8 +83,8 @@ public class PlayerMovement : MonoBehaviour
                     jumpSpeed = Mathf.Max(jumpSpeed - alignedSpeed, 0);
                 }
                 m_modifiedVelocity += m_contactNormal * jumpSpeed;
+                m_desiresJump = false;
             }
-            m_desiresJump = false;
         }
         m_playerRB.linearVelocity = m_modifiedVelocity;
         ResetStates();
@@ -87,6 +101,7 @@ public class PlayerMovement : MonoBehaviour
     {
         m_modifiedVelocity = Vector2.zero;
         m_groundedContacts = 0;
+        m_steepContacts = 0;
         m_contactNormal = Vector2.up;
     }
     void AdjustMovementVelocity()
@@ -111,5 +126,46 @@ public class PlayerMovement : MonoBehaviour
     Vector2 ProjectOnContactPlane(Vector2 vectorToProject)
     {
         return vectorToProject - m_contactNormal * Vector3.Dot(vectorToProject, m_contactNormal);
+    }
+    bool SnapToGround()
+    {
+        if (m_stepsSinceLastGrounded > 1 || m_stepsSinceLastJump <= 2)
+        {
+            return false;
+        }
+        float speed = m_modifiedVelocity.magnitude;
+        if (speed > m_maxSnapSpeed)
+        {
+            return false;   
+        }
+        RaycastHit2D hit = Physics2D.Raycast(m_playerRB.position, Vector2.down, m_snapDistance, m_snapLayers);
+        if (hit.collider is null || hit.normal.y < GroundDotProduct)
+        {
+            return false;
+        }
+        else if (hit.normal.y > -0.01f)
+        {
+            m_steepContacts++;
+            m_steepNormal += hit.normal;
+        }
+        m_contactNormal = hit.normal;
+        m_groundedContacts = 1;
+        
+        float dot = Vector2.Dot(m_modifiedVelocity, m_contactNormal);
+        if (dot > 0)
+        {
+            m_modifiedVelocity = (m_modifiedVelocity - hit.normal * dot).normalized * speed;
+        }
+        return true;
+    }
+
+    bool CheckSteepContacts()
+    {
+        if (m_steepContacts <= 1) return false;
+        m_steepNormal.Normalize();
+        if (!(m_steepNormal.y >= GroundDotProduct)) return false;
+        m_groundedContacts = 1;
+        m_contactNormal = m_steepNormal;
+        return true;
     }
 }
