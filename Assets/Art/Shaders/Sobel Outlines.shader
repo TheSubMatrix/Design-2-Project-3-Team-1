@@ -8,6 +8,9 @@ Shader "Fullscreen/SobelOperator"
         _DepthSensitivity ("Depth Sensitivity", Range(0, 10)) = 1.0
         _NormalSensitivity ("Normal Sensitivity", Range(0, 10)) = 1.0
         _ThicknessScale ("Thickness Scale", Range(0, 5)) = 1.0
+        _DepthNormalThreshold ("Depth Normal Threshold", Range(0, 1)) = 0.5
+        _DepthNormalThresholdScale ("Depth Normal Threshold Scale", Range(1, 10)) = 7.0
+        _OutlineThickness ("Outline Thickness", Range(0.1, 5)) = 1.0
     }
 
     SubShader
@@ -21,8 +24,8 @@ Shader "Fullscreen/SobelOperator"
             Name "SobelDepthNormals"
 
             HLSLPROGRAM
-            #pragma vertex Vert
-            #pragma fragment frag
+            #pragma vertex Vertex
+            #pragma fragment Fragment
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareNormalsTexture.hlsl"
@@ -35,6 +38,9 @@ Shader "Fullscreen/SobelOperator"
             float _DepthSensitivity;
             float _NormalSensitivity;
             float _ThicknessScale;
+            float _DepthNormalThreshold;
+            float _DepthNormalThresholdScale;
+            float _OutlineThickness;
 
             // Sobel kernels
             static const float sobelX[9] = {
@@ -48,17 +54,81 @@ Shader "Fullscreen/SobelOperator"
                  0,  0,  0,
                  1,  2,  1
             };
-
-            float4 frag(Varyings input) : SV_Target
+            
+            struct VertexToFragment
+            {
+                float4 PositionCS : SV_POSITION;
+                float2 Texcoord : TEXCOORD0;
+                float3 ViewSpaceDir : TEXCOORD1;
+            };
+            
+            VertexToFragment Vertex(Attributes input)
+            {
+                VertexToFragment output;
+                output.PositionCS = GetFullScreenTriangleVertexPosition(input.vertexID);
+                output.Texcoord = GetFullScreenTriangleTexCoord(input.vertexID);
+                
+                // Calculate view space direction for glancing angle detection
+                float3 viewPos = ComputeViewSpacePosition(output.Texcoord, 1.0, UNITY_MATRIX_I_P);
+                output.ViewSpaceDir = viewPos;
+                
+                return output;
+            }
+            
+            float4 Fragment(VertexToFragment input) : SV_Target
             {
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
                 
-                float2 uv = input.texcoord;
+                float2 uv = input.Texcoord;
                 float2 texelSize = _BlitTexture_TexelSize.xy;
                 
-                // Get center depth for distance-based scaling
+                // Get center depth and normal
                 float centerDepth = SampleSceneDepth(uv);
+                
+                // Early out for skybox - depth value of 0 or 1 depending on platform
+                #if UNITY_REVERSED_Z
+                    if (centerDepth < 0.0001) // Skybox in reversed Z
+                #else
+                    if (centerDepth > 0.9999) // Skybox in normal Z
+                #endif
+                {
+                    return SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, uv);
+                }
+                
                 float linearDepth = LinearEyeDepth(centerDepth, _ZBufferParams);
+                float3 centerNormal = SampleSceneNormals(uv);
+                
+                // Transform normal from 0...1 range to -1...1 range
+                float3 viewSpaceNormal = centerNormal * 2.0 - 1.0;
+                
+                // Validate normal - if it's invalid or zero, use default threshold
+                float normalLength = length(viewSpaceNormal);
+                float normalThreshold = 1.0;
+                
+                if (normalLength > 0.01)
+                {
+                    // Normalize the normal
+                    viewSpaceNormal = viewSpaceNormal / normalLength;
+                    
+                    // Calculate NdotV for glancing angle detection
+                    // Normalize view direction and get the angle between normal and view
+                    float3 viewDir = normalize(input.ViewSpaceDir);
+                    float NdotV = 1.0 - dot(viewSpaceNormal, -viewDir);
+                    
+                    // Clamp NdotV to avoid extreme values
+                    NdotV = saturate(NdotV);
+                    
+                    // Modulate depth threshold based on viewing angle
+                    // At glancing angles (high NdotV), increase threshold to reduce artifacts
+                    float normalThreshold01 = saturate((NdotV - _DepthNormalThreshold) / (1.0 - _DepthNormalThreshold + 0.0001));
+                    normalThreshold = normalThreshold01 * _DepthNormalThresholdScale + 1.0;
+                }
+                
+                // Apply angle-based threshold modulation to depth threshold
+                float depthThreshold = _DepthThreshold * normalThreshold;
+
+                // Scale texel size by outline thickness to make lines thicker
+                float2 scaledTexelSize = texelSize * _OutlineThickness;
 
                 // Sample 3x3 neighborhood for depth
                 float depthSamples[9];
@@ -69,7 +139,7 @@ Shader "Fullscreen/SobelOperator"
                 {
                     for (int x = -1; x <= 1; x++)
                     {
-                        float2 offset = float2(x, y) * texelSize;
+                        float2 offset = float2(x, y) * scaledTexelSize;
                         float2 sampleUV = uv + offset;
                         
                         // Sample depth and normals
@@ -93,13 +163,11 @@ Shader "Fullscreen/SobelOperator"
                 float depthEdge = sqrt(depthGradX * depthGradX + depthGradY * depthGradY);
                 
                 // Check if using orthographic projection
-                // In ortho, unity_OrthoParams.w = 1, in perspective it's 0
                 bool isOrtho = unity_OrthoParams.w == 1.0;
                 
                 if (!isOrtho)
                 {
                     // Perspective: Compensate for depth gradient compression at distance
-                    // Multiply by depth to boost distant edges
                     float depthCompensation = 1.0 + (linearDepth - 1.0) * _ThicknessScale;
                     depthEdge *= depthCompensation;
                 }
@@ -119,8 +187,8 @@ Shader "Fullscreen/SobelOperator"
                 float3 normalGrad = sqrt(normalGradX * normalGradX + normalGradY * normalGradY);
                 float normalEdge = length(normalGrad) * _NormalSensitivity;
 
-                // Combine depth and normal edges
-                float depthStrength = saturate((depthEdge - _DepthThreshold) / (1.0 - _DepthThreshold + 0.001));
+                // Combine depth and normal edges with angle-modulated threshold
+                float depthStrength = saturate((depthEdge - depthThreshold) / (1.0 - depthThreshold + 0.001));
                 float normalStrength = saturate((normalEdge - _NormalThreshold) / (1.0 - _NormalThreshold + 0.001));
                 
                 float edgeStrength = max(depthStrength, normalStrength);

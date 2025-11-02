@@ -27,8 +27,10 @@ public struct SerializableKeyValuePair<TKey, TValue>
 [Serializable]
 public class SerializableDictionary<TKey, TValue> : ISerializationCallbackReceiver, IEnumerable
 {
-    [FormerlySerializedAs("list")] [SerializeField]
-     List<SerializableKeyValuePair<TKey, TValue>> m_list = new();
+    [FormerlySerializedAs("list")] 
+    [SerializeField]
+    List<SerializableKeyValuePair<TKey, TValue>> m_list = new();
+    
     [SerializeField]
     SerializableKeyValuePair<TKey, TValue> m_stagingEntry;
 
@@ -37,7 +39,7 @@ public class SerializableDictionary<TKey, TValue> : ISerializationCallbackReceiv
     
     [NonSerialized]
     bool m_initialized;
-    
+
     public Dictionary<TKey, TValue> Dictionary 
     { 
         get 
@@ -55,11 +57,29 @@ public class SerializableDictionary<TKey, TValue> : ISerializationCallbackReceiv
             m_dictionary = new Dictionary<TKey, TValue>();
         else
             m_dictionary.Clear();
+
         foreach (SerializableKeyValuePair<TKey, TValue> kvp in m_list.Where(kvp => kvp.Key != null))
         {
             m_dictionary[kvp.Key] = kvp.Value;
         }
         
+        m_initialized = true;
+    }
+    /// <summary>
+    /// Rebuilds the dictionary from the serialized list. This is useful if the dictionary is modified outside the editor.
+    /// </summary>
+    public void Rebuild()
+    {
+        if (m_dictionary == null)
+            m_dictionary = new Dictionary<TKey, TValue>();
+        else
+            m_dictionary.Clear();
+
+        foreach (SerializableKeyValuePair<TKey, TValue> kvp in m_list.Where(kvp => kvp.Key != null))
+        {
+            m_dictionary[kvp.Key] = kvp.Value;
+        }
+
         m_initialized = true;
     }
 
