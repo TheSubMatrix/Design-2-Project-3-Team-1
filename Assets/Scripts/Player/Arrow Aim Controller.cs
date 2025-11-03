@@ -27,7 +27,6 @@ public class ArrowAimController : MonoBehaviour
 
     void OnAim(InputAction.CallbackContext context)
     {
-        // Store the screen position reported by the cursor
         m_currentAimInput = context.ReadValue<Vector2>();
     }
     

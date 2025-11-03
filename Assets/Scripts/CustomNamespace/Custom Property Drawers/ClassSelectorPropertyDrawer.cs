@@ -111,7 +111,7 @@ public class ClassSelectorPropertyDrawer : PropertyDrawer
             property.serializedObject.ApplyModifiedProperties();
                 
             propertiesContainer.Clear();
-            DrawUIForType(selectedType, property, propertiesContainer);
+            PropertyDrawerCache.DrawUIForType(selectedType, property, propertiesContainer);
         });
         
         // Handle [field: SerializeField] by checking the backing field
@@ -140,48 +140,10 @@ public class ClassSelectorPropertyDrawer : PropertyDrawer
         int index = dropdown.choices.IndexOf(selectedType.Name);
         if (index < 0) return root;
         dropdown.SetValueWithoutNotify(dropdown.choices[index]);
-        DrawUIForType(selectedType, property, propertiesContainer);
+        PropertyDrawerCache.DrawUIForType(selectedType, property, propertiesContainer);
 
         return root;
     }
-
-    static void DrawUIForType(Type typeToDrawUIFor, SerializedProperty property, VisualElement container)
-    {
-        BuildUIForType builderDelegate = GetOrCacheUIBuilder(typeToDrawUIFor);
-        builderDelegate?.Invoke(property, container);
-    }
-
-    static BuildUIForType GetOrCacheUIBuilder(Type typeToDrawUIFor)
-    {
-        if (typeToDrawUIFor == null)
-            return null;
     
-        if (s_UIBuilderCache.TryGetValue(typeToDrawUIFor, out BuildUIForType cached))
-            return cached;
-        
-        // Create and cache the builder
-        BuildUIForType builder = CreateBuilderForType(typeToDrawUIFor);
-        s_UIBuilderCache[typeToDrawUIFor] = builder;
-        return builder;
-    }
-
-    static BuildUIForType CreateBuilderForType(Type typeToDrawUIFor)
-    {
-        return (prop, typeContainer) =>
-        {
-            // Use the unified hybrid drawer system from the cache
-            bool usedCustomDrawer = PropertyDrawerCache.CreateHybridPropertyUI(
-                prop, 
-                typeContainer, 
-                typeToDrawUIFor, 
-                typeof(ClassSelectorPropertyDrawer));
-
-            // Fallback: Draw all properties using default property fields
-            if (!usedCustomDrawer)
-            {
-                PropertyDrawerCache.CreateDefaultPropertyFields(prop, typeContainer);
-            }
-        };
-    }
 }
 #endif

@@ -11,6 +11,7 @@ public class Bow : MonoBehaviour
     [SerializeField, RequiredField] InputActionReference m_swapArrowAction;
     [SerializeField, RequiredField] Transform m_arrowSpawnPoint;
     [SerializeField, RequiredField] VisualEffect m_trajectoryEffect;
+    [SerializeField, RequiredField] Collider2D m_playerCollider;
     [SerializeField] uint m_trajectoryPointCount = 20;
     GraphicsBuffer m_trajectoryBuffer;
     Vector3[] m_trajectoryData;
@@ -49,7 +50,7 @@ public class Bow : MonoBehaviour
         m_arrowPools[m_currentArrowSelection].Get(out Arrow arrow);
         arrow.transform.position = m_arrowSpawnPoint.position;
         arrow.transform.rotation = m_arrowSpawnPoint.rotation;
-        arrow.Fire(arrow.transform.right);
+        arrow.Fire(arrow.transform.right, m_playerCollider);
         ShowTrajectory(arrow, m_arrowSpawnPoint);
     }
 
