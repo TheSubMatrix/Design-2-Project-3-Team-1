@@ -4,12 +4,12 @@ using UnityEngine.EventSystems;
 
 public class SceneLoader : MonoBehaviour
 {
-    public ButtonClickArrow arrowAnimator; // Drag UIController (with ButtonClickArrow) here
+    public ButtonClickArrow arrowAnimator; 
 
-    // Call this from each Button’s OnClick, passing the scene name string
+   
     public void OnButtonClicked(string sceneName)
     {
-        // Which button was clicked?
+    
         var go = EventSystem.current.currentSelectedGameObject;
         if (!go)
         {
@@ -24,7 +24,7 @@ public class SceneLoader : MonoBehaviour
             return;
         }
 
-        // Animate arrow, then load scene
+  
         arrowAnimator.MoveArrowToButton(buttonRect, () =>
         {
             SceneManager.LoadScene(sceneName);

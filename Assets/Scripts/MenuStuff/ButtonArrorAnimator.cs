@@ -6,17 +6,17 @@ using System;
 public class ButtonClickArrow : MonoBehaviour
 {
     [Header("References")]
-    public RectTransform arrow;       // Drag your Arrow RectTransform here
-    public AudioSource audioSource;   // Optional: on UIController
-    public AudioClip clickSound;      // Optional: assign a clip
+    public RectTransform arrow;       
+    public AudioSource audioSource;   
+    public AudioClip clickSound;      
 
     [Header("Settings")]
-    public float offsetX = 50f;       // Arrow stops this many pixels left of button
-    public float speed = 1400f;       // Pixels per second
+    public float offsetX = 50f;       
+    public float speed = 1400f;       
 
     Coroutine moveRoutine;
 
-    // Called by SceneLoader; moves arrow to target, then runs onComplete
+   
     public void MoveArrowToButton(RectTransform target, System.Action onComplete)
     {
         if (clickSound && audioSource) audioSource.PlayOneShot(clickSound);
@@ -31,10 +31,9 @@ public class ButtonClickArrow : MonoBehaviour
 
         arrow.gameObject.SetActive(true);
 
-        // World positions (safe for Screen Space Overlay)
+       
         Vector3 targetPos = target.position + new Vector3(-offsetX, 0f, 0f);
 
-        // Start one screen width to the left of the target’s X so it's definitely off-screen
         Vector3 startPos = new Vector3(targetPos.x - Screen.width, targetPos.y, targetPos.z);
         arrow.position = startPos;
         yield return null;
