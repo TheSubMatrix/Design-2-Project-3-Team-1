@@ -1,15 +1,19 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
+using System.Collections;
 
 public class SceneLoader : MonoBehaviour
 {
-    public ButtonClickArrow arrowAnimator; 
+    [Header("References")]
+    public ButtonClickArrow arrowAnimator;
 
-   
+    [Header("Settings")]
+    public float delayAfterArrow = 0.5f;
+    public float fadeDuration = 0.5f;
+
     public void OnButtonClicked(string sceneName)
     {
-    
         var go = EventSystem.current.currentSelectedGameObject;
         if (!go)
         {
@@ -24,10 +28,20 @@ public class SceneLoader : MonoBehaviour
             return;
         }
 
-  
         arrowAnimator.MoveArrowToButton(buttonRect, () =>
         {
-            SceneManager.LoadScene(sceneName);
+            StartCoroutine(LoadSceneWithFade(sceneName));
         });
+    }
+
+    private IEnumerator LoadSceneWithFade(string sceneName)
+    {
+        yield return new WaitForSeconds(delayAfterArrow);
+
+        if (ScreenFader.Instance)
+            yield return ScreenFader.Instance.FadeOut(fadeDuration);
+
+        SceneManager.LoadScene(sceneName);
+        
     }
 }

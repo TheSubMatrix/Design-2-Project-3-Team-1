@@ -2,27 +2,34 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.EventSystems;
 
-public class HoverTextColor : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class ButtonHoverEffectTMP : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    public TMP_Text text;
+    public TMP_Text text;  
     public Color normalColor = Color.white;
     public Color hoverColor = Color.yellow;
+    public AudioSource hoverSound;
 
     void Start()
     {
         if (text == null)
             text = GetComponentInChildren<TMP_Text>();
-        
-        text.color = normalColor;
+
+        if (text != null)
+            text.color = normalColor;
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        text.color = hoverColor;
+        if (text != null)
+            text.color = hoverColor;
+
+        if (hoverSound != null && !hoverSound.isPlaying)
+            hoverSound.Play();
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        text.color = normalColor;
+        if (text != null)
+            text.color = normalColor;
     }
 }
