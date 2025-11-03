@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.VFX;
@@ -11,29 +12,48 @@ public class Arrow : MonoBehaviour
     [SerializeField] uint m_trajectoryPointCount = 20;
     [SerializeField] float m_trajectoryPointTime = 0.1f;
     [SerializeField] LayerMask m_collisionMask;
-    protected Rigidbody2D RB;
+    public Rigidbody2D RB { get; protected set; }
     readonly List<Vector2> m_trajectoryPoints = new();
+    
+    Collider2D m_arrowCollider;
+    Collider2D m_ignoredCollider;
+    bool m_isIgnoringCollision = false;
 
     void Awake()
     {
         RB = GetComponent<Rigidbody2D>();
+        m_arrowCollider = GetComponent<Collider2D>();
     }
-    public virtual void Fire(Vector2 direction)
+    
+    public virtual void Fire(Vector2 direction, Collider2D playerCollider = null)
     {
         m_completedTrajectory = false;
         RB.AddForce(direction.normalized * m_fireForce, ForceMode2D.Impulse);
         StuckInWall = false;
+
+        if (playerCollider == null) return;
+        m_ignoredCollider = playerCollider;
+        Physics2D.IgnoreCollision(m_arrowCollider, playerCollider, true);
+        m_isIgnoringCollision = true;
     }
 
     void FixedUpdate()
     {
         if(m_completedTrajectory) return;
         RB.rotation = Mathf.Atan2(RB.linearVelocity.y, RB.linearVelocity.x) * Mathf.Rad2Deg;
-        
     }
+    
+    void OnTriggerExit2D(Collider2D other)
+    {
+        Debug.Log("Exit");
+        if (!m_isIgnoringCollision || other != m_ignoredCollider) return;
+        Physics2D.IgnoreCollision(m_arrowCollider, m_ignoredCollider, false);
+        m_isIgnoringCollision = false;
+    }
+    
     protected virtual void OnImpact(Collision2D collision)
     {
-        if (collision.gameObject.layer.Equals(LayerMask.NameToLayer("Arrow Sticky")))
+        if (collision.gameObject.layer.Equals(LayerMask.NameToLayer("Arrow Surface")))
         {
             StuckInWall = true;
             RB.bodyType = RigidbodyType2D.Static;
@@ -44,6 +64,13 @@ public class Arrow : MonoBehaviour
     {
         m_completedTrajectory = true;
         OnImpact(collision);
+    }
+    
+    void OnDisable()
+    {
+        if (!m_isIgnoringCollision || m_ignoredCollider == null || m_arrowCollider == null) return;
+        Physics2D.IgnoreCollision(m_arrowCollider, m_ignoredCollider, false);
+        m_isIgnoringCollision = false;
     }
     
     public List<Vector2> CalculateTrajectory(Transform startTransform)

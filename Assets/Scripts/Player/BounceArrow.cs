@@ -5,7 +5,7 @@ public class BounceArrow : Arrow
     bool m_isBouncy;
     protected override void OnImpact(Collision2D collision)
     {
-        if (collision.gameObject.layer.Equals(LayerMask.NameToLayer("Arrow Sticky")))
+        if (collision.gameObject.layer.Equals(LayerMask.NameToLayer("Arrow Surface")))
         {
             StuckInWall = true;
             RB.bodyType = RigidbodyType2D.Static;

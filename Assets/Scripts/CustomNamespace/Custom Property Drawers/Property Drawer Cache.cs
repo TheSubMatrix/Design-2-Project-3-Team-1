@@ -6,7 +6,9 @@ using System.Reflection;
 using CustomNamespace.Extensions;
 using UnityEditor;
 using UnityEditor.Compilation;
+using UnityEditor.UIElements;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace CustomNamespace.Editor
 {
@@ -23,12 +25,16 @@ namespace CustomNamespace.Editor
             public Type DrawerType;
             public Type TargetType;
             public bool UseForChildren;
-            public HashSet<string> HandledFields; // Fields this drawer is responsible for
+            public HashSet<string> HandledFields;
         }
+
+        // Delegate for building UI for a specific type
+        public delegate void BuildUIForType(SerializedProperty property, VisualElement container);
 
         static Dictionary<Type, List<Type>> s_derivedTypesCache;
         static Dictionary<Type, DrawerInfo> s_drawerByTargetTypeCache;
         static Dictionary<Type, DrawerInfo> s_drawerByDrawerTypeCache;
+        static Dictionary<Type, BuildUIForType> s_UIBuilderCache;
         
         #endregion
 
@@ -54,8 +60,8 @@ namespace CustomNamespace.Editor
             s_derivedTypesCache = new Dictionary<Type, List<Type>>();
             s_drawerByTargetTypeCache = new Dictionary<Type, DrawerInfo>();
             s_drawerByDrawerTypeCache = new Dictionary<Type, DrawerInfo>();
+            s_UIBuilderCache = new Dictionary<Type, BuildUIForType>();
 
-            // Cache all property drawers
             IEnumerable<Type> allDrawers = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(ass => ass.GetTypes())
                 .Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(PropertyDrawer)));
@@ -70,7 +76,6 @@ namespace CustomNamespace.Editor
 
                     bool useForChildren = cpd.GetFieldValue<bool>("m_UseForChildren");
                     
-                    // Build field set for this drawer
                     HashSet<string> handledFields = GetHandledFieldsForType(targetType);
 
                     DrawerInfo info = new DrawerInfo
@@ -81,10 +86,7 @@ namespace CustomNamespace.Editor
                         HandledFields = handledFields
                     };
 
-                    // Only add if not already present (first wins in case of conflicts)
                     s_drawerByTargetTypeCache.TryAdd(targetType, info);
-                    
-                    // Also cache by drawer type for reverse lookups
                     s_drawerByDrawerTypeCache.TryAdd(drawerType, info);
                 }
             }
@@ -97,9 +99,6 @@ namespace CustomNamespace.Editor
         /// <summary>
         /// Gets all non-abstract types that derive from or implement the specified base type.
         /// </summary>
-        /// <param name="baseType">The base type or interface to find implementations of</param>
-        /// <param name="includeBaseType">Whether to include the base type itself if it's not abstract</param>
-        /// <returns>List of derived types</returns>
         public static List<Type> GetDerivedTypes(Type baseType, bool includeBaseType = false)
         {
             if (baseType == null)
@@ -110,7 +109,6 @@ namespace CustomNamespace.Editor
 
             if (s_derivedTypesCache != null && s_derivedTypesCache.TryGetValue(baseType, out List<Type> types))
             {
-                // If we need to include the base type, and it's not abstract, add it
                 if (includeBaseType && !baseType.IsAbstract && !types.Contains(baseType))
                 {
                     types = new List<Type>(types) { baseType };
@@ -118,16 +116,14 @@ namespace CustomNamespace.Editor
                 return types;
             }
 
-            // Compute derived types
             types = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(ass => ass.GetTypes())
                 .Where(t => t != baseType 
                     && !t.IsAbstract 
                     && baseType.IsAssignableFrom(t)
-                    && (baseType.IsInterface || !t.IsInterface)) // Exclude interfaces unless base is interface
+                    && (baseType.IsInterface || !t.IsInterface))
                 .ToList();
 
-            // Include the base type if it's not abstract and includeBaseType is true
             if (includeBaseType && !baseType.IsAbstract)
             {
                 types.Add(baseType);
@@ -141,12 +137,6 @@ namespace CustomNamespace.Editor
 
         #region Drawer Resolution
 
-        /// <summary>
-        /// Gets the PropertyDrawer type for a given target type (field type or attribute type).
-        /// Follows Unity's drawer resolution rules: exact match first, then parent types/interfaces with useForChildren.
-        /// </summary>
-        /// <param name="targetType">The type to find a drawer for</param>
-        /// <returns>The PropertyDrawer type, or null if none found</returns>
         public static Type GetDrawerType(Type targetType)
         {
             if (targetType == null)
@@ -155,13 +145,11 @@ namespace CustomNamespace.Editor
             if (s_drawerByTargetTypeCache == null)
                 RebuildCache();
 
-            // Direct exact match (the highest priority)
             if (s_drawerByTargetTypeCache != null && s_drawerByTargetTypeCache.TryGetValue(targetType, out DrawerInfo info))
             {
                 return info.DrawerType;
             }
 
-            // Check parent types (for class inheritance) - only if useForChildren is true
             for (Type parentType = targetType.BaseType; parentType != null; parentType = parentType.BaseType)
             {
                 if (s_drawerByTargetTypeCache != null && s_drawerByTargetTypeCache.TryGetValue(parentType, out info) && info.UseForChildren)
@@ -170,7 +158,6 @@ namespace CustomNamespace.Editor
                 }
             }
 
-            // Check interfaces (for interface implementation) - only if useForChildren is true
             foreach (Type interfaceType in targetType.GetInterfaces())
             {
                 if (s_drawerByTargetTypeCache != null && s_drawerByTargetTypeCache.TryGetValue(interfaceType, out info) && info.UseForChildren)
@@ -182,11 +169,6 @@ namespace CustomNamespace.Editor
             return null;
         }
 
-        /// <summary>
-        /// Gets the target type that a drawer was designed to handle.
-        /// </summary>
-        /// <param name="drawerType">The PropertyDrawer type</param>
-        /// <returns>The target type (field type or attribute type), or null if not found</returns>
         public static Type GetDrawerTargetType(Type drawerType)
         {
             if (drawerType == null)
@@ -200,12 +182,6 @@ namespace CustomNamespace.Editor
                 : null;
         }
 
-        /// <summary>
-        /// Gets information about which fields a drawer handles.
-        /// Useful for determining if additional fields need to be drawn when using inheritance.
-        /// </summary>
-        /// <param name="drawerType">The PropertyDrawer type</param>
-        /// <returns>Set of field names the drawer handles, or null if drawer not found</returns>
         public static HashSet<string> GetDrawerHandledFields(Type drawerType)
         {
             if (drawerType == null)
@@ -219,11 +195,6 @@ namespace CustomNamespace.Editor
                 : null;
         }
 
-        /// <summary>
-        /// Gets information about which fields a target type's drawer handles.
-        /// </summary>
-        /// <param name="targetType">The type being drawn</param>
-        /// <returns>Set of field names the drawer handles, or null if no drawer found</returns>
         public static HashSet<string> GetHandledFieldsForTargetType(Type targetType)
         {
             Type drawerType = GetDrawerType(targetType);
@@ -234,12 +205,13 @@ namespace CustomNamespace.Editor
         #region Drawer Instantiation
 
         /// <summary>
-        /// Creates and configures a PropertyDrawer instance for the specified property.
+        /// Creates a PropertyDrawer for the given property, considering both attribute-based
+        /// and type-based drawers. Allows excluding specific drawer types.
         /// </summary>
-        /// <param name="property">The SerializedProperty to create a drawer for</param>
-        /// <param name="excludeDrawerType">Optional drawer type to exclude (for wrapper drawers)</param>
-        /// <returns>Configured PropertyDrawer instance, or null if none available</returns>
-        public static PropertyDrawer CreateDrawerForProperty(SerializedProperty property, Type excludeDrawerType = null)
+        public static PropertyDrawer CreateDrawerForProperty(
+            SerializedProperty property, 
+            Type excludeDrawerType = null,
+            HashSet<Type> excludeDrawerTypes = null)
         {
             if (property == null)
                 return null;
@@ -248,21 +220,26 @@ namespace CustomNamespace.Editor
             if (fieldInfo == null)
                 return null;
 
-            // Priority 1: Check for PropertyAttribute-based drawers
-            foreach (PropertyAttribute attr in fieldInfo.GetCustomAttributes<PropertyAttribute>(true))
+            // Priority 1: Check PropertyAttribute-based drawers
+            // Process in reverse order so the last attribute (top in code) takes precedence
+            PropertyAttribute[] attributes = fieldInfo.GetCustomAttributes<PropertyAttribute>(true)
+                .Reverse()
+                .ToArray();
+
+            foreach (PropertyAttribute attr in attributes)
             {
                 Type attrType = attr.GetType();
                 Type drawerType = GetDrawerType(attrType);
 
-                if (drawerType != null && drawerType != excludeDrawerType)
+                if (drawerType != null && !IsDrawerExcluded(drawerType, excludeDrawerType, excludeDrawerTypes))
                 {
                     return CreateDrawerInstance(drawerType, fieldInfo, attr);
                 }
             }
 
-            // Priority 2: Check for type-based drawers
+            // Priority 2: Check type-based drawer
             Type typeDrawer = GetDrawerType(fieldType);
-            if (typeDrawer != null && typeDrawer != excludeDrawerType)
+            if (typeDrawer != null && !IsDrawerExcluded(typeDrawer, excludeDrawerType, excludeDrawerTypes))
             {
                 return CreateDrawerInstance(typeDrawer, fieldInfo);
             }
@@ -271,12 +248,54 @@ namespace CustomNamespace.Editor
         }
 
         /// <summary>
-        /// Creates and configures a PropertyDrawer instance.
+        /// Gets all PropertyDrawers that could apply to this property (both attribute and type-based).
+        /// Useful for scenarios where you need to chain or inspect multiple drawers.
         /// </summary>
-        /// <param name="drawerType">The type of PropertyDrawer to instantiate</param>
-        /// <param name="fieldInfo">The FieldInfo to assign to the drawer</param>
-        /// <param name="attribute">Optional PropertyAttribute to assign to the drawer</param>
-        /// <returns>Configured PropertyDrawer instance, or null if creation fails</returns>
+        public static List<PropertyDrawer> GetAllDrawersForProperty(
+            SerializedProperty property,
+            HashSet<Type> excludeDrawerTypes = null)
+        {
+            List<PropertyDrawer> drawers = new List<PropertyDrawer>();
+            
+            if (property == null)
+                return drawers;
+
+            FieldInfo fieldInfo = property.GetFieldInfoAndStaticType(out Type fieldType);
+            if (fieldInfo == null)
+                return drawers;
+
+            // Collect all attribute-based drawers
+            foreach (PropertyAttribute attr in fieldInfo.GetCustomAttributes<PropertyAttribute>(true))
+            {
+                Type attrType = attr.GetType();
+                Type drawerType = GetDrawerType(attrType);
+
+                if (drawerType == null || IsDrawerExcluded(drawerType, null, excludeDrawerTypes)) continue;
+                PropertyDrawer drawer = CreateDrawerInstance(drawerType, fieldInfo, attr);
+                if (drawer != null)
+                    drawers.Add(drawer);
+            }
+
+            // Add type-based drawer if it exists
+            Type typeDrawer = GetDrawerType(fieldType);
+            if (typeDrawer != null && !IsDrawerExcluded(typeDrawer, null, excludeDrawerTypes))
+            {
+                PropertyDrawer drawer = CreateDrawerInstance(typeDrawer, fieldInfo);
+                if (drawer != null)
+                    drawers.Add(drawer);
+            }
+
+            return drawers;
+        }
+
+        static bool IsDrawerExcluded(Type drawerType, Type excludeDrawerType, HashSet<Type> excludeDrawerTypes)
+        {
+            if (drawerType == excludeDrawerType)
+                return true;
+
+            return excludeDrawerTypes != null && excludeDrawerTypes.Contains(drawerType);
+        }
+
         public static PropertyDrawer CreateDrawerInstance(Type drawerType, FieldInfo fieldInfo, PropertyAttribute attribute = null)
         {
             if (drawerType == null || !typeof(PropertyDrawer).IsAssignableFrom(drawerType))
@@ -285,11 +304,8 @@ namespace CustomNamespace.Editor
             try
             {
                 PropertyDrawer drawer = (PropertyDrawer)Activator.CreateInstance(drawerType);
-
-                // Set the fieldInfo on the drawer using reflection
                 drawer.SetFieldValue("m_FieldInfo", fieldInfo);
 
-                // Set the attribute if provided
                 if (attribute != null)
                 {
                     drawer.SetFieldValue("m_Attribute", attribute);
@@ -308,45 +324,30 @@ namespace CustomNamespace.Editor
 
         #region Hybrid Drawer Support
 
-        /// <summary>
-        /// Creates a hybrid UI that combines a custom drawer with additional fields from derived types.
-        /// This mimics Unity's behavior when a subclass extends a type that has a custom drawer.
-        /// </summary>
-        /// <param name="property">The SerializedProperty to create UI for</param>
-        /// <param name="container">The VisualElement container to add UI to</param>
-        /// <param name="actualType">The actual runtime type (this may be derived from the drawer's target type)</param>
-        /// <param name="excludeDrawerType">Optional drawer type to exclude (for wrapper drawers)</param>
-        /// <returns>True if a drawer was used, false if the drawer falls back to default fields</returns>
         public static bool CreateHybridPropertyUI(
             SerializedProperty property, 
-            UnityEngine.UIElements.VisualElement container,
+            VisualElement container,
             Type actualType,
-            Type excludeDrawerType = null)
+            Type excludeDrawerType = null,
+            HashSet<Type> excludeDrawerTypes = null)
         {
             if (property == null || container == null || actualType == null)
                 return false;
 
-            // Try to get a drawer for this property
-            PropertyDrawer drawer = CreateDrawerForProperty(property, excludeDrawerType);
+            PropertyDrawer drawer = CreateDrawerForProperty(property, excludeDrawerType, excludeDrawerTypes);
 
             if (drawer == null)
                 return false;
 
-            // Get the type the drawer was designed for
             Type drawerTargetType = GetDrawerTargetType(drawer.GetType());
-            
-            // Get fields handled by the drawer
             HashSet<string> fieldsHandledByDrawer = GetDrawerHandledFields(drawer.GetType());
 
-            // Create the custom UI from the drawer
-            UnityEngine.UIElements.VisualElement customUI = drawer.CreatePropertyGUI(property);
+            VisualElement customUI = drawer.CreatePropertyGUI(property);
             if (customUI != null)
             {
                 container.Add(customUI);
             }
 
-            // If the actual type is different from (derived from) the drawer's target type,
-            // add any additional fields that the drawer doesn't handle
             if (drawerTargetType != null && drawerTargetType != actualType)
             {
                 AddAdditionalFields(property, container, fieldsHandledByDrawer);
@@ -355,29 +356,24 @@ namespace CustomNamespace.Editor
             return true;
         }
 
-        /// <summary>
-        /// Adds fields to the container that are not already handled by a drawer.
-        /// Used when a derived type has additional fields beyond what the parent drawer handles.
-        /// </summary>
         static void AddAdditionalFields(
             SerializedProperty property,
-            UnityEngine.UIElements.VisualElement container,
+            VisualElement container,
             HashSet<string> handledFields)
         {
             bool hasAdditionalFields = false;
-            UnityEngine.UIElements.VisualElement additionalFieldsContainer = new() 
+            VisualElement additionalFieldsContainer = new() 
             { 
                 style = { marginTop = 8 } 
             };
 
             foreach (SerializedProperty child in property.GetChildren())
             {
-                // Skip fields already handled by the drawer
                 if (handledFields != null && handledFields.Contains(child.name))
                     continue;
 
                 hasAdditionalFields = true;
-                UnityEditor.UIElements.PropertyField field = new(child);
+                PropertyField field = new(child);
                 additionalFieldsContainer.Add(field);
             }
 
@@ -387,33 +383,98 @@ namespace CustomNamespace.Editor
             }
         }
 
-        /// <summary>
-        /// Creates default property fields for all children of a SerializedProperty.
-        /// This is the fallback when no custom drawer exists.
-        /// </summary>
-        /// <param name="property">The SerializedProperty to create fields for</param>
-        /// <param name="container">The container to add fields to</param>
         public static void CreateDefaultPropertyFields(
             SerializedProperty property,
-            UnityEngine.UIElements.VisualElement container)
+            VisualElement container)
         {
             if (property == null || container == null)
                 return;
 
             foreach (SerializedProperty child in property.GetChildren())
             {
-                UnityEditor.UIElements.PropertyField field = new(child);
+                PropertyField field = new(child);
                 container.Add(field);
             }
+        }
+
+        #endregion
+        
+        #region UI Builder Cache System
+
+        /// <summary>
+        /// Draws UI for a specific type using cached builder delegates.
+        /// </summary>
+        public static void DrawUIForType(
+            Type typeToDrawUIFor, 
+            SerializedProperty property, 
+            VisualElement container,
+            Type excludeDrawerType = null,
+            HashSet<Type> excludeDrawerTypes = null)
+        {
+            if (typeToDrawUIFor == null || property == null || container == null)
+                return;
+
+            // For excluded drawers, we can't use cached builders since they're type-specific
+            // Create a one-off builder instead
+            if (excludeDrawerType != null || excludeDrawerTypes != null)
+            {
+                bool usedCustomDrawer = CreateHybridPropertyUI(
+                    property, 
+                    container, 
+                    typeToDrawUIFor, 
+                    excludeDrawerType,
+                    excludeDrawerTypes);
+
+                if (!usedCustomDrawer)
+                {
+                    CreateDefaultPropertyFields(property, container);
+                }
+                return;
+            }
+
+            // Use cached builder for standard case (no exclusions)
+            BuildUIForType builderDelegate = GetOrCacheUIBuilder(typeToDrawUIFor);
+            builderDelegate?.Invoke(property, container);
+        }
+
+        static BuildUIForType GetOrCacheUIBuilder(Type typeToDrawUIFor)
+        {
+            if (typeToDrawUIFor == null)
+                return null;
+
+            s_UIBuilderCache ??= new Dictionary<Type, BuildUIForType>();
+
+            if (s_UIBuilderCache.TryGetValue(typeToDrawUIFor, out BuildUIForType cached))
+                return cached;
+            
+            // Create and cache the builder
+            BuildUIForType builder = CreateBuilderForType(typeToDrawUIFor);
+            s_UIBuilderCache[typeToDrawUIFor] = builder;
+            return builder;
+        }
+
+        static BuildUIForType CreateBuilderForType(Type typeToDrawUIFor)
+        {
+            return (prop, typeContainer) =>
+            {
+                // Use the unified hybrid drawer system from the cache
+                bool usedCustomDrawer = CreateHybridPropertyUI(
+                    prop, 
+                    typeContainer, 
+                    typeToDrawUIFor);
+
+                // Fallback: Draw all properties using default property fields
+                if (!usedCustomDrawer)
+                {
+                    CreateDefaultPropertyFields(prop, typeContainer);
+                }
+            };
         }
 
         #endregion
 
         #region Helper Methods
 
-        /// <summary>
-        /// Gets the set of field names that a drawer for the specified type would handle.
-        /// </summary>
         static HashSet<string> GetHandledFieldsForType(Type targetType)
         {
             HashSet<string> handledFields = new HashSet<string>();
@@ -426,7 +487,6 @@ namespace CustomNamespace.Editor
 
             foreach (FieldInfo field in fields)
             {
-                // Include public fields and fields with [SerializeField]
                 if (field.IsPublic || field.GetCustomAttribute<SerializeField>() != null)
                 {
                     handledFields.Add(field.Name);
@@ -436,9 +496,6 @@ namespace CustomNamespace.Editor
             return handledFields;
         }
 
-        /// <summary>
-        /// Checks if a drawer handles a specific field.
-        /// </summary>
         public static bool DrawerHandlesField(Type drawerType, string fieldName)
         {
             HashSet<string> handledFields = GetDrawerHandledFields(drawerType);

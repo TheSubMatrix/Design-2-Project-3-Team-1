@@ -3,13 +3,13 @@ Shader "Fullscreen/SobelOperator"
     Properties
     {
         _EdgeColor ("Edge Color", Color) = (0, 0, 0, 1)
-        _DepthThreshold ("Depth Threshold", Range(0, 1)) = 0.1
-        _NormalThreshold ("Normal Threshold", Range(0, 1)) = 0.1
-        _DepthSensitivity ("Depth Sensitivity", Range(0, 10)) = 1.0
-        _NormalSensitivity ("Normal Sensitivity", Range(0, 10)) = 1.0
-        _ThicknessScale ("Thickness Scale", Range(0, 5)) = 1.0
-        _DepthNormalThreshold ("Depth Normal Threshold", Range(0, 1)) = 0.5
-        _DepthNormalThresholdScale ("Depth Normal Threshold Scale", Range(1, 10)) = 7.0
+        _DepthThreshold ("Depth Threshold", Float) = 0.1
+        _NormalThreshold ("Normal Threshold", Float) = 0.1
+        _DepthSensitivity ("Depth Sensitivity", Float) = 1.0
+        _NormalSensitivity ("Normal Sensitivity", Float) = 1.0
+        _ThicknessScale ("Thickness Scale", Float) = 1.0
+        _DepthNormalThreshold ("Depth Normal Threshold", Float) = 0.5
+        _DepthNormalThresholdScale ("Depth Normal Threshold Scale", Float) = 7.0
         _OutlineThickness ("Outline Thickness", Range(0.1, 5)) = 1.0
     }
 
@@ -81,15 +81,11 @@ Shader "Fullscreen/SobelOperator"
                 
                 float2 uv = input.Texcoord;
                 float2 texelSize = _BlitTexture_TexelSize.xy;
-                
-                // Get center depth and normal
                 float centerDepth = SampleSceneDepth(uv);
-                
-                // Early out for skybox - depth value of 0 or 1 depending on platform
                 #if UNITY_REVERSED_Z
-                    if (centerDepth < 0.0001) // Skybox in reversed Z
+                    if (centerDepth < 0.0001)
                 #else
-                    if (centerDepth > 0.9999) // Skybox in normal Z
+                    if (centerDepth > 0.9999) 
                 #endif
                 {
                     return SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, uv);
@@ -97,40 +93,25 @@ Shader "Fullscreen/SobelOperator"
                 
                 float linearDepth = LinearEyeDepth(centerDepth, _ZBufferParams);
                 float3 centerNormal = SampleSceneNormals(uv);
-                
-                // Transform normal from 0...1 range to -1...1 range
                 float3 viewSpaceNormal = centerNormal * 2.0 - 1.0;
-                
-                // Validate normal - if it's invalid or zero, use default threshold
                 float normalLength = length(viewSpaceNormal);
                 float normalThreshold = 1.0;
                 
                 if (normalLength > 0.01)
                 {
-                    // Normalize the normal
                     viewSpaceNormal = viewSpaceNormal / normalLength;
-                    
-                    // Calculate NdotV for glancing angle detection
-                    // Normalize view direction and get the angle between normal and view
                     float3 viewDir = normalize(input.ViewSpaceDir);
-                    float NdotV = 1.0 - dot(viewSpaceNormal, -viewDir);
-                    
-                    // Clamp NdotV to avoid extreme values
-                    NdotV = saturate(NdotV);
-                    
-                    // Modulate depth threshold based on viewing angle
-                    // At glancing angles (high NdotV), increase threshold to reduce artifacts
-                    float normalThreshold01 = saturate((NdotV - _DepthNormalThreshold) / (1.0 - _DepthNormalThreshold + 0.0001));
+                    float ndotV = 1.0 - dot(viewSpaceNormal, -viewDir);
+                    ndotV = saturate(ndotV);
+                    float normalThreshold01 = saturate((ndotV - _DepthNormalThreshold) / (1.0 - _DepthNormalThreshold + 0.0001));
                     normalThreshold = normalThreshold01 * _DepthNormalThresholdScale + 1.0;
                 }
                 
-                // Apply angle-based threshold modulation to depth threshold
+
                 float depthThreshold = _DepthThreshold * normalThreshold;
 
-                // Scale texel size by outline thickness to make lines thicker
                 float2 scaledTexelSize = texelSize * _OutlineThickness;
 
-                // Sample 3x3 neighborhood for depth
                 float depthSamples[9];
                 float3 normalSamples[9];
                 int index = 0;
