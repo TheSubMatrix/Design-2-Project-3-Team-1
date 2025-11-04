@@ -228,7 +228,7 @@ MonoBehaviour:
   m_trajectoryPointTime: 0.2
   m_collisionMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 127
 --- !u!2083052967 &1682216025982730066
 VisualEffect:
   m_ObjectHideFlags: 0

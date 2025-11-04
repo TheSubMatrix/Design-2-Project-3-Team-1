@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using UnityEngine;
 using UnityEngine.Serialization;
 #if UNITY_EDITOR
@@ -65,9 +64,7 @@ public class SerializableDictionary<TKey, TValue> : ISerializationCallbackReceiv
         
         m_initialized = true;
     }
-    /// <summary>
-    /// Rebuilds the dictionary from the serialized list. This is useful if the dictionary is modified outside the editor.
-    /// </summary>
+
     public void Rebuild()
     {
         if (m_dictionary == null)
@@ -147,65 +144,34 @@ public class SerializableDictionary<TKey, TValue> : ISerializationCallbackReceiv
 }
 
 #if UNITY_EDITOR
+
+
 [CustomPropertyDrawer(typeof(SerializableDictionary<,>), true)]
 public class SerializableDictionaryDrawer : PropertyDrawer
 {
-    static readonly Dictionary<Type, BuildUIForType> s_UIBuilderCache = new();
-    delegate void BuildUIForType(SerializedProperty property, VisualElement container);
-    
     public override VisualElement CreatePropertyGUI(SerializedProperty property)
     {
         Type[] genericArgs = fieldInfo.FieldType.GetGenericArguments();
-        
         if (genericArgs.Length != 2)
-        {
             return new Label("Error: Invalid SerializableDictionary type");
-        }
-        Type keyType = genericArgs[0];
         Type valueType = genericArgs[1];
-        
-        VisualElement container = new ();
+
+        VisualElement container = new();
         SerializedProperty listProperty = property.FindPropertyRelative("m_list");
         SerializedProperty stagingProperty = property.FindPropertyRelative("m_stagingEntry");
+        SerializedProperty stagingKey = stagingProperty.FindPropertyRelative("Key");
+
         Foldout foldout = new()
         {
             text = $"{property.displayName} ({listProperty.arraySize} entries)",
             value = property.isExpanded
         };
         foldout.RegisterValueChangedCallback(evt => property.isExpanded = evt.newValue);
-        VisualElement listContainer = new ();
-        
-        VisualElement newEntrySection = new()
-        {
-            style = 
-            { 
-                backgroundColor = new StyleColor(new Color(0.3f, 0.3f, 0.3f, 0.2f)),
-                paddingTop = 5,
-                paddingBottom = 5,
-                paddingLeft = 5,
-                paddingRight = 5,
-                marginBottom = new StyleLength(5),
-                borderBottomWidth = 1,
-                borderBottomColor = new StyleColor(new Color(0.1f, 0.1f, 0.1f, 0.5f))
-            }
-        };
 
-        Label newEntryLabel = new("Add/Update Entry")
-        {
-            style = { unityFontStyleAndWeight = FontStyle.Bold, marginBottom = 5 }
-        };
-        newEntrySection.Add(newEntryLabel);
-        SerializedProperty stagingKey = stagingProperty.FindPropertyRelative("Key");
-        SerializedProperty stagingValue = stagingProperty.FindPropertyRelative("Value");
+        // --- Staging area ---
+        VisualElement newEntrySection = new();
 
-        VisualElement stagingRow = new()
-        {
-            style = { flexDirection = FlexDirection.Column, marginBottom = 2 }
-        };
-        VisualElement keyContainer = new() { style = { marginBottom = 2 } };
-        DrawUIForType(keyType, stagingKey, keyContainer);
-        VisualElement valueContainer = new() { style = { marginBottom = 5 } };
-        DrawUIForType(valueType, stagingValue, valueContainer);
+        DrawUIWithLabel(stagingKey, newEntrySection, "Key", true);
 
         Button addButton = new(() =>
         {
@@ -213,57 +179,65 @@ public class SerializableDictionaryDrawer : PropertyDrawer
             for (int i = 0; i < listProperty.arraySize; i++)
             {
                 SerializedProperty element = listProperty.GetArrayElementAtIndex(i);
-                SerializedProperty existingKey = element.FindPropertyRelative("Key");
-
-                if (!SerializedProperty.DataEquals(existingKey, stagingKey)) continue;
+                if (!SerializedProperty.DataEquals(element.FindPropertyRelative("Key"), stagingKey)) continue;
                 existingIndex = i;
                 break;
             }
-            
-            SerializedProperty targetElement;
-            
+
             if (existingIndex >= 0)
             {
-                targetElement = listProperty.GetArrayElementAtIndex(existingIndex);
-            }
-            else
-            {
-                int newIndex = listProperty.arraySize;
-                listProperty.arraySize++;
                 property.serializedObject.ApplyModifiedProperties();
-                property.serializedObject.Update();
-                targetElement = listProperty.GetArrayElementAtIndex(newIndex);
+                return;
             }
-            SerializedProperty targetKey = targetElement.FindPropertyRelative("Key");
-            SerializedProperty targetValue = targetElement.FindPropertyRelative("Value");
-            
-            CopyPropertyValue(stagingKey, targetKey);
-            CopyPropertyValue(stagingValue, targetValue);
-            
+
+            int index = listProperty.arraySize;
+            listProperty.arraySize++;
             property.serializedObject.ApplyModifiedProperties();
-            ClearPropertyValue(stagingKey, keyType);
-            ClearPropertyValue(stagingValue, valueType);
-            
+            property.serializedObject.Update();
+
+            SerializedProperty elementNew = listProperty.GetArrayElementAtIndex(index);
+            SerializedProperty keyProp = elementNew.FindPropertyRelative("Key");
+            SerializedProperty valueProp = elementNew.FindPropertyRelative("Value");
+
+            keyProp.boxedValue = stagingKey.boxedValue;
+            if (typeof(UnityEngine.Object).IsAssignableFrom(valueType))
+                valueProp.objectReferenceValue = null;
+            else
+                valueProp.boxedValue = Activator.CreateInstance(valueType);
+
             property.serializedObject.ApplyModifiedProperties();
         })
         {
-            text = "Add/Update",
-            style = { alignSelf = Align.FlexEnd, width = 80 }
+            text = "Add / Select",
+            style = { alignSelf = Align.FlexEnd, width = 100 }
         };
+        newEntrySection.Add(addButton);
 
-        stagingRow.Add(keyContainer);
-        stagingRow.Add(valueContainer);
-        stagingRow.Add(addButton);
-        newEntrySection.Add(stagingRow);
-        RebuildList();
+        // Divider
+        newEntrySection.Add(new VisualElement
+        {
+            style = {
+                height = 1,
+                marginTop = 6,
+                marginBottom = 6,
+                backgroundColor = new StyleColor(EditorGUIUtility.isProSkin 
+                    ? new Color(0.4f,0.4f,0.4f,0.35f) 
+                    : new Color(0.25f,0.25f,0.25f,0.35f))
+            }
+        });
 
         foldout.Add(newEntrySection);
+
+        // --- Existing entries list ---
+        VisualElement listContainer = new();
         foldout.Add(listContainer);
         container.Add(foldout);
-        container.TrackPropertyValue(listProperty, prop => 
+
+        RebuildList();
+        container.TrackPropertyValue(listProperty, p =>
         {
-            foldout.text = $"{property.displayName} ({prop.arraySize} entries)";
-            RebuildList(); 
+            foldout.text = $"{property.displayName} ({p.arraySize} entries)";
+            RebuildList();
         });
 
         return container;
@@ -271,176 +245,57 @@ public class SerializableDictionaryDrawer : PropertyDrawer
         void RebuildList()
         {
             listContainer.Clear();
-            
+
+            if (listProperty.arraySize == 0)
+            {
+                listContainer.Add(new Label("No entries") { style = { unityFontStyleAndWeight = FontStyle.Italic } });
+                return;
+            }
+
             for (int i = 0; i < listProperty.arraySize; i++)
             {
-                int index = i;
+                int idx = i;
                 SerializedProperty element = listProperty.GetArrayElementAtIndex(i);
                 SerializedProperty keyProp = element.FindPropertyRelative("Key");
-                SerializedProperty valueProp = element.FindPropertyRelative("Value");
+                SerializedProperty valProp = element.FindPropertyRelative("Value");
 
-                VisualElement entryRow = new()
+                VisualElement row = new()
                 {
-                    style = 
-                    { 
-                        flexDirection = FlexDirection.Column, 
-                        marginBottom = 5,
-                        paddingTop = 5,
-                        paddingBottom = 5,
-                        paddingLeft = 5,
-                        paddingRight = 5,
-                        
+                    style = {
+                        flexDirection = FlexDirection.Column,
+                        paddingTop = 2,
+                        paddingBottom = 2,
+                        paddingLeft = 2,
+                        paddingRight = 2,
+                        marginBottom = 3,
                         borderBottomWidth = 1,
-                        borderBottomColor = new StyleColor(new Color(0.1f, 0.1f, 0.1f, 0.5f))
+                        borderBottomColor = new StyleColor(new Color(0.1f,0.1f,0.1f,0.3f))
                     }
                 };
 
-                VisualElement keyEntryContainer = new() { style = { marginBottom = 2 } };
-                DrawUIForType(keyType, keyProp, keyEntryContainer);
-                keyEntryContainer.SetEnabled(false);
-                VisualElement valueEntryContainer = new() { style = { marginBottom = 2 } };
-                DrawUIForType(valueType, valueProp, valueEntryContainer);
-                valueEntryContainer.SetEnabled(false);
+                DrawUIWithLabel(keyProp, row, "Key", false);
+                DrawUIWithLabel(valProp, row, "Value", true);
 
-                Button removeButton = new(() =>
+                Button remove = new(() =>
                 {
-                    if (index >= listProperty.arraySize) return;
-                    listProperty.DeleteArrayElementAtIndex(index);
+                    listProperty.DeleteArrayElementAtIndex(idx);
                     property.serializedObject.ApplyModifiedProperties();
                 })
-                {
-                    text = "Remove",
-                    style = { alignSelf = Align.FlexEnd }
-                };
+                { text = "Remove", style = { alignSelf = Align.FlexEnd } };
+                row.Add(remove);
 
-                entryRow.Add(keyEntryContainer);
-                entryRow.Add(valueEntryContainer);
-                entryRow.Add(removeButton);
-                listContainer.Add(entryRow);
+                listContainer.Add(row);
             }
         }
     }
-    
-    static void DrawUIForType(Type typeToDrawUIFor, SerializedProperty property, VisualElement container)
+
+    static void DrawUIWithLabel(SerializedProperty prop, VisualElement container, string label, bool enabled)
     {
-        BuildUIForType builderDelegate = GetOrCacheUIBuilder(typeToDrawUIFor);
-        builderDelegate?.Invoke(property, container);
+        PropertyField field = new(prop, label);
+        field.BindProperty(prop);
+        field.SetEnabled(enabled);
+        container.Add(field);
     }
 
-    static BuildUIForType GetOrCacheUIBuilder(Type typeToDrawUIFor)
-    {
-        if (typeToDrawUIFor == null)
-            return null;
-    
-        if (s_UIBuilderCache.TryGetValue(typeToDrawUIFor, out BuildUIForType cached))
-            return cached;
-        
-        BuildUIForType builder = CreateBuilderForType();
-        s_UIBuilderCache[typeToDrawUIFor] = builder;
-        return builder;
-    }
-
-    static BuildUIForType CreateBuilderForType()
-    {
-        return (prop, typeContainer) =>
-        {
-            PropertyDrawer drawer = CustomNamespace.Editor.PropertyDrawerCache.CreateDrawerForProperty(prop, typeof(SerializableDictionaryDrawer));
-            VisualElement customUI = drawer?.CreatePropertyGUI(prop);
-            if (customUI != null)
-            {
-                typeContainer.Add(customUI);
-                return;
-            }
-            PropertyField field = new(prop, "");
-            field.BindProperty(prop);
-            typeContainer.Add(field);
-        };
-    }
-    
-    static void CopyPropertyValue(SerializedProperty source, SerializedProperty dest)
-    {
-        if (source == null || dest == null) return;
-        dest.boxedValue = source.boxedValue;
-    }
-    
-    static Type GetFieldType(SerializedProperty prop)
-    {
-        string path = prop.propertyPath.Replace(".Array.data[", "[");
-        string[] elements = path.Split('.');
-
-        Type currentType = prop.serializedObject.targetObject.GetType();
-
-        foreach (string t in elements)
-        {
-            string element = t;
-            if (element.EndsWith("]"))
-            {
-                currentType = currentType is { IsArray: true } ? currentType.GetElementType() : currentType?.GetGenericArguments()[0];
-                element = element[..element.IndexOf('[')];
-            }
-
-            if (currentType == null) continue;
-            FieldInfo field = currentType.GetField(element, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-            
-            if (field == null)
-            {
-                return currentType;
-            }
-
-            currentType = field.FieldType;
-        }
-
-        return currentType;
-    }
-
-    static void ClearPropertyValue(SerializedProperty prop, Type targetType)
-    {
-        if (prop == null || targetType == null) return;
-        if (!targetType.IsValueType || prop.propertyType == SerializedPropertyType.ManagedReference)
-        {
-            try
-            {
-                prop.boxedValue = null;
-            }
-            catch
-            {
-                ClearStructChildren(prop);
-            }
-        }
-        else 
-        {
-            ClearStructChildren(prop);
-        }
-    }
-    
-    static void ClearStructChildren(SerializedProperty prop)
-    {
-        SerializedProperty iterator = prop.Copy();
-        SerializedProperty end = prop.GetEndProperty();
-
-        if (!iterator.Next(true)) return; 
-        do
-        {
-            if (SerializedProperty.EqualContents(iterator, end)) break;
-            Type fieldType = GetFieldType(iterator);
-            if (iterator.propertyType == SerializedPropertyType.Generic)
-            {
-                ClearStructChildren(iterator); 
-            }
-            else
-            {
-                try
-                {
-                    object defaultValue = fieldType.IsValueType && fieldType != typeof(void) ? Activator.CreateInstance(fieldType) : null;
-                    iterator.boxedValue = defaultValue;
-                }
-                catch (Exception e)
-                {
-                    Debug.LogWarning($"Failed to reset field {iterator.name} of type {fieldType.Name}. Error: {e.Message}");
-                }
-            }
-        }
-        while (iterator.Next(false));
-    }
 }
 #endif
