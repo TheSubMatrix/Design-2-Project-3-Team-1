@@ -6,6 +6,7 @@ using UnityEngine.Serialization;
 
 public class MainMenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
+    [SerializeField] ButtonClickArrow m_clickArrow;
     [FormerlySerializedAs("text")] public TMP_Text m_text;  
     [FormerlySerializedAs("normalColor")] public Color m_normalColor = Color.white;
     [FormerlySerializedAs("hoverColor")] public Color m_hoverColor = Color.yellow;
@@ -35,6 +36,6 @@ public class MainMenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     public void RequestTransitionToScene(string sceneName)
     {
-        SceneTransitionManager.Instance.TransitionToScene(sceneName, 1f, SceneTransitionManager.TransitionType.Death);
+        m_clickArrow.MoveArrowToButton(GetComponent<RectTransform>(),()=> SceneTransitionManager.Instance.TransitionToScene(sceneName, 1f, SceneTransitionManager.TransitionType.Death));
     }
 }
