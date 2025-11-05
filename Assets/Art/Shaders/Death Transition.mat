@@ -39,7 +39,8 @@ Material:
     m_Floats:
     - _Distortion_Strength: -0.56
     - _Flame_Power: 2.67
-    - _Transition_Time: 1
+    - _Transition_Power: 4.43
+    - _Transition_Time: 0
     - _Y_Scale: 1
     m_Colors:
     - _Noise_Scale: {r: 1.94, g: 0.51, b: 0, a: 0}
