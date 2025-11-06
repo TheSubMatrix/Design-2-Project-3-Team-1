@@ -33,7 +33,7 @@ public class SerializableType : ISerializationCallbackReceiver {
     // Implicit conversion from Type to SerializableType
     public static implicit operator SerializableType(Type type) => new() { Type = type };
 }
-
+#if UNITY_EDITOR
 [CustomPropertyDrawer(typeof(SerializableType))]
 public class SerializableTypeDrawer : PropertyDrawer {
     TypeFilterAttribute typeFilter;
@@ -74,7 +74,7 @@ public class SerializableTypeDrawer : PropertyDrawer {
         property.serializedObject.ApplyModifiedProperties();
     }
 }
-
+#endif
 public class TypeFilterAttribute : PropertyAttribute {
     public Func<Type, bool> Filter { get; }
         
