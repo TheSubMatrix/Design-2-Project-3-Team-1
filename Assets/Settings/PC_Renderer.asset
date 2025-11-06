@@ -9,29 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 515ea35b24293454c87a57278b918c97, type: 3}
-  m_Name: JFAOutlineFeature
-  m_EditorClassIdentifier: 
-  m_Active: 0
-  settings:
-    outlineLayerMask:
-      serializedVersion: 2
-      m_Bits: 0
-    jfaInitMaterial: {fileID: 2100000, guid: e0bd5f8404bddbf47b070a2f5bf7c8ce, type: 2}
-    jfaFloodMaterial: {fileID: 2100000, guid: 3ea994eec70839a4696f241029a1fba8, type: 2}
-    jfaOutlineMaterial: {fileID: 2100000, guid: 827379fab7ae34c42b31b438d58e271c, type: 2}
-    outlineColor: {r: 0, g: 0, b: 0, a: 1}
-    outlineWidth: 4
-    renderPassEvent: 550
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: de640fe3d0db1804a85f9fc8f5cadab6, type: 3}
   m_Name: PC_Renderer
   m_EditorClassIdentifier: 

@@ -19,15 +19,15 @@ public class Quiver : IObjectPool<Arrow>
     }
     public Quiver()
     {
-        Setup();
+        
     }
 
-    public void Setup()
+    public void Setup(ILevelDataProvider levelData)
     {
         m_pool = new ObjectPool<Arrow>(
             () =>
             {
-                GameObject arrow =  Object.Instantiate(m_arrowPrefab.gameObject);
+                GameObject arrow = Object.Instantiate(m_arrowPrefab.gameObject);
                 arrow.SetActive(false);
                 return arrow.GetComponent<Arrow>();
             },
@@ -38,6 +38,7 @@ public class Quiver : IObjectPool<Arrow>
             m_defaultCapacity,
             m_maxSize
         );
+        uint ammoForLevel = levelData.GetArrowCounts(m_arrowPrefab);
     }
     void OnGet(Arrow arrow)
     {

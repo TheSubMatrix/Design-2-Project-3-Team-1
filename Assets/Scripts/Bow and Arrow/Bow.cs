@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using CustomNamespace.DependencyInjection;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
@@ -19,7 +20,7 @@ public class Bow : MonoBehaviour
 
     [Header("Input Actions")]
     [SerializeField] InputActionReference m_fireAction;
-    [SerializeField] InputActionReference m_cancelAction;
+    [FormerlySerializedAs("m_cancelAction")] [SerializeField] InputActionReference m_prepareShotAction;
     [SerializeField] InputActionReference m_swapArrowAction;
     [SerializeField] InputActionReference m_aimAction;
 
@@ -33,10 +34,14 @@ public class Bow : MonoBehaviour
     float m_currentPower;
     
     Arrow m_previewArrow;
-
-    void Awake()
+    
+    [Inject]
+    void InitializeQuivers(ILevelDataProvider levelData)
     {
-        foreach (Quiver pool in m_quivers) pool.Setup();
+        foreach (Quiver pool in m_quivers) pool.Setup(levelData);
+    }
+    void Start()
+    {
         m_trajectoryBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, (int)m_trajectoryPointCount, sizeof(float) * 3);
         m_trajectoryData = new Vector3[m_trajectoryPointCount];
         m_trajectoryEffect.SetGraphicsBuffer("Trajectory Buffer", m_trajectoryBuffer);
@@ -47,11 +52,11 @@ public class Bow : MonoBehaviour
     void OnEnable()
     {
         m_fireAction.action.Enable();
-        m_fireAction.action.performed += StartCharging;
-        m_fireAction.action.canceled += ReleaseFire;
+        m_fireAction.action.performed += ReleaseFire;
 
-        m_cancelAction.action.Enable();
-        m_cancelAction.action.performed += OnShotCancelled;
+        m_prepareShotAction.action.Enable();    
+        m_prepareShotAction.action.performed += StartCharging;
+        m_prepareShotAction.action.canceled += OnShotCancelled;
         
         m_swapArrowAction.action.Enable();
         m_swapArrowAction.action.performed += SwapArrow;
@@ -61,12 +66,12 @@ public class Bow : MonoBehaviour
 
     void OnDisable()
     {
-        m_fireAction.action.performed -= StartCharging;
-        m_fireAction.action.canceled -= ReleaseFire;
+        m_fireAction.action.performed -= ReleaseFire;
         m_fireAction.action.Disable();
-
-        m_cancelAction.action.performed -= OnShotCancelled;
-        m_cancelAction.action.Disable();       
+        
+        m_prepareShotAction.action.performed -= StartCharging;
+        m_prepareShotAction.action.canceled -= OnShotCancelled;
+        m_prepareShotAction.action.Disable();       
         
         m_swapArrowAction.action.performed -= SwapArrow;
         m_swapArrowAction.action.Disable();

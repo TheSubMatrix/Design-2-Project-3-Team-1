@@ -1,11 +1,8 @@
 {
-    "name": "Menus",
+    "name": "CustomNamespace.Utils.DependencyInjection",
     "rootNamespace": "",
     "references": [
-        "GUID:2e07d35e76d608d41a7a13bcb7476334",
-        "GUID:a3aab014a8e3ef4438300f4c5a6e46fd",
-        "GUID:6055be8ebefd69e48b49212b09b47b2f",
-        "GUID:cebde7c958cb86e4ab4963b9b4041b99"
+        "GUID:a3aab014a8e3ef4438300f4c5a6e46fd"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

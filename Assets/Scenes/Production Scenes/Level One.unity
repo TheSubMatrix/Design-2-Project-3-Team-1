@@ -463,6 +463,50 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &158140113
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 158140115}
+  - component: {fileID: 158140114}
+  m_Layer: 0
+  m_Name: Dependency Injector
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &158140114
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 158140113}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0dedbdec10749b49b75c9081c42435e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &158140115
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 158140113}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &161070392
 GameObject:
   m_ObjectHideFlags: 0
@@ -2740,6 +2784,51 @@ Transform:
   - {fileID: 1974381099}
   m_Father: {fileID: 1118980809}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1537066985
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1537066987}
+  - component: {fileID: 1537066986}
+  m_Layer: 0
+  m_Name: Level Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1537066986
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1537066985}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0b7d8b5957a5e644949ecfd3daf4edf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_levelConfig: {fileID: 11400000, guid: 635bbb30c7459f1438535d91c3264fbc, type: 2}
+--- !u!4 &1537066987
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1537066985}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1784908981
 GameObject:
   m_ObjectHideFlags: 0
@@ -3420,11 +3509,11 @@ MonoBehaviour:
   m_arrowSpawnPoint: {fileID: 721805972}
   m_trajectoryEffect: {fileID: 1974381101}
   m_playerCollider: {fileID: 1118980805}
-  m_chargeTime: 0.5
+  m_chargeTime: 1.5
   m_trajectoryPointCount: 20
-  m_maxPower: 1
+  m_maxPower: 2
   m_fireAction: {fileID: 1120369429361536294, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  m_cancelAction: {fileID: 1200050285633940590, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  m_prepareShotAction: {fileID: 1200050285633940590, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_swapArrowAction: {fileID: 397843700396680129, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_aimAction: {fileID: -5630151704836100654, guid: 052faaac586de48259a63d0c4782560b, type: 3}
 --- !u!1 &2024400985
@@ -3564,3 +3653,5 @@ SceneRoots:
   - {fileID: 1135128284}
   - {fileID: 118820666}
   - {fileID: 161070397}
+  - {fileID: 158140115}
+  - {fileID: 1537066987}

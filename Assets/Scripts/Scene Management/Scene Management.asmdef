@@ -1,11 +1,12 @@
 {
-    "name": "Menus",
+    "name": "SceneManagement",
     "rootNamespace": "",
     "references": [
-        "GUID:2e07d35e76d608d41a7a13bcb7476334",
         "GUID:a3aab014a8e3ef4438300f4c5a6e46fd",
-        "GUID:6055be8ebefd69e48b49212b09b47b2f",
-        "GUID:cebde7c958cb86e4ab4963b9b4041b99"
+        "GUID:2e07d35e76d608d41a7a13bcb7476334",
+        "GUID:feed37f66159d4147ba92c09dde5e08a",
+        "GUID:304a36b356bec2746a1ed1678658faf5",
+        "GUID:6af97dccfc1dd8748a23e6e573e1435a"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
