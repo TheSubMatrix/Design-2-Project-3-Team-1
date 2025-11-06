@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.UIElements;
 
 [Serializable]
 public class SerializableType : ISerializationCallbackReceiver {
@@ -26,52 +27,61 @@ public class SerializableType : ISerializationCallbackReceiver {
         type = Type.GetType(typeString);
         return type != null || !string.IsNullOrEmpty(typeString);
     }
-        
-    // Implicit conversion from SerializableType to Type
+    
     public static implicit operator Type(SerializableType sType) => sType.Type;
-
-    // Implicit conversion from Type to SerializableType
     public static implicit operator SerializableType(Type type) => new() { Type = type };
 }
 #if UNITY_EDITOR
 [CustomPropertyDrawer(typeof(SerializableType))]
 public class SerializableTypeDrawer : PropertyDrawer {
-    TypeFilterAttribute typeFilter;
-    string[] typeNames, typeFullNames;
+    TypeFilterAttribute m_typeFilter;
+    string[] m_typeNames, m_typeFullNames;
 
     void Initialize() {
-        if (typeFullNames != null) return;
+        if (m_typeFullNames != null) return;
             
-        typeFilter = (TypeFilterAttribute) Attribute.GetCustomAttribute(fieldInfo, typeof(TypeFilterAttribute));
+        m_typeFilter = (TypeFilterAttribute) Attribute.GetCustomAttribute(fieldInfo, typeof(TypeFilterAttribute));
             
         Type[] filteredTypes = AppDomain.CurrentDomain.GetAssemblies()
             .SelectMany(assembly => assembly.GetTypes())
-            .Where(t => typeFilter == null ? DefaultFilter(t) : typeFilter.Filter(t))
+            .Where(t => m_typeFilter == null ? DefaultFilter(t) : m_typeFilter.Filter(t))
             .ToArray();
             
-        typeNames = filteredTypes.Select(t => t.ReflectedType == null ? t.Name : $"t.ReflectedType.Name + t.Name").ToArray();
-        typeFullNames = filteredTypes.Select(t => t.AssemblyQualifiedName).ToArray();
+        m_typeNames = filteredTypes.Select(t => t.ReflectedType == null ? t.Name : $"{t.ReflectedType.Name}+{t.Name}").ToArray();
+        m_typeFullNames = filteredTypes.Select(t => t.AssemblyQualifiedName).ToArray();
     }
         
     static bool DefaultFilter(Type type) {
         return !type.IsAbstract && !type.IsInterface && !type.IsGenericType;
     }
 
-    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
+    public override VisualElement CreatePropertyGUI(SerializedProperty property) {
         Initialize();
+        
         SerializedProperty typeIdProperty = property.FindPropertyRelative("assemblyQualifiedName");
-
         if (string.IsNullOrEmpty(typeIdProperty.stringValue)) {
-            typeIdProperty.stringValue = typeFullNames.First();
+            typeIdProperty.stringValue = m_typeFullNames.First();
             property.serializedObject.ApplyModifiedProperties();
         }
 
-        int currentIndex = Array.IndexOf(typeFullNames, typeIdProperty.stringValue);
-        int selectedIndex = EditorGUI.Popup(position, label.text, currentIndex, typeNames);
+        int currentIndex = Array.IndexOf(m_typeFullNames, typeIdProperty.stringValue);
+        if (currentIndex < 0) currentIndex = 0;
 
-        if (selectedIndex < 0 || selectedIndex == currentIndex) return;
-        typeIdProperty.stringValue = typeFullNames[selectedIndex];
-        property.serializedObject.ApplyModifiedProperties();
+        PopupField<string> popupField = new PopupField<string>(
+            property.displayName,
+            m_typeNames.ToList(),
+            currentIndex
+        );
+
+        // Handle value changes
+        popupField.RegisterValueChangedCallback(evt => {
+            int selectedIndex = m_typeNames.ToList().IndexOf(evt.newValue);
+            if (selectedIndex < 0 || selectedIndex >= m_typeFullNames.Length) return;
+            typeIdProperty.stringValue = m_typeFullNames[selectedIndex];
+            property.serializedObject.ApplyModifiedProperties();
+        });
+
+        return popupField;
     }
 }
 #endif
@@ -83,38 +93,5 @@ public class TypeFilterAttribute : PropertyAttribute {
                          !type.IsInterface &&
                          !type.IsGenericType &&
                          type.InheritsOrImplements(filterType);
-    }
-}
-
-public static class TypeExtensions {
-    /// <summary>
-    /// Checks if a given type inherits or implements a specified base type.
-    /// </summary>
-    /// <param name="type">The type which needs to be checked.</param>
-    /// <param name="baseType">The base type/interface which is expected to be inherited or implemented by the 'type'</param>
-    /// <returns>Return true if 'type' inherits or implements 'baseType'. False otherwise</returns>        
-    public static bool InheritsOrImplements(this Type type, Type baseType) {
-        type = ResolveGenericType(type);
-        baseType = ResolveGenericType(baseType);
-
-        while (type != typeof(object)) {
-            if (baseType == type || HasAnyInterfaces(type, baseType)) return true;
-                
-            type = ResolveGenericType(type.BaseType);
-            if (type == null) return false;
-        }
-            
-        return false;
-    }
-        
-    static Type ResolveGenericType(Type type) {
-        if (type is not { IsGenericType: true }) return type;
-
-        Type genericType = type.GetGenericTypeDefinition();
-        return genericType != type ? genericType : type;
-    }
-
-    static bool HasAnyInterfaces(Type type, Type interfaceType) {
-        return type.GetInterfaces().Any(i => ResolveGenericType(i) == interfaceType);
     }
 }

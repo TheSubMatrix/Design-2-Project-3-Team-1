@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -19,3 +20,4 @@ public class ReadOnlyPropertyDrawer : PropertyDrawer
         GUI.enabled = true;
     }
 }
+#endif
