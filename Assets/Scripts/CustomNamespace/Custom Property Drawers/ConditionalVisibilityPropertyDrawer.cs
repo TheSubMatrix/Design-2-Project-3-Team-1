@@ -1,14 +1,11 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR
+using UnityEngine;
 using System;
-using CustomNamespace.Editor;
 using CustomNamespace.Extensions;
-
-
-#if UNITY_EDITOR
 using UnityEditor;
 using UnityEngine.UIElements;
 using UnityEditor.UIElements;
-
+using CustomNamespace.Editor;
 [CustomPropertyDrawer(typeof(ConditionalVisibilityAttribute))]
 public class ConditionalVisibilityPropertyDrawer : PropertyDrawer
 {
