@@ -1,20 +1,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 using UnityEngine.VFX;
 
 public class Bow : MonoBehaviour
 {
+    [FormerlySerializedAs("m_arrowPools")]
     [Header("Arrow & Trajectory")]
-    [SerializeField] List<ArrowPool> m_arrowPools;
+    [SerializeField] List<Quiver> m_quivers;
     [SerializeField] Transform m_arrowSpawnPoint;
     [SerializeField] VisualEffect m_trajectoryEffect;
     [SerializeField] Collider2D m_playerCollider;
+    [FormerlySerializedAs("chargeTime")]
+    [SerializeField] float m_chargeTime = 0.5f;
     [SerializeField, Range(1, 50)] uint m_trajectoryPointCount = 20;
     [SerializeField, Range(0.1f, 3f)] float m_maxPower = 1f;
 
     [Header("Input Actions")]
     [SerializeField] InputActionReference m_fireAction;
+    [SerializeField] InputActionReference m_cancelAction;
     [SerializeField] InputActionReference m_swapArrowAction;
     [SerializeField] InputActionReference m_aimAction;
 
@@ -24,17 +29,14 @@ public class Bow : MonoBehaviour
 
     int m_currentArrowSelection;
     bool m_isCharging;
-    Vector2 m_dragStart;
+    float m_currentChargeTime;
     float m_currentPower;
-    float m_lastPower = -1f;
-
+    
     Arrow m_previewArrow;
-    Quaternion m_lockedRotation;
-    bool m_isRotationLocked;
 
     void Awake()
     {
-        foreach (ArrowPool pool in m_arrowPools) pool.Setup();
+        foreach (Quiver pool in m_quivers) pool.Setup();
         m_trajectoryBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, (int)m_trajectoryPointCount, sizeof(float) * 3);
         m_trajectoryData = new Vector3[m_trajectoryPointCount];
         m_trajectoryEffect.SetGraphicsBuffer("Trajectory Buffer", m_trajectoryBuffer);
@@ -48,6 +50,9 @@ public class Bow : MonoBehaviour
         m_fireAction.action.performed += StartCharging;
         m_fireAction.action.canceled += ReleaseFire;
 
+        m_cancelAction.action.Enable();
+        m_cancelAction.action.performed += OnShotCancelled;
+        
         m_swapArrowAction.action.Enable();
         m_swapArrowAction.action.performed += SwapArrow;
 
@@ -60,6 +65,9 @@ public class Bow : MonoBehaviour
         m_fireAction.action.canceled -= ReleaseFire;
         m_fireAction.action.Disable();
 
+        m_cancelAction.action.performed -= OnShotCancelled;
+        m_cancelAction.action.Disable();       
+        
         m_swapArrowAction.action.performed -= SwapArrow;
         m_swapArrowAction.action.Disable();
 
@@ -73,7 +81,7 @@ public class Bow : MonoBehaviour
 
     void Update()
     {
-        if (!m_isCharging && m_mainCamera is not null)
+        if (m_mainCamera is not null)
         {
             Vector3 mouseWorldPos = m_mainCamera.ScreenToWorldPoint(m_aimAction.action.ReadValue<Vector2>());
             Vector2 aimDir = transform.position - mouseWorldPos;
@@ -83,25 +91,13 @@ public class Bow : MonoBehaviour
                 transform.rotation = Quaternion.Euler(0f, 0f, angle);
             }
         }
-
         if (m_isCharging && m_previewArrow is not null)
         {
-            if (!m_isRotationLocked)
-            {
-                m_lockedRotation = transform.rotation;
-                m_isRotationLocked = true;
-            }
-
-            Vector2 currentAimInput = m_aimAction.action.ReadValue<Vector2>();
-            Vector2 drag = currentAimInput - m_dragStart;
-            m_currentPower = Mathf.Clamp(drag.magnitude / 100f, 0f, m_maxPower);
-
-            transform.rotation = m_lockedRotation;
-            m_previewArrow.transform.rotation = m_lockedRotation;
+            m_currentChargeTime += Time.deltaTime;
+            m_currentPower = Mathf.Clamp01(m_currentChargeTime / m_chargeTime) * m_maxPower;
             m_previewArrow.transform.position = m_arrowSpawnPoint.position;
+            m_previewArrow.transform.rotation = m_arrowSpawnPoint.rotation;
             UpdateTrajectoryVFX();
-            if (!(Mathf.Abs(m_currentPower - m_lastPower) > 0.01f)) return;
-            m_lastPower = m_currentPower;
         }
         else
         {
@@ -112,40 +108,39 @@ public class Bow : MonoBehaviour
     void StartCharging(InputAction.CallbackContext context)
     {
         m_isCharging = true;
-        m_dragStart = m_aimAction.action.ReadValue<Vector2>();
-
-        m_arrowPools[m_currentArrowSelection].Get(out m_previewArrow);
+        m_quivers[m_currentArrowSelection].Get(out m_previewArrow);
+        m_currentPower = 0f;
+        m_currentChargeTime = 0f;
+        if (m_previewArrow == null) return;
         m_previewArrow.transform.position = m_arrowSpawnPoint.position;
         m_previewArrow.transform.rotation = m_arrowSpawnPoint.rotation;
         m_previewArrow.SetPreview(true, m_playerCollider);
-
-        m_isRotationLocked = false;
-        m_currentPower = 0f;
-        m_lastPower = -1f;
     }
 
     void ReleaseFire(InputAction.CallbackContext context)
     {
         if (!m_isCharging || m_previewArrow == null) return;
-
         m_isCharging = false;
-
-        Vector2 currentAimInput = m_aimAction.action.ReadValue<Vector2>();
-        Vector2 drag = currentAimInput - m_dragStart;
-        m_currentPower = Mathf.Clamp(drag.magnitude / 100f, 0f, m_maxPower);
-
         m_previewArrow.SetPreview(false);
         m_previewArrow.Fire(m_arrowSpawnPoint.right, m_currentPower, m_playerCollider);
-
         m_previewArrow = null;
         m_currentPower = 0f;
-        m_lastPower = -1f;
-        m_isRotationLocked = false;
-
+        m_currentChargeTime = 0f;
         m_trajectoryEffect.Reinit();
         m_trajectoryEffect.SetUInt("Valid Point Count", 0);
     }
-
+    void OnShotCancelled(InputAction.CallbackContext context)
+    {
+        if (!m_isCharging || m_previewArrow == null) return;
+        m_isCharging = false;
+        m_quivers[m_currentArrowSelection].ReleaseAndAddBack(m_previewArrow);
+        m_previewArrow.SetPreview(false);
+        m_previewArrow = null;
+        m_currentPower = 0f;
+        m_currentChargeTime = 0f;
+        m_trajectoryEffect.Reinit();
+        m_trajectoryEffect.SetUInt("Valid Point Count", 0);       
+    }
     void UpdateTrajectoryVFX()
     {
         List<Vector2> points = m_previewArrow.CalculateTrajectory(m_arrowSpawnPoint, m_currentPower);
@@ -171,7 +166,9 @@ public class Bow : MonoBehaviour
 
     void SwapArrow(InputAction.CallbackContext context)
     {
+        if (m_isCharging) return;
         float inputY = context.ReadValue<Vector2>().y;
-        m_currentArrowSelection = (m_currentArrowSelection + Mathf.RoundToInt(inputY) + m_arrowPools.Count) % m_arrowPools.Count;
+        m_currentArrowSelection = (m_currentArrowSelection + Mathf.RoundToInt(inputY) + m_quivers.Count) % m_quivers.Count;
+        Debug.Log(m_currentArrowSelection);
     }
 }

@@ -4,6 +4,9 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class Arrow : MonoBehaviour
 {
+    /// <summary>
+    /// The current Rigidbody2D component of the arrow.
+    /// </summary>
     public Rigidbody2D RB { get; private set; }
     public bool StuckInWall { get; protected set; }
 
@@ -73,7 +76,7 @@ public class Arrow : MonoBehaviour
         }
     }
 
-    private void FixedUpdate()
+    void FixedUpdate()
     {
         if (CompletedTrajectory || m_isPreview) return;
 
@@ -83,7 +86,7 @@ public class Arrow : MonoBehaviour
         }
     }
 
-    private void OnTriggerExit2D(Collider2D other)
+    void OnTriggerExit2D(Collider2D other)
     {
         if (!m_isIgnoringCollision || other != m_ignoredCollider) return;
 
@@ -91,7 +94,7 @@ public class Arrow : MonoBehaviour
         m_isIgnoringCollision = false;
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    void OnCollisionEnter2D(Collision2D collision)
     {
         OnImpact(collision);
     }
@@ -106,7 +109,7 @@ public class Arrow : MonoBehaviour
         }
     }
 
-    private void OnDisable()
+    void OnDisable()
     {
         if (m_isIgnoringCollision && m_ignoredCollider != null && m_arrowCollider != null)
         {

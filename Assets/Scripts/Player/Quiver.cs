@@ -4,15 +4,20 @@ using UnityEngine.Pool;
 using Object = UnityEngine.Object;
 
 [Serializable]
-public class ArrowPool : IObjectPool<Arrow>
+public class Quiver : IObjectPool<Arrow>
 {
+    [SerializeField, ReadOnly] uint m_currentAmmo = 10;
     [SerializeField] bool m_collectionCheck = true;
     [SerializeField] int m_defaultCapacity = 10;
     [SerializeField] int m_maxSize = 100;
     [SerializeField] Arrow m_arrowPrefab;
     ObjectPool<Arrow> m_pool;
-    
-    public ArrowPool()
+    public void ReleaseAndAddBack(Arrow arrow)
+    {
+        Release(arrow);
+        m_currentAmmo++;
+    }
+    public Quiver()
     {
         Setup();
     }
@@ -34,10 +39,10 @@ public class ArrowPool : IObjectPool<Arrow>
             m_maxSize
         );
     }
-
     void OnGet(Arrow arrow)
     {
         arrow.gameObject.SetActive(true);
+        m_currentAmmo--;
     }
 
     void OnRelease(Arrow arrow)
@@ -57,7 +62,9 @@ public class ArrowPool : IObjectPool<Arrow>
 
     public PooledObject<Arrow> Get(out Arrow arrow)
     {
-        return m_pool.Get(out arrow);
+        if (m_currentAmmo > 0) return m_pool.Get(out arrow);
+        arrow = null;
+        return default;
     }
 
     public void Release(Arrow arrow)

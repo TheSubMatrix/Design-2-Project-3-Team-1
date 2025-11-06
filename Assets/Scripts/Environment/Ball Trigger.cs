@@ -1,16 +1,20 @@
+using System;
+using CustomNamespace.GenericDatatypes;
 using UnityEngine;
-
+using UnityEngine.Events;
+[RequireComponent(typeof(Collider2D))]
 public class BallTrigger : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [SerializeField] LayerMask m_triggerLayers;
+    [SerializeField] Observer<bool> m_isTriggered;
+    void OnTriggerEnter2D(Collider2D other)
     {
-        
+        if((m_triggerLayers & other.gameObject.layer) is 0){ return; }
+        m_isTriggered.Value = true;
     }
-
-    // Update is called once per frame
-    void Update()
+    void OnTriggerExit2D(Collider2D other)
     {
-        
+        if((m_triggerLayers & other.gameObject.layer) is 0){ return; }
+        m_isTriggered.Value = false;
     }
 }
