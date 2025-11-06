@@ -4,28 +4,31 @@ using UnityEngine;
 public class Health : MonoBehaviour, IDamageable
 {
     [SerializeField] Observer<uint> m_health;
-    [SerializeField] Observer<uint> m_maxHealth = 100;
+    [SerializeField] Observer<uint> m_maxHealth = new Observer<uint>(100);
     [SerializeField] Observer<bool> m_isDead;
     [SerializeField] Observer<bool> m_isInvulnerable;
+    
     void Start()
     {
-        m_health = m_maxHealth.Value;
+        m_health.Value = m_maxHealth.Value;
     }
 
     public void Damage(uint amount)
     {
-        if(m_isInvulnerable || m_isDead) return;
-        m_health = m_health > amount ? m_health - amount : 0;
-        if(m_health == 0)
+        if(m_isInvulnerable.Value || m_isDead.Value) return;
+        
+        m_health.Value = m_health.Value > amount ? m_health.Value - amount : 0;
+        
+        if(m_health.Value <= 0)
         {
-            m_isDead = true;
+            m_isDead.Value = true;
         }
     }
 
     public void Heal(uint amount)
     {
-        m_health = m_health + amount > m_maxHealth ? m_maxHealth : m_health + amount;
-        if(m_isDead)
-            m_isDead = false;
+        m_health.Value = m_health.Value + amount > m_maxHealth.Value ? m_maxHealth.Value : m_health.Value + amount;
+        if(m_isDead.Value)
+            m_isDead.Value = false;
     }
 }

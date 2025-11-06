@@ -2,10 +2,6 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 using System.Reflection;
-using CustomNamespace.GenericDatatypes;
-using UnityEditor;
-using UnityEditor.UIElements;
-using UnityEngine.UIElements;
 
 #if UNITY_EDITOR
 using UnityEditor.Events;
@@ -17,10 +13,12 @@ namespace CustomNamespace.GenericDatatypes
     [Serializable]
     public class Observer<T>
     {
+        Observer() { }
+        Observer(T value) { m_value = value;}
+        
         [SerializeField] T m_value;
         [SerializeField] UnityEvent<T> m_onValueChanged;
-
-
+        
         public T Value
         {
             get => m_value;
@@ -28,7 +26,6 @@ namespace CustomNamespace.GenericDatatypes
         }
 
         public static implicit operator T(Observer<T> observer) => observer.Value;
-        public static implicit operator Observer<T> (T value) => new Observer<T>(value);
 
         public Observer(T value, UnityAction<T> callback = null)
         {

@@ -1124,7 +1124,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   m_maxHealth:
-    m_value: 0
+    m_value: 100
     m_onValueChanged:
       m_PersistentCalls:
         m_Calls: []
@@ -1132,7 +1132,19 @@ MonoBehaviour:
     m_value: 0
     m_onValueChanged:
       m_PersistentCalls:
-        m_Calls: []
+        m_Calls:
+        - m_Target: {fileID: 1118980803}
+          m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_MethodName: SetActive
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
   m_isInvulnerable:
     m_value: 0
     m_onValueChanged:
@@ -1752,6 +1764,10 @@ MonoBehaviour:
     m_defaultCapacity: 10
     m_maxSize: 100
     m_arrowPrefab: {fileID: -5666174083092024657, guid: 4406efc57a8cef4439374a58c0084557, type: 3}
+  - m_collectionCheck: 1
+    m_defaultCapacity: 10
+    m_maxSize: 100
+    m_arrowPrefab: {fileID: 4197891008620151356, guid: 32788bb62778334418a671b98d662ed7, type: 3}
   m_arrowSpawnPoint: {fileID: 721805972}
   m_trajectoryEffect: {fileID: 1974381101}
   m_playerCollider: {fileID: 1118980805}

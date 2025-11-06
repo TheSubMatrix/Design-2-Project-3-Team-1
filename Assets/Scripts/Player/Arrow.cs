@@ -12,7 +12,7 @@ public class Arrow : MonoBehaviour
     [SerializeField] float m_trajectoryPointTime = 0.1f;
     [SerializeField] LayerMask m_collisionMask;
 
-    bool m_completedTrajectory;
+    protected bool CompletedTrajectory;
     bool m_isPreview;
     Collider2D m_arrowCollider;
     Collider2D m_ignoredCollider;
@@ -59,9 +59,9 @@ public class Arrow : MonoBehaviour
         }
     }
 
-    public void Fire(Vector2 direction, float powerPercentage, Collider2D playerCollider = null)
+    public virtual void Fire(Vector2 direction, float powerPercentage, Collider2D playerCollider = null)
     {
-        m_completedTrajectory = false;
+        CompletedTrajectory = false;
         StuckInWall = false;
         RB.AddForce(direction.normalized * m_fireForce * powerPercentage, ForceMode2D.Impulse);
         
@@ -75,7 +75,7 @@ public class Arrow : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (m_completedTrajectory || m_isPreview) return;
+        if (CompletedTrajectory || m_isPreview) return;
 
         if (RB.linearVelocity.sqrMagnitude > 0.001f)
         {
@@ -93,12 +93,12 @@ public class Arrow : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        m_completedTrajectory = true;
         OnImpact(collision);
     }
 
     protected virtual void OnImpact(Collision2D collision)
     {
+        CompletedTrajectory = true;
         if (collision.gameObject.layer == LayerMask.NameToLayer("Arrow Surface"))
         {
             StuckInWall = true;
@@ -127,9 +127,7 @@ public class Arrow : MonoBehaviour
 
         Vector2 startPos = startTransform.position;
         Vector2 startVelocity = startTransform.right.normalized * (m_fireForce * powerPercentage);
-
-        // Use the rigidbody's gravity scale if available
-        float gravityScale = RB?.gravityScale ?? 1f;
+        float gravityScale = RB?.gravityScale * RB?.mass ?? 1f;
         float gravity = Mathf.Abs(Physics2D.gravity.y) * gravityScale;
         
 

@@ -12,11 +12,11 @@ GameObject:
   - component: {fileID: 5880502229041533552}
   - component: {fileID: 4800573344202640704}
   - component: {fileID: 3428193686605352494}
-  - component: {fileID: -4417297890186915749}
+  - component: {fileID: 6889456568750313395}
   - component: {fileID: 2701169083237212506}
-  - component: {fileID: -5666174083092024657}
+  - component: {fileID: 4197891008620151356}
   m_Layer: 3
-  m_Name: Bouncy Arrow
+  m_Name: Rebound Arrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -136,7 +136,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!61 &-4417297890186915749
+--- !u!61 &6889456568750313395
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -209,7 +209,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &-5666174083092024657
+--- !u!114 &4197891008620151356
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -218,7 +218,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5591014927966834789}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ecd40472b0434b86b525d57864f1de6b, type: 3}
+  m_Script: {fileID: 11500000, guid: 11f552694f31f9741ab2a66a81464162, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_fireForce: 10
@@ -227,3 +227,5 @@ MonoBehaviour:
   m_collisionMask:
     serializedVersion: 2
     m_Bits: 127
+  m_bouncePhysicsMaterial: {fileID: 6200000, guid: 1355ca1832820084a9394796fb0c1bd9, type: 2}
+  m_standardPhysicsMaterial: {fileID: 6200000, guid: fa52a17bf7bf52244be571c6549b084d, type: 2}
