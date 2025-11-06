@@ -156,8 +156,6 @@ AudioMixerController:
     name: Sound Effect Volume
   - guid: b419db9b9a7ef53409e77b5abcfab8c0
     name: Music Volume
-  - guid: b5f06e914b68d7543b6ba854f24281ea
-    name: MyExposedParam
   m_AudioMixerGroupViews:
   - guids:
     - 28d854f856b6ef947bb6dcf39c7d7451

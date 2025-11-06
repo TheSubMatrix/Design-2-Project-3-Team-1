@@ -36,7 +36,7 @@ public class MainMenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     public void RequestTransitionToScene(string sceneName)
     {
-        m_clickArrow.MoveArrowToButton(GetComponent<RectTransform>(),()=> SceneTransitionManager.Instance.TransitionToScene(sceneName, 1f, SceneTransitionManager.TransitionType.Death));
+        m_clickArrow.MoveArrowToButton(GetComponent<RectTransform>(),()=> SceneTransitionManager.Instance.TransitionToScene(sceneName));
     }
     public void OnQuitButtonPressed()
     {

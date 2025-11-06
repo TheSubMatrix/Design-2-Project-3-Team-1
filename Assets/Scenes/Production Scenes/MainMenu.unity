@@ -1663,7 +1663,7 @@ AudioSource:
   m_GameObject: {fileID: 1289572050}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: -7245304972095319532, guid: 778da360bf7beae40b5a03c0e088a921, type: 2}
   m_audioClip: {fileID: 8300000, guid: c3a39e1a5a79843958bbf083ddaa5024, type: 3}
   m_Resource: {fileID: 8300000, guid: c3a39e1a5a79843958bbf083ddaa5024, type: 3}
   m_PlayOnAwake: 1
@@ -2541,6 +2541,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Scene Transition Manager
       objectReference: {fileID: 0}
+    - target: {fileID: 4825327025143249930, guid: 9de29dc8300f5464789d62a236f15fc0, type: 3}
+      propertyPath: m_sfxMixerGroup
+      value: 
+      objectReference: {fileID: -7245304972095319532, guid: 778da360bf7beae40b5a03c0e088a921, type: 2}
+    - target: {fileID: 4825327025143249930, guid: 9de29dc8300f5464789d62a236f15fc0, type: 3}
+      propertyPath: m_musicMixerGroup
+      value: 
+      objectReference: {fileID: -4409922144973907691, guid: 778da360bf7beae40b5a03c0e088a921, type: 2}
     - target: {fileID: 8315938173219160267, guid: 9de29dc8300f5464789d62a236f15fc0, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

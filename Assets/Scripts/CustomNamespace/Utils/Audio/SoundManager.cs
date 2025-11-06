@@ -23,7 +23,7 @@ namespace AudioSystem
 
         public bool CanPlaySound(SoundData soundData)
         {
-            if (!soundData.PlayedFrequently) return true;
+            if (soundData is not null && !soundData.PlayedFrequently) return true;
             if (FrequentEmitters.Count < m_maxSoundInstances || !FrequentEmitters.TryDequeue(out SoundEmitter emitter)) return true;
             try
             {
