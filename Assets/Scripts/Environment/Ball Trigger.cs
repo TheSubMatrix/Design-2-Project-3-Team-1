@@ -9,12 +9,12 @@ public class BallTrigger : MonoBehaviour
     [SerializeField] Observer<bool> m_isTriggered;
     void OnTriggerEnter2D(Collider2D other)
     {
-        if((m_triggerLayers & other.gameObject.layer) is 0){ return; }
+        if((m_triggerLayers.value & (1 << other.gameObject.layer)) is 0){ return; }
         m_isTriggered.Value = true;
     }
     void OnTriggerExit2D(Collider2D other)
     {
-        if((m_triggerLayers & other.gameObject.layer) is 0){ return; }
+        if((m_triggerLayers.value & (1 << other.gameObject.layer)) is 0){ return; }
         m_isTriggered.Value = false;
     }
 }
