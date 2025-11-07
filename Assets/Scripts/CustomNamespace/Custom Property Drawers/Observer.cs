@@ -33,7 +33,11 @@ namespace CustomNamespace.GenericDatatypes
             if (callback is not null) m_onValueChanged.AddListener(callback);
             Value = value;
         }
-
+        public void SetValueWithoutNotify(T value)
+        {
+            m_value = value;
+        }
+        
         void Set(T value)
         {
             if (Equals(m_value, value)) return;
@@ -51,6 +55,7 @@ namespace CustomNamespace.GenericDatatypes
             if (callback is null) return;
             m_onValueChanged ??= new UnityEvent<T>();
             #if UNITY_EDITOR
+            
                 UnityEventTools.AddPersistentListener(m_onValueChanged, callback);
             #else
                 m_onValueChanged.AddListener(callback);
