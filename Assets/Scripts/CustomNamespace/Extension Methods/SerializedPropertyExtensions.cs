@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using System.Collections.Generic;
+using UnityEngine;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -13,7 +14,7 @@ namespace CustomNamespace.Extensions
     /// </summary>
     public static class SerializedPropertyExtensions
     {
-#if UNITY_EDITOR
+        #if UNITY_EDITOR
         // Delegate for the private static method 'GetFieldInfoAndStaticTypeFromProperty' in 'ScriptAttributeUtility'.
         private delegate FieldInfo GetFieldInfoAndStaticTypeFromProperty(SerializedProperty aProperty, out Type aType);
         private static GetFieldInfoAndStaticTypeFromProperty getFieldInfoAndStaticTypeFromProperty;
@@ -148,6 +149,62 @@ namespace CustomNamespace.Extensions
             
             return fieldInfo;
         }
-#endif
+
+        /// <summary>
+        /// Delegate for the internal static method.
+        /// Uses public types for arguments to avoid needing GetInternalPtr.
+        /// </summary>
+        private delegate bool InternalCopySerializedPropertyDelegate(SerializedProperty dest, SerializedProperty src);
+        private static InternalCopySerializedPropertyDelegate internalCopySerializedProperty;
+
+        /// <summary>
+        /// Reliably copies the serialized data from one property to another, including object references, 
+        /// by accessing Unity's internal serialization method via reflection.
+        /// </summary>
+        /// <param name="destProperty">The destination property (the one to be changed).</param>
+        /// <param name="srcProperty">The source property (the one whose value will be copied).</param>
+        /// <returns>True if the copy was successful, false otherwise.</returns>
+        public static bool CopySerializedPropertyDataFrom(this SerializedProperty destProperty, SerializedProperty srcProperty)
+        {
+            // --- Lazy Initialization of the Copy Delegate ---
+            if (internalCopySerializedProperty != null)
+                return internalCopySerializedProperty != null &&
+                       internalCopySerializedProperty(destProperty, srcProperty);
+            Type serializedPropertyType = typeof(SerializedProperty);
+                
+            // Find the internal static method named 'InternalCopySerializedProperty'.
+            // It must take two SerializedProperty arguments.
+            MethodInfo mi = serializedPropertyType.GetMethod(
+                "InternalCopySerializedProperty", 
+                BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic, 
+                null, 
+                new Type[] { serializedPropertyType, serializedPropertyType }, // Signature check
+                null
+            );
+                
+            if (mi != null)
+            {
+                try
+                {
+                    // Create the delegate using the method info.
+                    internalCopySerializedProperty = (InternalCopySerializedPropertyDelegate)Delegate.CreateDelegate(
+                        typeof(InternalCopySerializedPropertyDelegate), 
+                        mi
+                    );
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"Failed to create delegate for InternalCopySerializedProperty: {ex.Message}");
+                    return false;
+                }
+            }
+            else
+            {
+                Debug.LogError("Reflection failed: Could not find internal method 'InternalCopySerializedProperty' with the expected signature.");
+                return false;
+            }
+            return internalCopySerializedProperty != null && internalCopySerializedProperty(destProperty, srcProperty);
+        }
+        #endif
     }
 }

@@ -10,7 +10,7 @@ public class LevelManager : MonoBehaviour, IDependencyProvider, ILevelDataProvid
     
     void Awake()
     {
-        LoadLevelData(SceneManager.GetActiveScene().name);
+        if(m_currentLevelData is null){ LoadCurrentLevelData();}
         SceneManager.activeSceneChanged += OnSceneChanged;
     }
     
@@ -23,10 +23,16 @@ public class LevelManager : MonoBehaviour, IDependencyProvider, ILevelDataProvid
     {
         LoadLevelData(next.name);
     }
-    
+
+    void LoadCurrentLevelData()
+    {
+        string sceneName = SceneManager.GetActiveScene().name;
+        LoadLevelData(sceneName);   
+    }
     void LoadLevelData(string sceneName)
     {
         m_currentLevelData = m_levelConfig.GetLevelData(sceneName);
+
         if (m_currentLevelData == null)
         {
             Debug.LogWarning($"No level data found for scene: {sceneName}");
@@ -36,6 +42,8 @@ public class LevelManager : MonoBehaviour, IDependencyProvider, ILevelDataProvid
     [Provide]
     public ILevelDataProvider ProvideLevelDataProvider()
     {
+        if (m_currentLevelData != null) return this;
+        LoadCurrentLevelData();
         return this;
     }
     

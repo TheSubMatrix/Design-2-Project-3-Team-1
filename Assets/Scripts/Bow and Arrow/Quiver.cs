@@ -1,4 +1,5 @@
 ﻿using System;
+using CustomNamespace.GenericDatatypes;
 using UnityEngine;
 using UnityEngine.Pool;
 using Object = UnityEngine.Object;
@@ -6,16 +7,17 @@ using Object = UnityEngine.Object;
 [Serializable]
 public class Quiver : IObjectPool<Arrow>
 {
-    [SerializeField, ReadOnly] uint m_currentAmmo = 10;
+    [SerializeField] Observer<uint> m_currentAmmo;
     [SerializeField] bool m_collectionCheck = true;
     [SerializeField] int m_defaultCapacity = 10;
     [SerializeField] int m_maxSize = 100;
     [SerializeField] Arrow m_arrowPrefab;
+    
     ObjectPool<Arrow> m_pool;
     public void ReleaseAndAddBack(Arrow arrow)
     {
         Release(arrow);
-        m_currentAmmo++;
+        m_currentAmmo.Value++;
     }
     public Quiver()
     {
@@ -24,6 +26,7 @@ public class Quiver : IObjectPool<Arrow>
 
     public void Setup(ILevelDataProvider levelData)
     {
+        m_currentAmmo = new Observer<uint>(0);
         m_pool = new ObjectPool<Arrow>(
             () =>
             {
@@ -38,12 +41,12 @@ public class Quiver : IObjectPool<Arrow>
             m_defaultCapacity,
             m_maxSize
         );
-        uint ammoForLevel = levelData.GetArrowCounts(m_arrowPrefab);
+        m_currentAmmo.Value = levelData.GetArrowCounts(m_arrowPrefab);
     }
     void OnGet(Arrow arrow)
     {
         arrow.gameObject.SetActive(true);
-        m_currentAmmo--;
+        m_currentAmmo.Value--;
     }
 
     void OnRelease(Arrow arrow)

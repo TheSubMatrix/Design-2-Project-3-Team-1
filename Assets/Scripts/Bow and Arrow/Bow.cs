@@ -173,6 +173,5 @@ public class Bow : MonoBehaviour
         if (m_isCharging) return;
         float inputY = context.ReadValue<Vector2>().y;
         m_currentArrowSelection = (m_currentArrowSelection + Mathf.RoundToInt(inputY) + m_quivers.Count) % m_quivers.Count;
-        Debug.Log(m_currentArrowSelection);
     }
 }
