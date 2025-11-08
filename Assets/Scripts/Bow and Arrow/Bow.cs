@@ -163,7 +163,6 @@ public class Bow : MonoBehaviour
             else
                 m_trajectoryData[i] = m_trajectoryData[points.Count - 1];
         }
-
         m_trajectoryBuffer.SetData(m_trajectoryData);
         m_trajectoryEffect.SetUInt("Valid Point Count", (uint)points.Count);
         m_trajectoryEffect.SendEvent("Show");

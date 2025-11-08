@@ -23,6 +23,7 @@ MonoBehaviour:
           m_stagingEntry:
             Key: {fileID: 8117516934143688352, guid: eda4f136f156e3546a6f27a090346b57, type: 3}
             Value: 0
+        m_nextLevel: Level Two
     m_stagingEntry:
       Key: Level One
       Value:
@@ -31,3 +32,4 @@ MonoBehaviour:
           m_stagingEntry:
             Key: {fileID: 0}
             Value: 0
+        m_nextLevel: 

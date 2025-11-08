@@ -234,8 +234,12 @@ public class SerializableDictionaryDrawer : PropertyDrawer
         container.Add(foldout);
 
         RebuildList();
+        
+        int lastArraySize = listProperty.arraySize;
         container.TrackPropertyValue(listProperty, p =>
         {
+            if (p.arraySize == lastArraySize) return;
+            lastArraySize = p.arraySize;
             foldout.text = $"{property.displayName} ({p.arraySize} entries)";
             RebuildList();
         });

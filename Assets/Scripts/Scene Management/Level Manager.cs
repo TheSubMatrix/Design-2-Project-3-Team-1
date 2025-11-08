@@ -43,4 +43,9 @@ public class LevelManager : MonoBehaviour, IDependencyProvider, ILevelDataProvid
     {
         return m_currentLevelData?.GetArrowCounts(arrow) ?? 0;
     }
+
+    public string GetNextLevel()
+    {
+        return m_currentLevelData.GetNextLevel();
+    }
 }
