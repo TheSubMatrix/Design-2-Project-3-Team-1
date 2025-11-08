@@ -116,7 +116,11 @@ public class Bow : MonoBehaviour
         m_quivers[m_currentArrowSelection].Get(out m_previewArrow);
         m_currentPower = 0f;
         m_currentChargeTime = 0f;
-        if (m_previewArrow == null) return;
+        if (m_previewArrow == null)
+        {
+            m_isCharging = false;
+            return;
+        }
         m_previewArrow.transform.position = m_arrowSpawnPoint.position;
         m_previewArrow.transform.rotation = m_arrowSpawnPoint.rotation;
         m_previewArrow.SetPreview(true, m_playerCollider);
