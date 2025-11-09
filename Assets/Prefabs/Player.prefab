@@ -231,7 +231,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 100
+  m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 1
@@ -409,21 +409,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_quivers:
-  - m_currentAmmo: 10
+  - m_currentAmmo:
+      m_value: 0
+      m_onValueChanged:
+        m_PersistentCalls:
+          m_Calls: []
     m_collectionCheck: 1
     m_defaultCapacity: 10
     m_maxSize: 100
-    m_arrowPrefab: {fileID: 8117516934143688352, guid: eda4f136f156e3546a6f27a090346b57, type: 3}
-  - m_currentAmmo: 10
+    m_arrowPrefab: {fileID: 7059951787267099606, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
+  - m_currentAmmo:
+      m_value: 0
+      m_onValueChanged:
+        m_PersistentCalls:
+          m_Calls: []
     m_collectionCheck: 1
     m_defaultCapacity: 10
     m_maxSize: 100
     m_arrowPrefab: {fileID: -5666174083092024657, guid: 4406efc57a8cef4439374a58c0084557, type: 3}
-  - m_currentAmmo: 10
+  - m_currentAmmo:
+      m_value: 0
+      m_onValueChanged:
+        m_PersistentCalls:
+          m_Calls: []
     m_collectionCheck: 1
     m_defaultCapacity: 10
     m_maxSize: 100
-    m_arrowPrefab: {fileID: 4197891008620151356, guid: 32788bb62778334418a671b98d662ed7, type: 3}
+    m_arrowPrefab: {fileID: 2378414848884382480, guid: 965fa06bcfa06204382de651e1860780, type: 3}
   m_arrowSpawnPoint: {fileID: 7572264835305586608}
   m_trajectoryEffect: {fileID: 8245384195352364310}
   m_playerCollider: {fileID: 3414745985959945927}
