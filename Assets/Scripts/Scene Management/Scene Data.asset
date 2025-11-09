@@ -24,8 +24,16 @@ MonoBehaviour:
             Key: {fileID: 7059951787267099606, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
             Value: 0
         m_nextLevel: Level Two
+    - Key: Level Two
+      Value:
+        m_arrowCounts:
+          m_list: []
+          m_stagingEntry:
+            Key: {fileID: 0}
+            Value: 0
+        m_nextLevel: 
     m_stagingEntry:
-      Key: Level One
+      Key: Level Two
       Value:
         m_arrowCounts:
           m_list: []

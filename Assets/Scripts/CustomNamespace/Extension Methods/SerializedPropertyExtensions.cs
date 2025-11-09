@@ -149,61 +149,41 @@ namespace CustomNamespace.Extensions
             
             return fieldInfo;
         }
-
         /// <summary>
-        /// Delegate for the internal static method.
-        /// Uses public types for arguments to avoid needing GetInternalPtr.
+        /// Compares two SerializedProperties for equality. Takes into account Unity object references.
         /// </summary>
-        private delegate bool InternalCopySerializedPropertyDelegate(SerializedProperty dest, SerializedProperty src);
-        private static InternalCopySerializedPropertyDelegate internalCopySerializedProperty;
-
-        /// <summary>
-        /// Reliably copies the serialized data from one property to another, including object references, 
-        /// by accessing Unity's internal serialization method via reflection.
-        /// </summary>
-        /// <param name="destProperty">The destination property (the one to be changed).</param>
-        /// <param name="srcProperty">The source property (the one whose value will be copied).</param>
-        /// <returns>True if the copy was successful, false otherwise.</returns>
-        public static bool CopySerializedPropertyDataFrom(this SerializedProperty destProperty, SerializedProperty srcProperty)
+        /// <param name="a">The type we want to compare</param>
+        /// <param name="b">The type we want to compare against</param>
+        /// <returns>Whether the properties are equal</returns>
+        public static bool CompareToProperty(this SerializedProperty a, SerializedProperty b)
         {
-            // --- Lazy Initialization of the Copy Delegate ---
-            if (internalCopySerializedProperty != null)
-                return internalCopySerializedProperty != null &&
-                       internalCopySerializedProperty(destProperty, srcProperty);
-            Type serializedPropertyType = typeof(SerializedProperty);
-                
-            // Find the internal static method named 'InternalCopySerializedProperty'.
-            // It must take two SerializedProperty arguments.
-            MethodInfo mi = serializedPropertyType.GetMethod(
-                "InternalCopySerializedProperty", 
-                BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic, 
-                null, 
-                new Type[] { serializedPropertyType, serializedPropertyType }, // Signature check
-                null
-            );
-                
-            if (mi != null)
-            {
-                try
-                {
-                    // Create the delegate using the method info.
-                    internalCopySerializedProperty = (InternalCopySerializedPropertyDelegate)Delegate.CreateDelegate(
-                        typeof(InternalCopySerializedPropertyDelegate), 
-                        mi
-                    );
-                }
-                catch (Exception ex)
-                {
-                    Debug.LogError($"Failed to create delegate for InternalCopySerializedProperty: {ex.Message}");
-                    return false;
-                }
-            }
-            else
-            {
-                Debug.LogError("Reflection failed: Could not find internal method 'InternalCopySerializedProperty' with the expected signature.");
+            if (a.propertyType != b.propertyType)
                 return false;
+            
+            // DataEquals compares serialized data (file IDs, instance IDs) which can differ between scene objects and prefabs even when they reference the same object. Need to check explicitly for that
+            if (a.propertyType == SerializedPropertyType.ObjectReference)
+            {
+                return a.objectReferenceValue == b.objectReferenceValue;
             }
-            return internalCopySerializedProperty != null && internalCopySerializedProperty(destProperty, srcProperty);
+
+            // For all other types, use boxed value which provides proper equality semantics
+            try
+            {
+                object aValue = a.boxedValue;
+                object bValue = b.boxedValue;
+        
+                if (aValue == null && bValue == null)
+                    return true;
+                if (aValue == null || bValue == null)
+                    return false;
+            
+                return aValue.Equals(bValue);
+            }
+            catch
+            {
+                // Fallback for edge cases where boxedValue might fail
+                return SerializedProperty.DataEquals(a, b);
+            }
         }
         #endif
     }

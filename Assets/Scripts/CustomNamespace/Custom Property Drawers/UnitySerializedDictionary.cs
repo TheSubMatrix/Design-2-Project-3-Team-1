@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using CustomNamespace.Extensions;
 using UnityEngine;
 using UnityEngine.Serialization;
 #if UNITY_EDITOR
@@ -144,8 +145,6 @@ public class SerializableDictionary<TKey, TValue> : ISerializationCallbackReceiv
 }
 
 #if UNITY_EDITOR
-
-
 [CustomPropertyDrawer(typeof(SerializableDictionary<,>), true)]
 public class SerializableDictionaryDrawer : PropertyDrawer
 {
@@ -154,6 +153,8 @@ public class SerializableDictionaryDrawer : PropertyDrawer
         Type[] genericArgs = fieldInfo.FieldType.GetGenericArguments();
         if (genericArgs.Length != 2)
             return new Label("Error: Invalid SerializableDictionary type");
+        
+        Type keyType = genericArgs[0];
         Type valueType = genericArgs[1];
 
         VisualElement container = new();
@@ -171,7 +172,7 @@ public class SerializableDictionaryDrawer : PropertyDrawer
         // --- Staging area ---
         VisualElement newEntrySection = new();
 
-        DrawUIWithLabel(stagingKey, newEntrySection, "Key", true);
+        DrawUIWithLabel(stagingKey, newEntrySection, "Key", true, keyType);
 
         Button addButton = new(() =>
         {
@@ -179,7 +180,10 @@ public class SerializableDictionaryDrawer : PropertyDrawer
             for (int i = 0; i < listProperty.arraySize; i++)
             {
                 SerializedProperty element = listProperty.GetArrayElementAtIndex(i);
-                if (!SerializedProperty.DataEquals(element.FindPropertyRelative("Key"), stagingKey)) continue;
+                SerializedProperty existingKey = element.FindPropertyRelative("Key");
+                
+                // Use the extension method for proper comparison
+                if (!existingKey.CompareToProperty(stagingKey)) continue;
                 existingIndex = i;
                 break;
             }
@@ -199,11 +203,27 @@ public class SerializableDictionaryDrawer : PropertyDrawer
             SerializedProperty keyProp = elementNew.FindPropertyRelative("Key");
             SerializedProperty valueProp = elementNew.FindPropertyRelative("Value");
 
-            keyProp.boxedValue = stagingKey.boxedValue;
-            if (typeof(UnityEngine.Object).IsAssignableFrom(valueType))
-                valueProp.objectReferenceValue = null;
+            // Copy key value properly based on type
+            if (typeof(UnityEngine.Object).IsAssignableFrom(keyType))
+            {
+                keyProp.objectReferenceValue = stagingKey.objectReferenceValue;
+            }
             else
+            {
+                keyProp.boxedValue = stagingKey.boxedValue;
+            }
+            
+            // Initialize value - check actual reflected type, not just SerializedProperty type
+            if (typeof(UnityEngine.Object).IsAssignableFrom(valueType))
+            {
+                valueProp.objectReferenceValue = null;
+                // Set the object reference instance ID to allow proper type filtering in the object picker
+                valueProp.objectReferenceInstanceIDValue = 0;
+            }
+            else
+            {
                 valueProp.boxedValue = Activator.CreateInstance(valueType);
+            }
 
             property.serializedObject.ApplyModifiedProperties();
         })
@@ -277,8 +297,8 @@ public class SerializableDictionaryDrawer : PropertyDrawer
                     }
                 };
 
-                DrawUIWithLabel(keyProp, row, "Key", false);
-                DrawUIWithLabel(valProp, row, "Value", true);
+                DrawUIWithLabel(keyProp, row, "Key", false, keyType);
+                DrawUIWithLabel(valProp, row, "Value", true, valueType);
 
                 Button remove = new(() =>
                 {
@@ -293,12 +313,49 @@ public class SerializableDictionaryDrawer : PropertyDrawer
         }
     }
 
-    static void DrawUIWithLabel(SerializedProperty prop, VisualElement container, string label, bool enabled)
+    static void DrawUIWithLabel(SerializedProperty prop, VisualElement container, string label, bool enabled, Type expectedType = null)
     {
-        PropertyField field = new(prop, label);
-        field.BindProperty(prop);
-        field.SetEnabled(enabled);
-        container.Add(field);
+        VisualElement fieldContainer = new VisualElement();
+        
+        // If it's an object reference, and we know the expected type, use ObjectField directly
+        if (expectedType != null && 
+            typeof(UnityEngine.Object).IsAssignableFrom(expectedType) && 
+            prop.propertyType == SerializedPropertyType.ObjectReference)
+        {
+            ObjectField objectField = new ObjectField(label)
+            {
+                objectType = expectedType,
+                allowSceneObjects = true,
+                value = prop.objectReferenceValue
+            };
+            
+            // Manually handle value changes instead of using BindProperty
+            objectField.RegisterValueChangedCallback(evt =>
+            {
+                prop.objectReferenceValue = evt.newValue;
+                prop.serializedObject.ApplyModifiedProperties();
+            });
+            
+            // Track property changes to update the field
+            fieldContainer.TrackPropertyValue(prop, p =>
+            {
+                if (objectField.value != p.objectReferenceValue)
+                    objectField.value = p.objectReferenceValue;
+            });
+            
+            objectField.SetEnabled(enabled);
+            fieldContainer.Add(objectField);
+        }
+        else
+        {
+            // Use standard PropertyField for everything else
+            PropertyField field = new PropertyField(prop, label);
+            field.BindProperty(prop);
+            field.SetEnabled(enabled);
+            fieldContainer.Add(field);
+        }
+        
+        container.Add(fieldContainer);
     }
 
 }
