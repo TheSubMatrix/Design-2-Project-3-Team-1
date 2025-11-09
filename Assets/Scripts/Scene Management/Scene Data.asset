@@ -20,8 +20,10 @@ MonoBehaviour:
           m_list:
           - Key: {fileID: 7059951787267099606, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
             Value: 10
+          - Key: {fileID: 6081388840972783543, guid: 3d8111a3af23f824ca26b465236a2b2e, type: 3}
+            Value: 10
           m_stagingEntry:
-            Key: {fileID: 7059951787267099606, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
+            Key: {fileID: 6081388840972783543, guid: 3d8111a3af23f824ca26b465236a2b2e, type: 3}
             Value: 0
         m_nextLevel: Level Two
     - Key: Level Two

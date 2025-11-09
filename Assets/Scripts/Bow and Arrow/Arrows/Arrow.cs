@@ -67,13 +67,11 @@ public class Arrow : MonoBehaviour
         CompletedTrajectory = false;
         StuckInWall = false;
         RB.AddForce(direction.normalized * m_fireForce * powerPercentage, ForceMode2D.Impulse);
-        
-        if (playerCollider != null)
-        {
-            m_ignoredCollider = playerCollider;
-            Physics2D.IgnoreCollision(m_arrowCollider, m_ignoredCollider, true);
-            m_isIgnoringCollision = true;
-        }
+
+        if (playerCollider == null) return;
+        m_ignoredCollider = playerCollider;
+        Physics2D.IgnoreCollision(m_arrowCollider, m_ignoredCollider, true);
+        m_isIgnoringCollision = true;
     }
 
     void FixedUpdate()
@@ -102,11 +100,9 @@ public class Arrow : MonoBehaviour
     protected virtual void OnImpact(Collision2D collision)
     {
         CompletedTrajectory = true;
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Arrow Surface"))
-        {
-            StuckInWall = true;
-            RB.bodyType = RigidbodyType2D.Static;
-        }
+        if (collision.gameObject.layer != LayerMask.NameToLayer("Arrow Surface")) return;
+        StuckInWall = true;
+        RB.bodyType = RigidbodyType2D.Static;
     }
 
     void OnDisable()
