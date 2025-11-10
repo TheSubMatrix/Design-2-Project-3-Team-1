@@ -98,7 +98,6 @@ public class Arrow : MonoBehaviour
     {
         if(CompletedTrajectory){return;}
         OnImpact(collision);
-        CompletedTrajectory = true;
     }
 
     protected virtual void OnImpact(Collision2D collision)
@@ -118,10 +117,12 @@ public class Arrow : MonoBehaviour
         SoundManager.Instance.CreateSound().WithSoundData(m_embedSound).WithRandomPitch().WithPosition(transform.position).Play();
         StuckInWall = true;
         RB.bodyType = RigidbodyType2D.Static;
+        CompletedTrajectory = true;
     }
     protected virtual void OnHit()
     {
         SoundManager.Instance.CreateSound().WithSoundData(m_hitSound).WithRandomPitch().WithPosition(transform.position).Play();
+        CompletedTrajectory = true;
     }
 
     void OnDisable()
