@@ -258,7 +258,7 @@ MonoBehaviour:
   m_trajectoryPointTime: 0.1
   m_collisionMask:
     serializedVersion: 2
-    m_Bits: 375
+    m_Bits: 371
   m_linkLength: 0.5
   m_linkWidth: 0.2
   m_linkMass: 1
@@ -267,7 +267,7 @@ MonoBehaviour:
   m_physicsMaterial: {fileID: 0}
   m_chainValidityMask:
     serializedVersion: 2
-    m_Bits: 503
+    m_Bits: 337
   m_jointBreakForce: 0
   m_jointBreakTorque: 0
   m_linkPrefab: {fileID: 0}

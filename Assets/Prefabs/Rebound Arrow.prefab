@@ -258,6 +258,6 @@ MonoBehaviour:
   m_trajectoryPointTime: 0.1
   m_collisionMask:
     serializedVersion: 2
-    m_Bits: 383
+    m_Bits: 379
   m_bouncePhysicsMaterial: {fileID: 6200000, guid: 1355ca1832820084a9394796fb0c1bd9, type: 2}
   m_standardPhysicsMaterial: {fileID: 6200000, guid: fa52a17bf7bf52244be571c6549b084d, type: 2}
