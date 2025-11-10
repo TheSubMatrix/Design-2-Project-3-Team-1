@@ -58,7 +58,6 @@ public class PlayerMovement : MonoBehaviour
     void OnMove(InputAction.CallbackContext context)
     {
         m_desiredMoveDirection = context.ReadValue<Vector2>() * m_moveSpeed;
-        Debug.Log(m_desiredMoveDirection);
     }
     void OnJump(InputAction.CallbackContext context)
     {

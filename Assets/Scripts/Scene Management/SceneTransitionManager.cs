@@ -57,11 +57,13 @@ public class SceneTransitionManager : PersistentSingleton<SceneTransitionManager
 
     void OnDestroy()
     {
+        if(CurrentInstance != this){return;}
         m_deathTransitionMaterial.SetFloat(s_TransitionTime, 0);
     }
 
     void OnDisable()
     {
+        if(CurrentInstance != this){return;}
         m_deathTransitionMaterial.SetFloat(s_TransitionTime, 0);
     }
 }

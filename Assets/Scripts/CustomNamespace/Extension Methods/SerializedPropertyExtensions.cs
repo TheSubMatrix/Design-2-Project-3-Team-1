@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using System.Collections.Generic;
+using UnityEngine;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -13,7 +14,7 @@ namespace CustomNamespace.Extensions
     /// </summary>
     public static class SerializedPropertyExtensions
     {
-#if UNITY_EDITOR
+        #if UNITY_EDITOR
         // Delegate for the private static method 'GetFieldInfoAndStaticTypeFromProperty' in 'ScriptAttributeUtility'.
         private delegate FieldInfo GetFieldInfoAndStaticTypeFromProperty(SerializedProperty aProperty, out Type aType);
         private static GetFieldInfoAndStaticTypeFromProperty getFieldInfoAndStaticTypeFromProperty;
@@ -148,6 +149,42 @@ namespace CustomNamespace.Extensions
             
             return fieldInfo;
         }
-#endif
+        /// <summary>
+        /// Compares two SerializedProperties for equality. Takes into account Unity object references.
+        /// </summary>
+        /// <param name="a">The type we want to compare</param>
+        /// <param name="b">The type we want to compare against</param>
+        /// <returns>Whether the properties are equal</returns>
+        public static bool CompareToProperty(this SerializedProperty a, SerializedProperty b)
+        {
+            if (a.propertyType != b.propertyType)
+                return false;
+            
+            // DataEquals compares serialized data (file IDs, instance IDs) which can differ between scene objects and prefabs even when they reference the same object. Need to check explicitly for that
+            if (a.propertyType == SerializedPropertyType.ObjectReference)
+            {
+                return a.objectReferenceValue == b.objectReferenceValue;
+            }
+
+            // For all other types, use boxed value which provides proper equality semantics
+            try
+            {
+                object aValue = a.boxedValue;
+                object bValue = b.boxedValue;
+        
+                if (aValue == null && bValue == null)
+                    return true;
+                if (aValue == null || bValue == null)
+                    return false;
+            
+                return aValue.Equals(bValue);
+            }
+            catch
+            {
+                // Fallback for edge cases where boxedValue might fail
+                return SerializedProperty.DataEquals(a, b);
+            }
+        }
+        #endif
     }
 }

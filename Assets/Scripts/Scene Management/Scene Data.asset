@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e9b3996dfc629242a3be0373f161f0b, type: 3}
+  m_Name: Scene Data
+  m_EditorClassIdentifier: 
+  m_sceneData:
+    m_list:
+    - Key: Level One
+      Value:
+        m_arrowCounts:
+          m_list:
+          - Key: {fileID: 7059951787267099606, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
+            Value: 10
+          - Key: {fileID: 6081388840972783543, guid: 3d8111a3af23f824ca26b465236a2b2e, type: 3}
+            Value: 10
+          m_stagingEntry:
+            Key: {fileID: 6081388840972783543, guid: 3d8111a3af23f824ca26b465236a2b2e, type: 3}
+            Value: 0
+        m_nextLevel: Level Two
+    - Key: Level Two
+      Value:
+        m_arrowCounts:
+          m_list: []
+          m_stagingEntry:
+            Key: {fileID: 0}
+            Value: 0
+        m_nextLevel: 
+    m_stagingEntry:
+      Key: Level Two
+      Value:
+        m_arrowCounts:
+          m_list: []
+          m_stagingEntry:
+            Key: {fileID: 0}
+            Value: 0
+        m_nextLevel: 
