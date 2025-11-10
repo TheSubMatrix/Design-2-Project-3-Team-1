@@ -39,7 +39,7 @@ MonoBehaviour:
           m_stagingEntry:
             Key: {fileID: 7059951787267099606, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
             Value: 0
-        m_nextLevel: 
+        m_nextLevel: Level Three
     - Key: Level Three
       Value:
         m_arrowCounts:
@@ -67,7 +67,7 @@ MonoBehaviour:
           m_stagingEntry:
             Key: {fileID: 7059951787267099606, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
             Value: 0
-        m_nextLevel: 
+        m_nextLevel: Level Five
     - Key: Level Five
       Value:
         m_arrowCounts:
@@ -77,7 +77,7 @@ MonoBehaviour:
           m_stagingEntry:
             Key: {fileID: 7059951787267099606, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
             Value: 0
-        m_nextLevel: 
+        m_nextLevel: Level Six
     - Key: Level Six
       Value:
         m_arrowCounts:
