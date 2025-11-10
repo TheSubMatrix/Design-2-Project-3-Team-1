@@ -22,16 +22,22 @@ MonoBehaviour:
             Value: 10
           - Key: {fileID: 6081388840972783543, guid: 3d8111a3af23f824ca26b465236a2b2e, type: 3}
             Value: 10
+          - Key: {fileID: 2378414848884382480, guid: 965fa06bcfa06204382de651e1860780, type: 3}
+            Value: 10
+          - Key: {fileID: -5666174083092024657, guid: 4406efc57a8cef4439374a58c0084557, type: 3}
+            Value: 10
           m_stagingEntry:
-            Key: {fileID: 6081388840972783543, guid: 3d8111a3af23f824ca26b465236a2b2e, type: 3}
+            Key: {fileID: -5666174083092024657, guid: 4406efc57a8cef4439374a58c0084557, type: 3}
             Value: 0
         m_nextLevel: Level Two
     - Key: Level Two
       Value:
         m_arrowCounts:
-          m_list: []
+          m_list:
+          - Key: {fileID: 7059951787267099606, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
+            Value: 10
           m_stagingEntry:
-            Key: {fileID: 0}
+            Key: {fileID: 7059951787267099606, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
             Value: 0
         m_nextLevel: 
     m_stagingEntry:

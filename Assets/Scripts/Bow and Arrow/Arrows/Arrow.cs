@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using AudioSystem;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -14,7 +15,9 @@ public class Arrow : MonoBehaviour
     [SerializeField] uint m_trajectoryPointCount = 20;
     [SerializeField] float m_trajectoryPointTime = 0.1f;
     [SerializeField] LayerMask m_collisionMask;
-
+    [SerializeField] SoundData m_fireSound;
+    [SerializeField] SoundData m_hitSound;
+    [SerializeField] SoundData m_embedSound;
     protected bool CompletedTrajectory;
     bool m_isPreview;
     Collider2D m_arrowCollider;
@@ -67,11 +70,11 @@ public class Arrow : MonoBehaviour
         CompletedTrajectory = false;
         StuckInWall = false;
         RB.AddForce(direction.normalized * m_fireForce * powerPercentage, ForceMode2D.Impulse);
-
         if (playerCollider == null) return;
         m_ignoredCollider = playerCollider;
         Physics2D.IgnoreCollision(m_arrowCollider, m_ignoredCollider, true);
         m_isIgnoringCollision = true;
+        SoundManager.Instance.CreateSound().WithSoundData(m_fireSound).WithRandomPitch().WithPosition(transform.position).Play();
     }
 
     void FixedUpdate()
@@ -87,22 +90,38 @@ public class Arrow : MonoBehaviour
     void OnTriggerExit2D(Collider2D other)
     {
         if (!m_isIgnoringCollision || other != m_ignoredCollider) return;
-
         Physics2D.IgnoreCollision(m_arrowCollider, m_ignoredCollider, false);
         m_isIgnoringCollision = false;
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
+    protected virtual void OnCollisionEnter2D(Collision2D collision)
     {
+        if(CompletedTrajectory){return;}
         OnImpact(collision);
+        CompletedTrajectory = true;
     }
 
     protected virtual void OnImpact(Collision2D collision)
     {
-        CompletedTrajectory = true;
-        if (collision.gameObject.layer != LayerMask.NameToLayer("Arrow Surface")) return;
+        if (collision.gameObject.layer != LayerMask.NameToLayer("Arrow Surface"))
+        {
+            OnHit();
+        }
+        else
+        {
+            OnEmbed();
+        }
+    }
+
+    protected virtual void OnEmbed()
+    {
+        SoundManager.Instance.CreateSound().WithSoundData(m_embedSound).WithRandomPitch().WithPosition(transform.position).Play();
         StuckInWall = true;
         RB.bodyType = RigidbodyType2D.Static;
+    }
+    protected virtual void OnHit()
+    {
+        SoundManager.Instance.CreateSound().WithSoundData(m_hitSound).WithRandomPitch().WithPosition(transform.position).Play();
     }
 
     void OnDisable()

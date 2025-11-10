@@ -139,18 +139,17 @@ public class ChainArrow : Arrow
         link.SetActive(false);
         linkPool.Enqueue(link);
     }
-    
-    protected override void OnImpact(Collision2D collision)
+
+    protected override void OnEmbed()
     {
-        base.OnImpact(collision);
-        
+        base.OnEmbed();
         if (m_triedCreatingChain) return;
         m_triedCreatingChain = true;
         
         // Find a valid connection point (no obstacles between)
         ChainArrow targetArrow = s_ValidConnectionPoints
             .FirstOrDefault(arrow => arrow != null && 
-                           !Physics2D.Linecast(transform.position, arrow.transform.position, m_chainValidityMask));
+                                     !Physics2D.Linecast(transform.position, arrow.transform.position, m_chainValidityMask));
         
         if (targetArrow != null)
         {
@@ -164,7 +163,7 @@ public class ChainArrow : Arrow
             Debug.Log("Added to connection list");
         }
     }
-    
+
     void GenerateChain(Vector2 startPoint, Vector2 endPoint, Rigidbody2D startAnchor, Rigidbody2D endAnchor)
     {
         ClearChain();
