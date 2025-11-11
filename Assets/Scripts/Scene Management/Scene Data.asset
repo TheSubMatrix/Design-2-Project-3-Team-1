@@ -88,8 +88,32 @@ MonoBehaviour:
             Key: {fileID: 2378414848884382480, guid: 965fa06bcfa06204382de651e1860780, type: 3}
             Value: 0
         m_nextLevel: 
+    - Key: Level Seven
+      Value:
+        m_arrowCounts:
+          m_list:
+          - Key: {fileID: 2378414848884382480, guid: 965fa06bcfa06204382de651e1860780, type: 3}
+            Value: 5
+          - Key: {fileID: 7059951787267099606, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
+            Value: 5
+          m_stagingEntry:
+            Key: {fileID: 7059951787267099606, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
+            Value: 0
+        m_nextLevel: Level Eight
+    - Key: Level Eight
+      Value:
+        m_arrowCounts:
+          m_list:
+          - Key: {fileID: 7059951787267099606, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
+            Value: 5
+          - Key: {fileID: -5666174083092024657, guid: 4406efc57a8cef4439374a58c0084557, type: 3}
+            Value: 5
+          m_stagingEntry:
+            Key: {fileID: -5666174083092024657, guid: 4406efc57a8cef4439374a58c0084557, type: 3}
+            Value: 0
+        m_nextLevel: 
     m_stagingEntry:
-      Key: Level Six
+      Key: Level Eight
       Value:
         m_arrowCounts:
           m_list: []

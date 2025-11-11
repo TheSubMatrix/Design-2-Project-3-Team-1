@@ -930,6 +930,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4336172911326699139, guid: 48873508e6c51044187bc4b5bb7eed5a, type: 3}
+      propertyPath: m_moveSpeed
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4336172911326699139, guid: 48873508e6c51044187bc4b5bb7eed5a, type: 3}
+      propertyPath: m_jumpHeight
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4336172911326699139, guid: 48873508e6c51044187bc4b5bb7eed5a, type: 3}
+      propertyPath: m_airAcceleration
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 4336172911326699139, guid: 48873508e6c51044187bc4b5bb7eed5a, type: 3}
+      propertyPath: m_airDeceleration
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 4336172911326699139, guid: 48873508e6c51044187bc4b5bb7eed5a, type: 3}
+      propertyPath: m_groundedAcceleration
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 4336172911326699139, guid: 48873508e6c51044187bc4b5bb7eed5a, type: 3}
+      propertyPath: m_groundedDeceleration
+      value: 50
+      objectReference: {fileID: 0}
     - target: {fileID: 9024224268239612536, guid: 48873508e6c51044187bc4b5bb7eed5a, type: 3}
       propertyPath: m_Name
       value: Player
