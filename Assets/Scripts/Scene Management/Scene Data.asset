@@ -87,7 +87,7 @@ MonoBehaviour:
           m_stagingEntry:
             Key: {fileID: 2378414848884382480, guid: 965fa06bcfa06204382de651e1860780, type: 3}
             Value: 0
-        m_nextLevel: 
+        m_nextLevel: Level Seven
     - Key: Level Seven
       Value:
         m_arrowCounts:
