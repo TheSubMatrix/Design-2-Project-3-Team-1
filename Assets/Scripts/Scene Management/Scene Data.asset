@@ -111,7 +111,7 @@ MonoBehaviour:
           m_stagingEntry:
             Key: {fileID: -5666174083092024657, guid: 4406efc57a8cef4439374a58c0084557, type: 3}
             Value: 0
-        m_nextLevel: 
+        m_nextLevel: MainMenu
     m_stagingEntry:
       Key: Level Eight
       Value:
