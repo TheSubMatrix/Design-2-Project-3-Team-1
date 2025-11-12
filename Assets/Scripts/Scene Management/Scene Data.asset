@@ -108,8 +108,10 @@ MonoBehaviour:
             Value: 5
           - Key: {fileID: -5666174083092024657, guid: 4406efc57a8cef4439374a58c0084557, type: 3}
             Value: 5
+          - Key: {fileID: 6081388840972783543, guid: 3d8111a3af23f824ca26b465236a2b2e, type: 3}
+            Value: 5
           m_stagingEntry:
-            Key: {fileID: -5666174083092024657, guid: 4406efc57a8cef4439374a58c0084557, type: 3}
+            Key: {fileID: 6081388840972783543, guid: 3d8111a3af23f824ca26b465236a2b2e, type: 3}
             Value: 0
         m_nextLevel: MainMenu
     m_stagingEntry:
