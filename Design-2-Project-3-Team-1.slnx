@@ -1,0 +1,21 @@
+﻿<Solution>
+  <Project Path="Environment.csproj" />
+  <Project Path="BetterHierarchy.csproj" />
+  <Project Path="CustomNamespace.Extensions.csproj" />
+  <Project Path="CustomNamespace.Utils.DependencyInjection.csproj" />
+  <Project Path="BowandArrow.csproj" />
+  <Project Path="CustomNamespace.GenericDatatypes.csproj" />
+  <Project Path="CustomNamespace.Utils.Audio.csproj" />
+  <Project Path="CustomNamespace.PropertyDrawers.csproj" />
+  <Project Path="BetterHierarchyDemoScripts.csproj" />
+  <Project Path="Player.csproj" />
+  <Project Path="SceneManagement.csproj" />
+  <Project Path="CustomNamespace.csproj" />
+  <Project Path="BowandArrow.Arrows.csproj" />
+  <Project Path="Menus.csproj" />
+  <Project Path="CustomNamespace.EventBus.csproj" />
+  <Project Path="Health.csproj" />
+  <Project Path="CustomNamespace.VFX.csproj" />
+  <Project Path="CustomNamespace.Input.csproj" />
+  <Project Path="CustomNamespace.Logging.csproj" />
+</Solution>
