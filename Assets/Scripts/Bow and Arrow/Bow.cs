@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using CustomNamespace.DependencyInjection;
+using CustomNamespace.GenericDatatypes;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
@@ -27,7 +28,7 @@ public class Bow : MonoBehaviour
     GraphicsBuffer m_trajectoryBuffer;
     Vector3[] m_trajectoryData;
 
-    int m_currentArrowSelection;
+    [SerializeField] Observer<int> m_currentArrowSelection;
     bool m_isCharging;
     float m_currentChargeTime;
     float m_currentPower;
@@ -161,6 +162,6 @@ public class Bow : MonoBehaviour
     {
         if (m_isCharging) return;
         float inputY = context.ReadValue<Vector2>().y;
-        m_currentArrowSelection = (m_currentArrowSelection + Mathf.RoundToInt(inputY) + m_quivers.Count) % m_quivers.Count;
+        m_currentArrowSelection.Value = (m_currentArrowSelection.Value + Mathf.RoundToInt(inputY) + m_quivers.Count) % m_quivers.Count;
     }
 }
