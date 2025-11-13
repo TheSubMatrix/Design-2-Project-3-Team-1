@@ -24,7 +24,7 @@ public class Aim : MonoBehaviour
     {
         m_aimAction.action.Disable();
     }
-    private void Awake()
+    void Awake()
     {
         m_mainCamera = Camera.main;
     }

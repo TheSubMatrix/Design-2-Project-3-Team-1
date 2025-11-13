@@ -91,9 +91,9 @@ MonoBehaviour:
   uiBounds:
     serializedVersion: 2
     x: -3383
-    y: -155
-    width: 3136
-    height: 2790
+    y: -154
+    width: 3137
+    height: 2785
 --- !u!114 &114350483966674976
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1939,7 +1939,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"obj":{"fileID":2800000,"guid":"e74d6e366ce41814ca25c780aa09f96f","type":3}}'
+      m_SerializableObject: '{"obj":{"fileID":2800000,"guid":"f8da561ab4c8ad54bb30dfeb842727a7","type":3}}'
     m_Space: -1
   m_Property:
     name: _Trail_Texture
