@@ -17,15 +17,10 @@ public class ReboundArrow : Arrow
     protected override void OnCollisionEnter2D(Collision2D collision)
     {
         if (CompletedTrajectory) return;
-        switch (m_hasBounced)
-        {
-            case false when collision.gameObject.layer != LayerMask.NameToLayer("Arrow Surface"):
-                OnBounce();
-                break;
-            default:
-                OnImpact(collision);
-                break;
-        }
+        if (!m_hasBounced && collision.gameObject.layer != LayerMask.NameToLayer("Arrow Surface"))
+            OnBounce();
+        else
+            OnImpact(collision);
     }
 
     protected override void OnImpact(Collision2D collision)
