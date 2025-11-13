@@ -1,7 +1,7 @@
 ﻿using CustomNamespace.DependencyInjection;
 using UnityEditor;
 using UnityEngine;
-
+#if UNITY_EDITOR
 namespace CustomNamespace.DependencyInjection {
     [CustomEditor(typeof(Injector))]
     public class InjectorEditor : Editor {
@@ -20,3 +20,4 @@ namespace CustomNamespace.DependencyInjection {
         }
     }
 }
+#endif
