@@ -38,8 +38,9 @@ public class Aim : MonoBehaviour
         float angle = Mathf.Atan2(aimDir.y, aimDir.x) * Mathf.Rad2Deg;
         m_characterTransform.rotation = Quaternion.Euler(m_characterTransform.rotation.eulerAngles.x, GetRotationFromAngle(angle) ,m_characterTransform.rotation.eulerAngles.z);
         transform.rotation = Quaternion.Euler(0f, 0f, angle);
-        m_characterAnimator?.SetFloat(m_xAimAnimationParameter, aimDir.x);
-        m_characterAnimator?.SetFloat(m_yAimAnimationParameter, aimDir.y);
+        if(!m_characterAnimator) return;
+        m_characterAnimator.SetFloat(m_xAimAnimationParameter, aimDir.x);
+        m_characterAnimator.SetFloat(m_yAimAnimationParameter, aimDir.y);
     }
     float GetRotationFromAngle(float angle)
     {
