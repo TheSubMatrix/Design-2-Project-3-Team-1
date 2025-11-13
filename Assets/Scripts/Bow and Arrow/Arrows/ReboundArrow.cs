@@ -16,21 +16,34 @@ public class ReboundArrow : Arrow
 
     protected override void OnCollisionEnter2D(Collision2D collision)
     {
+        if (CompletedTrajectory) return;
         switch (m_hasBounced)
         {
-            case false:
+            case false when collision.gameObject.layer != LayerMask.NameToLayer("Arrow Surface"):
                 OnBounce();
                 break;
-            case true:
+            default:
                 OnImpact(collision);
                 break;
         }
     }
 
+    protected override void OnImpact(Collision2D collision)
+    {
+        RB.sharedMaterial = m_standardPhysicsMaterial;
+        base.OnImpact(collision);
+    }
+
+    protected override void OnEmbed()
+    {
+        RB.linearVelocity = Vector2.zero;
+        RB.angularVelocity = 0f;
+        base.OnEmbed();
+    }
+
     void OnBounce()
     {
         m_hasBounced = true;
-        RB.sharedMaterial = m_standardPhysicsMaterial;
         RB.angularVelocity = 0f; // Reset angular velocity after bounce
         SoundManager.Instance.CreateSound().WithSoundData(m_bounceSound).WithRandomPitch().WithPosition(transform.position).Play();
     }
