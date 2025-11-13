@@ -309,67 +309,6 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
---- !u!1001 &215060039
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 4286848153204970509, guid: 7e927673977dd484d855195cb7f73929, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 2.77
-      objectReference: {fileID: 0}
-    - target: {fileID: 4286848153204970509, guid: 7e927673977dd484d855195cb7f73929, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 4.89
-      objectReference: {fileID: 0}
-    - target: {fileID: 4286848153204970509, guid: 7e927673977dd484d855195cb7f73929, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0.35
-      objectReference: {fileID: 0}
-    - target: {fileID: 4286848153204970509, guid: 7e927673977dd484d855195cb7f73929, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4286848153204970509, guid: 7e927673977dd484d855195cb7f73929, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4286848153204970509, guid: 7e927673977dd484d855195cb7f73929, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4286848153204970509, guid: 7e927673977dd484d855195cb7f73929, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4286848153204970509, guid: 7e927673977dd484d855195cb7f73929, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4286848153204970509, guid: 7e927673977dd484d855195cb7f73929, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4286848153204970509, guid: 7e927673977dd484d855195cb7f73929, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5985924099718971922, guid: 7e927673977dd484d855195cb7f73929, type: 3}
-      propertyPath: m_isTriggered.m_onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 907654612}
-    - target: {fileID: 6927419988033824181, guid: 7e927673977dd484d855195cb7f73929, type: 3}
-      propertyPath: m_Name
-      value: Ball In Place Trigger (1)
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 7e927673977dd484d855195cb7f73929, type: 3}
 --- !u!1001 &267229795
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2843,22 +2782,23 @@ PrefabInstance:
       propertyPath: m_Name
       value: Door (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 9183037268948890017, guid: 18facf6f3c0e945d29a5bfdbdde06255, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 9183037268948890017, guid: 18facf6f3c0e945d29a5bfdbdde06255, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 17.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9183037268948890017, guid: 18facf6f3c0e945d29a5bfdbdde06255, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.62
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 18facf6f3c0e945d29a5bfdbdde06255, type: 3}
---- !u!114 &907654612 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8966598135785227465, guid: 18facf6f3c0e945d29a5bfdbdde06255, type: 3}
-  m_PrefabInstance: {fileID: 907654611}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dcbf704a8b75076439ba87bafedb9725, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &929224511
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3888,7 +3828,7 @@ PrefabInstance:
     - target: {fileID: 5985924099718971922, guid: 7e927673977dd484d855195cb7f73929, type: 3}
       propertyPath: m_isTriggered.m_onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1798127062}
+      objectReference: {fileID: 0}
     - target: {fileID: 6927419988033824181, guid: 7e927673977dd484d855195cb7f73929, type: 3}
       propertyPath: m_Name
       value: Ball In Place Trigger
@@ -4164,17 +4104,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1750852311}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &1798127062 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8966598135785227465, guid: 18facf6f3c0e945d29a5bfdbdde06255, type: 3}
-  m_PrefabInstance: {fileID: 1094862136}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dcbf704a8b75076439ba87bafedb9725, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1846514775
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4591,7 +4520,6 @@ SceneRoots:
   - {fileID: 1094862136}
   - {fileID: 1369804278}
   - {fileID: 612113952}
-  - {fileID: 215060039}
   - {fileID: 907654611}
   - {fileID: 1846514775}
   - {fileID: 14183838}

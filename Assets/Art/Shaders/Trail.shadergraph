@@ -113,6 +113,9 @@
         },
         {
             "m_Id": "46f6657a394449088bae47a4464d9389"
+        },
+        {
+            "m_Id": "cf23345f81ac4dfe9ebb8cc84b4203b5"
         }
     ],
     "m_GroupDatas": [],
@@ -331,6 +334,20 @@
         {
             "m_OutputSlot": {
                 "m_Node": {
+                    "m_Id": "cf23345f81ac4dfe9ebb8cc84b4203b5"
+                },
+                "m_SlotId": 0
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "5f7c29244f514e5e9e10fad7f524d96c"
+                },
+                "m_SlotId": 1
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
                     "m_Id": "ebecf0e5b2034ae4988965502e3cd31a"
                 },
                 "m_SlotId": 2
@@ -467,6 +484,19 @@
             "m_Id": "65b6855717244a478e97cb89035db64d"
         }
     ]
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Texture2DMaterialSlot",
+    "m_ObjectId": "014d5e3ac7eb4e1b913f2a7ae972d4e8",
+    "m_Id": 0,
+    "m_DisplayName": "Trail Texture",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Out",
+    "m_StageCapability": 3,
+    "m_BareResource": false
 }
 
 {
@@ -1965,7 +1995,7 @@
     "hlslDeclarationOverride": 0,
     "m_Hidden": false,
     "m_Value": {
-        "m_SerializedTexture": "{\"texture\":{\"fileID\":2800000,\"guid\":\"e74d6e366ce41814ca25c780aa09f96f\",\"type\":3}}",
+        "m_SerializedTexture": "{\"texture\":{\"fileID\":2800000,\"guid\":\"f8da561ab4c8ad54bb30dfeb842727a7\",\"type\":3}}",
         "m_Guid": ""
     },
     "isMainTexture": false,
@@ -2898,6 +2928,42 @@
         "e31": 0.0,
         "e32": 0.0,
         "e33": 1.0
+    }
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.PropertyNode",
+    "m_ObjectId": "cf23345f81ac4dfe9ebb8cc84b4203b5",
+    "m_Group": {
+        "m_Id": ""
+    },
+    "m_Name": "Property",
+    "m_DrawState": {
+        "m_Expanded": true,
+        "m_Position": {
+            "serializedVersion": "2",
+            "x": -1902.39990234375,
+            "y": -221.60000610351563,
+            "width": 148.0,
+            "height": 33.600006103515628
+        }
+    },
+    "m_Slots": [
+        {
+            "m_Id": "014d5e3ac7eb4e1b913f2a7ae972d4e8"
+        }
+    ],
+    "synonyms": [],
+    "m_Precision": 0,
+    "m_PreviewExpanded": true,
+    "m_DismissedVersion": 0,
+    "m_PreviewMode": 0,
+    "m_CustomColors": {
+        "m_SerializableColors": []
+    },
+    "m_Property": {
+        "m_Id": "8011356ec13f47d1a256feb97cf61396"
     }
 }
 
