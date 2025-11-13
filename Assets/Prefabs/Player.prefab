@@ -170,11 +170,11 @@ MonoBehaviour:
   m_moveAction: {fileID: -1680190386980627800, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_jumpAction: {fileID: -2099379676528639254, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_playerRB: {fileID: 459162111972698956}
-  m_moveSpeed: 5
-  m_groundedAcceleration: 15
-  m_airAcceleration: 5
-  m_groundedDeceleration: 20
-  m_airDeceleration: 10
+  m_moveSpeed: 7
+  m_groundedAcceleration: 50
+  m_airAcceleration: 50
+  m_groundedDeceleration: 50
+  m_airDeceleration: 50
   m_groundAngle: 45
   m_jumpHeight: 2
   m_snapDistance: 1.2
@@ -426,7 +426,7 @@ MonoBehaviour:
     m_collectionCheck: 1
     m_defaultCapacity: 10
     m_maxSize: 100
-    m_arrowPrefab: {fileID: -5666174083092024657, guid: 4406efc57a8cef4439374a58c0084557, type: 3}
+    m_arrowPrefab: {fileID: 7821788257939886062, guid: daaa31f3987e3c54c96a3a1cb315529c, type: 3}
   - m_currentAmmo:
       m_value: 0
       m_onValueChanged:

@@ -5,7 +5,7 @@ using UnityEngine;
 public class LevelCompleteTrigger : MonoBehaviour
 {
     [Inject] ILevelDataProvider m_levelDataProvider;
-    string m_nextLevel;
+    [SerializeField]string m_nextLevel;
     Collider2D m_nextLevelTrigger;
     void Start()
     {
