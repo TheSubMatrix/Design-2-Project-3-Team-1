@@ -22,7 +22,6 @@ public class Bow : MonoBehaviour
     [SerializeField] InputActionReference m_fireAction;
     [FormerlySerializedAs("m_cancelAction")] [SerializeField] InputActionReference m_prepareShotAction;
     [SerializeField] InputActionReference m_swapArrowAction;
-    [SerializeField] InputActionReference m_aimAction;
 
     Camera m_mainCamera;
     GraphicsBuffer m_trajectoryBuffer;
@@ -60,8 +59,6 @@ public class Bow : MonoBehaviour
         
         m_swapArrowAction.action.Enable();
         m_swapArrowAction.action.performed += SwapArrow;
-
-        m_aimAction.action.Enable();
     }
 
     void OnDisable()
@@ -75,8 +72,6 @@ public class Bow : MonoBehaviour
         
         m_swapArrowAction.action.performed -= SwapArrow;
         m_swapArrowAction.action.Disable();
-
-        m_aimAction.action.Disable();
     }
 
     void OnDestroy()
@@ -86,16 +81,6 @@ public class Bow : MonoBehaviour
 
     void Update()
     {
-        if (m_mainCamera is not null)
-        {
-            Vector3 mouseWorldPos = m_mainCamera.ScreenToWorldPoint(m_aimAction.action.ReadValue<Vector2>());
-            Vector2 aimDir = transform.position - mouseWorldPos;
-            if (aimDir.sqrMagnitude > 0f)
-            {
-                float angle = Mathf.Atan2(aimDir.y, aimDir.x) * Mathf.Rad2Deg;
-                transform.rotation = Quaternion.Euler(0f, 0f, angle);
-            }
-        }
         if (m_isCharging && m_previewArrow is not null)
         {
             m_currentChargeTime += Time.deltaTime;
