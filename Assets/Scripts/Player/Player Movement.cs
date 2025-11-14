@@ -26,8 +26,12 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float m_maxSnapSpeed = 100f;
     [SerializeField] LayerMask m_snapLayers;
     
+    Rigidbody2D m_connectedRB;
+    Rigidbody2D m_previousConnectedRB;
+    Vector2 m_connectionWorldPosition;
     Vector2 m_desiredMoveDirection;
     Vector2 m_modifiedVelocity;
+    Vector2 m_connectionVelocity;
     Vector2 m_contactNormal;
     Vector2 m_steepNormal;
     bool m_desiresJump;
@@ -65,28 +69,16 @@ public class PlayerMovement : MonoBehaviour
     }
     void FixedUpdate()
     {
-        m_stepsSinceLastGrounded += 1;
-        m_stepsSinceLastJump += 1;
-        m_modifiedVelocity = m_playerRB.linearVelocity;
-        AdjustMovementVelocity();
-        if (IsGrounded || SnapToGround() || CheckSteepContacts())
+        UpdateState();   
+        AdjustVelocity();
+        if (m_desiresJump)
         {
+            Jump();
             m_stepsSinceLastGrounded = 0;
-            if (m_desiresJump)
-            {
-                m_stepsSinceLastJump = 0;
-                float jumpSpeed = Mathf.Sqrt(-2f * Physics2D.gravity.y * m_jumpHeight);
-                float alignedSpeed = Vector2.Dot(m_modifiedVelocity, m_contactNormal);
-                if (alignedSpeed > 0)
-                {
-                    jumpSpeed = Mathf.Max(jumpSpeed - alignedSpeed, 0);
-                }
-                m_modifiedVelocity += m_contactNormal * jumpSpeed;
-                m_desiresJump = false;
-            }
+            m_desiresJump = false;
         }
         m_playerRB.linearVelocity = m_modifiedVelocity;
-        ResetStates();
+        ClearState();
     }
     void OnCollisionEnter2D(Collision2D other)
     {
@@ -96,20 +88,23 @@ public class PlayerMovement : MonoBehaviour
     {
         EvaluateCollision(other);
     }
-    void ResetStates()
+    void ClearState()
     {
         m_modifiedVelocity = Vector2.zero;
         m_groundedContacts = 0;
         m_steepContacts = 0;
         m_contactNormal = Vector2.up;
+        m_previousConnectedRB = m_connectedRB;
     }
-    void AdjustMovementVelocity()
+    void AdjustVelocity()
     {
+        
         float groundRateOfChange = m_desiredMoveDirection.x > m_playerRB.linearVelocity.x ? m_groundedAcceleration : m_groundedDeceleration;
         float airRateOfChange = m_desiredMoveDirection.x > m_playerRB.linearVelocity.x ? m_airAcceleration : m_airDeceleration;
         float rateOfChange = IsGrounded ? groundRateOfChange : airRateOfChange;
-        Vector2 projectedVelocity = ProjectOnContactPlane(Vector2.right).normalized;
-        float currentVelocity = Vector2.Dot(m_modifiedVelocity, projectedVelocity);
+        Vector2 relativeVelocity = m_modifiedVelocity - m_connectionVelocity;
+        Vector2 projectedVelocity = ProjectDirectionOnPlane(Vector2.right, m_contactNormal);
+        float currentVelocity = Vector2.Dot(relativeVelocity, projectedVelocity);
         float newVelocity = Mathf.MoveTowards(currentVelocity, m_desiredMoveDirection.x, rateOfChange * Time.deltaTime);
         m_modifiedVelocity += projectedVelocity * (newVelocity - currentVelocity);
     }
@@ -117,14 +112,24 @@ public class PlayerMovement : MonoBehaviour
     {
         foreach (ContactPoint2D contact in other.contacts)
         {
-            if (!(contact.normal.y >= GroundDotProduct)) continue;
-            m_groundedContacts += 1;
-            m_contactNormal = contact.normal;
+            if (contact.normal.y >= GroundDotProduct)
+            {
+                m_groundedContacts += 1;
+                m_contactNormal = contact.normal;
+                m_connectedRB = other.rigidbody;
+            }
+            else if (contact.normal.y > -0.01f)
+            {
+                m_steepContacts++;
+                m_steepNormal += contact.normal;
+                if (m_groundedContacts != 0) continue;
+                m_connectedRB = other.rigidbody;
+            }
         }
     }
-    Vector2 ProjectOnContactPlane(Vector2 vectorToProject)
+    Vector2 ProjectDirectionOnPlane(Vector2 vectorToProject, Vector2 normal)
     {
-        return vectorToProject - m_contactNormal * Vector3.Dot(vectorToProject, m_contactNormal);
+        return (vectorToProject - m_contactNormal * Vector2.Dot(vectorToProject, m_contactNormal)).normalized;
     }
     bool SnapToGround()
     {
@@ -141,11 +146,6 @@ public class PlayerMovement : MonoBehaviour
         if (hit.collider is null || hit.normal.y < GroundDotProduct)
         {
             return false;
-        }
-        else if (hit.normal.y > -0.01f)
-        {
-            m_steepContacts++;
-            m_steepNormal += hit.normal;
         }
         m_contactNormal = hit.normal;
         m_groundedContacts = 1;
@@ -166,5 +166,52 @@ public class PlayerMovement : MonoBehaviour
         m_groundedContacts = 1;
         m_contactNormal = m_steepNormal;
         return true;
+    }
+    void UpdateConnectionState()
+    {
+        if (m_connectedRB == m_previousConnectedRB)
+        {
+            Vector2 connectionMovement = m_connectedRB.position - m_connectionWorldPosition;
+            m_connectionVelocity = connectionMovement / Time.deltaTime;
+        }
+        m_connectionWorldPosition = m_connectedRB.position;
+    }
+
+    void UpdateState()
+    {
+        m_stepsSinceLastGrounded += 1;
+        m_stepsSinceLastJump += 1;
+        m_modifiedVelocity = m_playerRB.linearVelocity;
+        if (IsGrounded || SnapToGround() || CheckSteepContacts())
+        {
+            m_stepsSinceLastGrounded = 0;
+            if (m_groundedContacts > 0)
+            {
+                m_contactNormal.Normalize();
+            }
+        }
+        else
+        {
+            m_contactNormal = Vector2.up;
+        }
+
+        if (!m_connectedRB) return;
+        if (m_connectedRB.bodyType == RigidbodyType2D.Kinematic || m_connectedRB.mass >= m_playerRB.mass)
+        {
+            UpdateConnectionState();
+        }
+    }
+
+    void Jump()
+    {
+        if(!IsGrounded && !OnSteep) return;
+        m_stepsSinceLastJump = 0;
+        float jumpSpeed = Mathf.Sqrt(-2f * Physics2D.gravity.y * m_jumpHeight);
+        float alignedSpeed = Vector2.Dot(m_modifiedVelocity, m_contactNormal);
+        if (alignedSpeed > 0)
+        {
+            jumpSpeed = Mathf.Max(jumpSpeed - alignedSpeed, 0);
+        }
+        m_modifiedVelocity += m_contactNormal * jumpSpeed;
     }
 }

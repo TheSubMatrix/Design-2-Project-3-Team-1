@@ -45,7 +45,7 @@ public class LevelManager : MonoBehaviour, IDependencyProvider, ILevelDataProvid
         if (m_currentLevelData != null) return this;
         LoadCurrentLevelData();
         return this;
-    }
+    } 
     
     public uint GetArrowCounts(Arrow arrow)
     {

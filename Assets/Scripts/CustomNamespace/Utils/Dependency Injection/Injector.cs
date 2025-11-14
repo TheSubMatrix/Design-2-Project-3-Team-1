@@ -8,12 +8,13 @@ namespace CustomNamespace.DependencyInjection {
 
 
     [DefaultExecutionOrder(-1000)]
-    public class Injector : MonoBehaviour {
+    public class Injector : PersistentSingleton<Injector> {
         const BindingFlags BindingFlags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic;
         
         readonly Dictionary<Type, object> m_registry = new();
 
-        void Awake() {
+        protected override void Awake() {
+            base.Awake();
             MonoBehaviour[] monoBehaviours = FindMonoBehaviours();
             
             // Find all modules implementing IDependencyProvider and register the dependencies they provide
