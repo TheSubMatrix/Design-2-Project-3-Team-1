@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
@@ -34,6 +32,7 @@ public class PlayerMovement : MonoBehaviour
     Vector2 m_connectionVelocity;
     Vector2 m_contactNormal;
     Vector2 m_steepNormal;
+    Vector2 m_jumpDirection;
     bool m_desiresJump;
     uint m_groundedContacts;
     uint m_steepContacts;
@@ -127,9 +126,10 @@ public class PlayerMovement : MonoBehaviour
             }
         }
     }
-    Vector2 ProjectDirectionOnPlane(Vector2 vectorToProject, Vector2 normal)
+
+    static Vector2 ProjectDirectionOnPlane(Vector2 vectorToProject, Vector2 normal)
     {
-        return (vectorToProject - m_contactNormal * Vector2.Dot(vectorToProject, m_contactNormal)).normalized;
+        return (vectorToProject - normal * Vector2.Dot(vectorToProject, normal)).normalized;
     }
     bool SnapToGround()
     {
@@ -204,10 +204,22 @@ public class PlayerMovement : MonoBehaviour
 
     void Jump()
     {
-        if(!IsGrounded && !OnSteep) return;
+        if (IsGrounded)
+        {
+            m_jumpDirection = m_contactNormal;
+        }
+        else if (OnSteep)
+        {
+            m_jumpDirection = m_steepNormal;
+        }
+        else
+        {
+            return;
+        }
+        m_jumpDirection = (m_jumpDirection + Vector2.up).normalized;
         m_stepsSinceLastJump = 0;
-        float jumpSpeed = Mathf.Sqrt(-2f * Physics2D.gravity.y * m_jumpHeight);
-        float alignedSpeed = Vector2.Dot(m_modifiedVelocity, m_contactNormal);
+        float jumpSpeed = Mathf.Sqrt(2f * Physics2D.gravity.magnitude * m_jumpHeight);
+        float alignedSpeed = Vector2.Dot(m_modifiedVelocity, m_jumpDirection);
         if (alignedSpeed > 0)
         {
             jumpSpeed = Mathf.Max(jumpSpeed - alignedSpeed, 0);
