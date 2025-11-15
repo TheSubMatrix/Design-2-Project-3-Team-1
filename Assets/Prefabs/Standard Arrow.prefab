@@ -314,7 +314,7 @@ MonoBehaviour:
     IgnoreListenerVolume: 0
     IgnoreListenerPause: 0
     RolloffMode: 0
-  <NameForUI>k__BackingField: 
+  <NameForUI>k__BackingField: Regular Arrow
   <SpriteForUI>k__BackingField: {fileID: 0}
 --- !u!1 &4593540587966168292
 GameObject:

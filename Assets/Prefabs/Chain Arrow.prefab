@@ -138,14 +138,14 @@ MonoBehaviour:
     IgnoreListenerVolume: 0
     IgnoreListenerPause: 0
     RolloffMode: 0
-  <NameForUI>k__BackingField: 
+  <NameForUI>k__BackingField: Chain Arrow
   <SpriteForUI>k__BackingField: {fileID: 0}
   m_linkLength: 0.5
   m_linkWidth: 0.2
   m_linkMass: 1
   m_chainInterruptionMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 65
   m_damping: 0.5
   m_angularDamping: 0.5
   m_physicsMaterial: {fileID: 0}

@@ -81,7 +81,7 @@ MonoBehaviour:
   m_fireForce: 10
   m_trajectoryPointCount: 20
   m_trajectoryPointTime: 0.1
-  m_collisionMask:
+  m_trajectoryTracingCollisionMask:
     serializedVersion: 2
     m_Bits: 345
   m_fireSound:
@@ -138,7 +138,7 @@ MonoBehaviour:
     IgnoreListenerVolume: 0
     IgnoreListenerPause: 0
     RolloffMode: 0
-  <NameForUI>k__BackingField: 
+  <NameForUI>k__BackingField: Bouncy Arrow
   <SpriteForUI>k__BackingField: {fileID: 0}
   m_bounceSound:
     Clip: {fileID: 0}

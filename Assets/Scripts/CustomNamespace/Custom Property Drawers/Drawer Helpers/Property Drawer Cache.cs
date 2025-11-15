@@ -31,13 +31,13 @@ namespace CustomNamespace.Editor
         // Delegate for building UI for a specific type
         public delegate void BuildUIForType(SerializedProperty property, VisualElement container);
 
-        static Dictionary<Type, List<Type>> derivedTypesCache;
-        static Dictionary<Type, DrawerInfo> drawerByTargetTypeCache;
-        static Dictionary<Type, DrawerInfo> drawerByDrawerTypeCache;
-        static Dictionary<Type, BuildUIForType> uiBuilderCache;
+        static Dictionary<Type, List<Type>> s_derivedTypesCache;
+        static Dictionary<Type, DrawerInfo> s_drawerByTargetTypeCache;
+        static Dictionary<Type, DrawerInfo> s_drawerByDrawerTypeCache;
+        static Dictionary<Type, BuildUIForType> s_uiBuilderCache;
         
         // Cache for field-specific drawer resolution (handles multi-attribute scenarios)
-        static Dictionary<string, Type> fieldDrawerCache;
+        static Dictionary<string, Type> s_fieldDrawerCache;
         
         #endregion
 
@@ -62,11 +62,11 @@ namespace CustomNamespace.Editor
         /// </summary>
         public static void RebuildCache()
         {
-            derivedTypesCache = new Dictionary<Type, List<Type>>();
-            drawerByTargetTypeCache = new Dictionary<Type, DrawerInfo>();
-            drawerByDrawerTypeCache = new Dictionary<Type, DrawerInfo>();
-            uiBuilderCache = new Dictionary<Type, BuildUIForType>();
-            fieldDrawerCache = new Dictionary<string, Type>();
+            s_derivedTypesCache = new Dictionary<Type, List<Type>>();
+            s_drawerByTargetTypeCache = new Dictionary<Type, DrawerInfo>();
+            s_drawerByDrawerTypeCache = new Dictionary<Type, DrawerInfo>();
+            s_uiBuilderCache = new Dictionary<Type, BuildUIForType>();
+            s_fieldDrawerCache = new Dictionary<string, Type>();
 
             IEnumerable<Type> allDrawers = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(ass => ass.GetTypes())
@@ -90,8 +90,8 @@ namespace CustomNamespace.Editor
                         HandledFields = handledFields
                     };
 
-                    drawerByTargetTypeCache.TryAdd(targetType, info);
-                    drawerByDrawerTypeCache.TryAdd(drawerType, info);
+                    s_drawerByTargetTypeCache.TryAdd(targetType, info);
+                    s_drawerByDrawerTypeCache.TryAdd(drawerType, info);
                 }
             }
         }
@@ -106,9 +106,9 @@ namespace CustomNamespace.Editor
         public static List<Type> GetDerivedTypes(Type baseType, bool includeBaseType = false)
         {
             if (baseType == null) return new List<Type>();
-            if (derivedTypesCache == null) RebuildCache();
+            if (s_derivedTypesCache == null) RebuildCache();
 
-            if (derivedTypesCache != null && derivedTypesCache.TryGetValue(baseType, out List<Type> types))
+            if (s_derivedTypesCache != null && s_derivedTypesCache.TryGetValue(baseType, out List<Type> types))
             {
                 if (includeBaseType && !baseType.IsAbstract && !types.Contains(baseType))
                     return new List<Type>(types) { baseType };
@@ -124,7 +124,7 @@ namespace CustomNamespace.Editor
             if (includeBaseType && !baseType.IsAbstract)
                 types.Add(baseType);
 
-            if (derivedTypesCache != null) derivedTypesCache[baseType] = types;
+            if (s_derivedTypesCache != null) s_derivedTypesCache[baseType] = types;
             return types;
         }
 
@@ -135,20 +135,20 @@ namespace CustomNamespace.Editor
         public static Type GetDrawerType(Type targetType)
         {
             if (targetType == null) return null;
-            if (drawerByTargetTypeCache == null) RebuildCache();
+            if (s_drawerByTargetTypeCache == null) RebuildCache();
 
-            if (drawerByTargetTypeCache != null && drawerByTargetTypeCache.TryGetValue(targetType, out DrawerInfo info))
+            if (s_drawerByTargetTypeCache != null && s_drawerByTargetTypeCache.TryGetValue(targetType, out DrawerInfo info))
                 return info.DrawerType;
 
             for (Type parentType = targetType.BaseType; parentType != null; parentType = parentType.BaseType)
             {
-                if (drawerByTargetTypeCache != null && drawerByTargetTypeCache.TryGetValue(parentType, out info) && info.UseForChildren)
+                if (s_drawerByTargetTypeCache != null && s_drawerByTargetTypeCache.TryGetValue(parentType, out info) && info.UseForChildren)
                     return info.DrawerType;
             }
 
             foreach (Type interfaceType in targetType.GetInterfaces())
             {
-                if (drawerByTargetTypeCache != null && drawerByTargetTypeCache.TryGetValue(interfaceType, out info) && info.UseForChildren)
+                if (s_drawerByTargetTypeCache != null && s_drawerByTargetTypeCache.TryGetValue(interfaceType, out info) && info.UseForChildren)
                     return info.DrawerType;
             }
 
@@ -158,15 +158,15 @@ namespace CustomNamespace.Editor
         public static Type GetDrawerTargetType(Type drawerType)
         {
             if (drawerType == null) return null;
-            if (drawerByDrawerTypeCache == null) RebuildCache();
-            return drawerByDrawerTypeCache != null && drawerByDrawerTypeCache.TryGetValue(drawerType, out DrawerInfo info) ? info.TargetType : null;
+            if (s_drawerByDrawerTypeCache == null) RebuildCache();
+            return s_drawerByDrawerTypeCache != null && s_drawerByDrawerTypeCache.TryGetValue(drawerType, out DrawerInfo info) ? info.TargetType : null;
         }
 
         public static HashSet<string> GetDrawerHandledFields(Type drawerType)
         {
             if (drawerType == null) return null;
-            if (drawerByDrawerTypeCache == null) RebuildCache();
-            return drawerByDrawerTypeCache != null && drawerByDrawerTypeCache.TryGetValue(drawerType, out DrawerInfo info) ? info.HandledFields : null;
+            if (s_drawerByDrawerTypeCache == null) RebuildCache();
+            return s_drawerByDrawerTypeCache != null && s_drawerByDrawerTypeCache.TryGetValue(drawerType, out DrawerInfo info) ? info.HandledFields : null;
         }
 
         #endregion
@@ -186,12 +186,12 @@ namespace CustomNamespace.Editor
             FieldInfo fieldInfo = property.GetFieldInfoAndStaticType(out Type fieldType);
             if (fieldInfo == null) return null;
 
-            // Generate cache key for this specific field (accounts for declaring type + field name)
+            // Generate a cache key for this specific field (accounts for declaring type + field name)
             string cacheKey = $"{fieldInfo.DeclaringType?.FullName}.{fieldInfo.Name}";
             bool hasExclusions = excludeDrawerType != null || excludeDrawerTypes != null;
 
-            // Use cached drawer type if no exclusions (exclusions prevent caching)
-            if (!hasExclusions && fieldDrawerCache.TryGetValue(cacheKey, out Type cachedDrawerType))
+            // Use the cached drawer type if no exclusions (exclusions prevent caching)
+            if (!hasExclusions && s_fieldDrawerCache.TryGetValue(cacheKey, out Type cachedDrawerType))
             {
                 if (cachedDrawerType == null) return null;
                 
@@ -213,12 +213,10 @@ namespace CustomNamespace.Editor
             foreach (PropertyAttribute attr in attributes)
             {
                 Type drawerType = GetDrawerType(attr.GetType());
-                if (drawerType != null && !IsDrawerExcluded(drawerType, excludeDrawerType, excludeDrawerTypes))
-                {
-                    selectedDrawerType = drawerType;
-                    selectedAttribute = attr;
-                    break;
-                }
+                if (drawerType == null || IsDrawerExcluded(drawerType, excludeDrawerType, excludeDrawerTypes)) continue;
+                selectedDrawerType = drawerType;
+                selectedAttribute = attr;
+                break;
             }
 
             // Priority 2: Type-based drawer
@@ -233,7 +231,7 @@ namespace CustomNamespace.Editor
 
             // Cache the result (even if null, to avoid repeated lookups)
             if (!hasExclusions)
-                fieldDrawerCache[cacheKey] = selectedDrawerType;
+                s_fieldDrawerCache[cacheKey] = selectedDrawerType;
 
             return selectedDrawerType != null 
                 ? CreateDrawerInstance(selectedDrawerType, fieldInfo, selectedAttribute) 
@@ -377,7 +375,7 @@ namespace CustomNamespace.Editor
                 return;
             }
 
-            // Use cached builder for standard case
+            // Use a cached builder for a standard case
             BuildUIForType builderDelegate = GetOrCacheUIBuilder(typeToDrawUIFor);
             builderDelegate?.Invoke(property, container);
         }
@@ -404,9 +402,9 @@ namespace CustomNamespace.Editor
         {
             if (typeToDrawUIFor == null) return null;
 
-            uiBuilderCache ??= new Dictionary<Type, BuildUIForType>();
+            s_uiBuilderCache ??= new Dictionary<Type, BuildUIForType>();
 
-            if (uiBuilderCache.TryGetValue(typeToDrawUIFor, out BuildUIForType cached))
+            if (s_uiBuilderCache.TryGetValue(typeToDrawUIFor, out BuildUIForType cached))
                 return cached;
             
             // Check if there's a custom drawer for this type
@@ -431,7 +429,7 @@ namespace CustomNamespace.Editor
                         return;
                     }
                     
-                    // Create drawer instance
+                    // Create the drawer instance
                     PropertyDrawer drawer = CreateDrawerInstance(drawerType, fieldInfo);
                     if (drawer == null)
                     {
@@ -444,7 +442,7 @@ namespace CustomNamespace.Editor
                     if (customUI != null)
                         typeContainer.Add(customUI);
                     
-                    // Add additional fields if drawer doesn't handle all fields
+                    // Add additional fields if the drawer doesn't handle all fields
                     if (drawerTargetType != null && drawerTargetType != typeToDrawUIFor)
                         AddAdditionalFields(prop, typeContainer, handledFields);
                 };
@@ -458,7 +456,7 @@ namespace CustomNamespace.Editor
                 };
             }
             
-            uiBuilderCache[typeToDrawUIFor] = builder;
+            s_uiBuilderCache[typeToDrawUIFor] = builder;
             return builder;
         }
 
