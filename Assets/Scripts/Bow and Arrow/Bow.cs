@@ -34,6 +34,9 @@ public class Bow : MonoBehaviour
     int m_currentArrowSelection;
     Arrow m_previewArrow;
     
+    
+    // ReSharper disable once UnusedMember.Local
+    // This actually gets called by the DI system
     [Inject]
     void InitializeQuivers(ILevelDataProvider levelData)
     {
@@ -42,6 +45,10 @@ public class Bow : MonoBehaviour
     void Start()
     {
         m_bowUI.Value ??= new BowUIData();
+        m_bowUI.Update(data => data
+            .WithArrowTypeName(m_quivers[m_currentArrowSelection].ArrowPrefab.NameForUI)
+            .WithArrowUISprite(m_quivers[m_currentArrowSelection].ArrowPrefab.SpriteForUI)
+            .WithAmmo(m_quivers[m_currentArrowSelection].CurrentAmmo));
         m_trajectoryBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, (int)m_trajectoryPointCount, sizeof(float) * 3);
         m_trajectoryData = new Vector3[m_trajectoryPointCount];
         m_trajectoryEffect.SetGraphicsBuffer("Trajectory Buffer", m_trajectoryBuffer);
@@ -122,6 +129,7 @@ public class Bow : MonoBehaviour
         m_currentChargeTime = 0f;
         m_trajectoryEffect.Reinit();
         m_trajectoryEffect.SetUInt("Valid Point Count", 0);
+        m_bowUI.Update(data => data.WithAmmo(m_quivers[m_currentArrowSelection].CurrentAmmo));
     }
     void OnShotCancelled(InputAction.CallbackContext context)
     {
