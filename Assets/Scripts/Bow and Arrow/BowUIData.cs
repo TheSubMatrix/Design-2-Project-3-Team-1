@@ -4,27 +4,13 @@ using UnityEngine;
 [Serializable]
 public class BowUIData
 {
-    string m_arrowTypeName;
-    Sprite m_arrowUISprite;
-    uint m_currentAmmo;
 
-    public string ArrowTypeName
-    {
-        get => m_arrowTypeName;
-        set => m_arrowTypeName = value;
-    }
 
-    public Sprite ArrowUISprite
-    {
-        get => m_arrowUISprite;
-        set => m_arrowUISprite = value;
-    }
 
-    public uint CurrentAmmo
-    {
-        get => m_currentAmmo;
-        set => m_currentAmmo = value;
-    }
+    public string ArrowTypeName { get; set; }
+    public Sprite ArrowUISprite { get; set; }
+    public uint CurrentAmmo { get; set; }
+    
     public BowUIData WithAmmo(uint ammo)
     {
         CurrentAmmo = ammo;
