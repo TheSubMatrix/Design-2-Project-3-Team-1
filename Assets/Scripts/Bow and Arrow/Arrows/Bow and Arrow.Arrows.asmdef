@@ -3,7 +3,8 @@
     "rootNamespace": "",
     "references": [
         "CustomNamespace.Utils.Audio",
-        "CustomNamespace.GenericDatatypes"
+        "CustomNamespace.GenericDatatypes",
+        "Health"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

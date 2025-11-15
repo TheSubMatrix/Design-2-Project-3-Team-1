@@ -8,12 +8,12 @@ public class ChainArrow : Arrow
     [SerializeField] float m_linkLength = 0.5f;
     [SerializeField] float m_linkWidth = 0.2f;
     [SerializeField] float m_linkMass = 1f;
+    [SerializeField] LayerMask m_chainInterruptionMask;
     
     [Header("Physics")]
     [SerializeField] float m_damping = 0.5f;
     [SerializeField] float m_angularDamping = 0.5f;
     [SerializeField] PhysicsMaterial2D m_physicsMaterial;
-    [SerializeField] LayerMask m_chainValidityMask;
     
     [Header("Joint Properties")]
     [SerializeField][Range(0f, 100f)] float m_jointBreakForce;
@@ -24,9 +24,9 @@ public class ChainArrow : Arrow
     [SerializeField] int m_poolInitialSize = 20;
     
     // Static pool shared across all ChainArrows for efficiency
-    static Queue<GameObject> linkPool;
-    static Transform poolParent;
-    static bool poolInitialized;
+    static Queue<GameObject> s_linkPool;
+    static Transform s_poolParent;
+    static bool s_poolInitialized;
     
     // Instance-specific active links
     readonly List<GameObject> m_activeLinks = new();
@@ -35,7 +35,7 @@ public class ChainArrow : Arrow
     
     // Connection tracking
     bool m_triedCreatingChain;
-    static readonly List<ChainArrow> s_ValidConnectionPoints = new();
+    static readonly List<ChainArrow> s_validConnectionPoints = new();
     
     // Cached components
     struct LinkComponents
@@ -52,24 +52,24 @@ public class ChainArrow : Arrow
     
     void InitializePoolIfNeeded()
     {
-        if (poolInitialized) return;
+        if (s_poolInitialized) return;
         
-        // Create a shared pool parent in DontDestroyOnLoad, this is needed because the pool is static
+        // Create a shared pool parent in DontDestroyOnLoad
         GameObject poolObj = new("ChainLinkPool_Shared");
         DontDestroyOnLoad(poolObj);
-        poolParent = poolObj.transform;
+        s_poolParent = poolObj.transform;
         
-        linkPool = new Queue<GameObject>();
+        s_linkPool = new Queue<GameObject>();
         
         // Pre-instantiate pool
         for (int i = 0; i < m_poolInitialSize; i++)
         {
             GameObject link = CreateNewLink();
             link.SetActive(false);
-            linkPool.Enqueue(link);
+            s_linkPool.Enqueue(link);
         }
         
-        poolInitialized = true;
+        s_poolInitialized = true;
     }
     
     GameObject CreateNewLink()
@@ -78,12 +78,12 @@ public class ChainArrow : Arrow
         
         if (m_linkPrefab != null)
         {
-            link = Instantiate(m_linkPrefab, poolParent);
+            link = Instantiate(m_linkPrefab, s_poolParent);
         }
         else
         {
             link = new GameObject("ChainLink");
-            link.transform.SetParent(poolParent);
+            link.transform.SetParent(s_poolParent);
             
             Rigidbody2D rb = link.AddComponent<Rigidbody2D>();
             rb.mass = m_linkMass;
@@ -97,7 +97,7 @@ public class ChainArrow : Arrow
             
             // Simple visual
             GameObject visual = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            if (visual.TryGetComponent(out Collider collider3D))
+            if (visual.TryGetComponent<Collider>(out var collider3D))
             {
                 if (Application.isPlaying) Destroy(collider3D);
                 else DestroyImmediate(collider3D);
@@ -112,13 +112,13 @@ public class ChainArrow : Arrow
     
     GameObject GetLinkFromPool()
     {
-        GameObject link = linkPool.Count > 0 ? linkPool.Dequeue() : CreateNewLink();
+        GameObject link = s_linkPool.Count > 0 ? s_linkPool.Dequeue() : CreateNewLink();
         link.SetActive(true);
         m_activeLinks.Add(link);
         return link;
     }
-
-    static void ReturnLinkToPool(GameObject link)
+    
+    void ReturnLinkToPool(GameObject link)
     {
         // Clean up joints
         HingeJoint2D[] joints = link.GetComponents<HingeJoint2D>();
@@ -129,7 +129,7 @@ public class ChainArrow : Arrow
         }
         
         // Reset rigidbody
-        if (link.TryGetComponent(out Rigidbody2D rb))
+        if (link.TryGetComponent<Rigidbody2D>(out var rb))
         {
             rb.bodyType = RigidbodyType2D.Dynamic;
             rb.linearVelocity = Vector2.zero;
@@ -137,34 +137,68 @@ public class ChainArrow : Arrow
         }
         
         link.SetActive(false);
-        linkPool.Enqueue(link);
+        s_linkPool.Enqueue(link);
     }
-
-    protected override void OnEmbed()
+    
+    protected override void OnEmbed(Collision2D collision)
     {
-        base.OnEmbed();
-        if (m_triedCreatingChain) return;
+        base.OnEmbed(collision);
+        Debug.Log("OnEmbed called - attempting to create chain");
+        TryCreateChain();
+    }
+    void TryCreateChain()
+    {
+        if (m_triedCreatingChain)
+        {
+            Debug.Log("Already tried creating chain, skipping");
+            return;
+        }
         m_triedCreatingChain = true;
         
+        Debug.Log($"TryCreateChain called. Valid connection points count: {s_validConnectionPoints.Count}");
+        
         // Find a valid connection point (no obstacles between)
-        ChainArrow targetArrow = s_ValidConnectionPoints
-            .FirstOrDefault(arrow => arrow != null && 
-                                     !Physics2D.Linecast(transform.position, arrow.transform.position, m_chainValidityMask));
+        ChainArrow targetArrow = null;
+        
+        foreach (ChainArrow arrow in s_validConnectionPoints)
+        {
+            if (arrow == null || arrow == this) continue;
+            
+            Vector2 startPos = transform.position;
+            Vector2 endPos = arrow.transform.position;
+            float distance = Vector2.Distance(startPos, endPos);
+            
+            Debug.Log($"Checking arrow at distance {distance}. Mask value: {m_chainInterruptionMask.value}");
+            
+            // Check if there's a clear path
+            RaycastHit2D hit = Physics2D.Linecast(startPos, endPos, m_chainInterruptionMask);
+            
+            if (hit.collider != null)
+            {
+                Debug.Log($"Linecast blocked by: {hit.collider.gameObject.name} on layer {LayerMask.LayerToName(hit.collider.gameObject.layer)}");
+            }
+            else
+            {
+                Debug.Log($"Clear path found to {arrow.gameObject.name}!");
+                targetArrow = arrow;
+                break;
+            }
+        }
         
         if (targetArrow != null)
         {
             Debug.Log($"Creating chain to {targetArrow.gameObject.name}");
-            s_ValidConnectionPoints.Remove(targetArrow);
+            s_validConnectionPoints.Remove(targetArrow);
             GenerateChain(transform.position, targetArrow.transform.position, RB, targetArrow.RB);
         }
         else
         {
-            s_ValidConnectionPoints.Add(this);
-            Debug.Log("Added to connection list");
+            s_validConnectionPoints.Add(this);
+            Debug.Log($"Added to connection list. Total arrows waiting: {s_validConnectionPoints.Count}");
         }
     }
-
-    void GenerateChain(Vector2 startPoint, Vector2 endPoint, Rigidbody2D startAnchor, Rigidbody2D endAnchor)
+    
+    bool GenerateChain(Vector2 startPoint, Vector2 endPoint, Rigidbody2D startAnchor, Rigidbody2D endAnchor)
     {
         ClearChain();
         
@@ -177,6 +211,8 @@ public class ChainArrow : Arrow
         
         LinkComponents prevComponents = default;
         bool hasPrevious = false;
+        
+        Debug.Log($"Generating chain with {linkCount + 1} links");
         
         // Generate all links
         for (int i = 0; i <= linkCount; i++)
@@ -224,6 +260,9 @@ public class ChainArrow : Arrow
         {
             AnchorLink(m_lastLink, endAnchor, false, actualLinkLength);
         }
+        
+        Debug.Log("Chain generation complete!");
+        return true;
     }
     
     void ConnectLinks(LinkComponents linkA, LinkComponents linkB, float length)
@@ -276,6 +315,6 @@ public class ChainArrow : Arrow
     void OnDestroy()
     {
         ClearChain();
-        s_ValidConnectionPoints.Remove(this);
+        s_validConnectionPoints.Remove(this);
     }
 }

@@ -17,9 +17,9 @@ public class BounceArrow : Arrow
         SoundManager.Instance.CreateSound().WithSoundData(m_bounceSound).WithPosition(transform.position).WithRandomPitch().Play();
     }
 
-    protected override void OnEmbed()
+    protected override void OnEmbed(Collision2D collision)
     {
-        base.OnEmbed();
+        base.OnEmbed(collision);
         m_isBouncy = true;
     }
 }

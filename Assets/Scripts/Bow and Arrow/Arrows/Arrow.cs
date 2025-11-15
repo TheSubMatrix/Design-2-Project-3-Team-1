@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using AudioSystem;
 using UnityEngine;
@@ -15,7 +14,7 @@ public class Arrow : MonoBehaviour
     [SerializeField] float m_fireForce = 10f;
     [SerializeField] uint m_trajectoryPointCount = 20;
     [SerializeField] float m_trajectoryPointTime = 0.1f;
-    [SerializeField] LayerMask m_collisionMask;
+    [FormerlySerializedAs("m_collisionMask")] [SerializeField] LayerMask m_trajectoryTracingCollisionMask;
     [SerializeField] SoundData m_fireSound;
     [SerializeField] SoundData m_hitSound;
     [SerializeField] SoundData m_embedSound;
@@ -73,8 +72,6 @@ public class Arrow : MonoBehaviour
     {
         CompletedTrajectory = false;
         StuckInWall = false;
-    
-        // Temporarily disable collision until we clear spawn point
         if (m_arrowCollider != null)
         {
             m_arrowCollider.enabled = false;
@@ -83,7 +80,6 @@ public class Arrow : MonoBehaviour
         RB.AddForce(direction.normalized * m_fireForce * powerPercentage, ForceMode2D.Impulse);
         if (playerCollider == null) return;
         m_ignoredCollider = playerCollider;
-        // Note: We'll re-enable collision in OnTriggerExit2D, so don't set up Physics2D.IgnoreCollision yet
         m_isIgnoringCollision = false;
         SoundManager.Instance.CreateSound().WithSoundData(m_fireSound).WithRandomPitch().WithPosition(transform.position).Play();
     }
@@ -100,12 +96,9 @@ public class Arrow : MonoBehaviour
 
     void OnTriggerExit2D(Collider2D other)
     {
-        // Re-enable the main collider once we've cleared spawn point geometry
         if (m_arrowCollider != null && !m_arrowCollider.enabled)
         {
             m_arrowCollider.enabled = true;
-        
-            // Now set up player collision ignore if needed
             if (m_ignoredCollider != null)
             {
                 Physics2D.IgnoreCollision(m_arrowCollider, m_ignoredCollider, true);
@@ -126,26 +119,31 @@ public class Arrow : MonoBehaviour
 
     protected virtual void OnImpact(Collision2D collision)
     {
-        if (collision.gameObject.layer != LayerMask.NameToLayer("Arrow Surface"))
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Arrow Surface") || LayerMask.LayerToName(collision.gameObject.layer) == "Arrow" && collision.gameObject.GetComponent<Arrow>().StuckInWall)
         {
-            OnHit();
+            OnEmbed(collision);
         }
         else
         {
-            OnEmbed();
+            OnHit(collision);
         }
     }
 
-    protected virtual void OnEmbed()
+    protected virtual void OnEmbed(Collision2D collision)
     {
+        RB.linearVelocity = Vector2.zero;
+        RB.angularVelocity = 0f;
+        RB.bodyType = RigidbodyType2D.Static;
         SoundManager.Instance.CreateSound().WithSoundData(m_embedSound).WithRandomPitch().WithPosition(transform.position).Play();
         StuckInWall = true;
-        RB.bodyType = RigidbodyType2D.Static;
         CompletedTrajectory = true;
-        gameObject.layer = LayerMask.NameToLayer("Arrow Surface");
     }
-    protected virtual void OnHit()
+    protected virtual void OnHit(Collision2D collision)
     {
+        if (collision.gameObject.TryGetComponent(out IDamageable damageable))
+        {
+            damageable.Damage(100);
+        }
         SoundManager.Instance.CreateSound().WithSoundData(m_hitSound).WithRandomPitch().WithPosition(transform.position).Play();
         CompletedTrajectory = true;
     }
@@ -197,7 +195,7 @@ public class Arrow : MonoBehaviour
                         previousPoint, 
                         delta.normalized, 
                         distance, 
-                        m_collisionMask
+                        m_trajectoryTracingCollisionMask
                     );
 
                     if (hit.collider is not null)

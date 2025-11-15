@@ -994,6 +994,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 8356184502091908581, guid: 48873508e6c51044187bc4b5bb7eed5a, type: 3}
+      propertyPath: m_quivers.Array.data[1].<ArrowPrefab>k__BackingField
+      value: 
+      objectReference: {fileID: -182859536137984030, guid: daaa31f3987e3c54c96a3a1cb315529c, type: 3}
+    - target: {fileID: 8356184502091908581, guid: 48873508e6c51044187bc4b5bb7eed5a, type: 3}
+      propertyPath: m_quivers.Array.data[2].<ArrowPrefab>k__BackingField
+      value: 
+      objectReference: {fileID: 2867152283576972626, guid: 965fa06bcfa06204382de651e1860780, type: 3}
+    - target: {fileID: 8356184502091908581, guid: 48873508e6c51044187bc4b5bb7eed5a, type: 3}
+      propertyPath: m_quivers.Array.data[3].<ArrowPrefab>k__BackingField
+      value: 
+      objectReference: {fileID: 6961176001319935979, guid: 3d8111a3af23f824ca26b465236a2b2e, type: 3}
     - target: {fileID: 9024224268239612536, guid: 48873508e6c51044187bc4b5bb7eed5a, type: 3}
       propertyPath: m_Name
       value: Player
