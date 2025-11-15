@@ -13,10 +13,10 @@ namespace CustomNamespace.Editor
     {
         public override VisualElement CreatePropertyGUI(SerializedProperty property)
         {
-            VisualElement root = new VisualElement();
+            VisualElement root = new ();
             
             // Create foldout
-            Foldout foldout = new Foldout
+            Foldout foldout = new()
             {
                 text = property.displayName,
                 value = property.isExpanded
@@ -29,9 +29,9 @@ namespace CustomNamespace.Editor
             });
             
             // Get the actual runtime type of the field
-            System.Reflection.FieldInfo fieldInfo = property.GetFieldInfoAndStaticType(out System.Type fieldType);
+            System.Reflection.FieldInfo info = property.GetFieldInfoAndStaticType(out System.Type fieldType);
             
-            // Try to create hybrid UI using the cache system
+            // Try to create a hybrid UI using the cache system
             bool usedCustomDrawer = PropertyDrawerCache.CreateHybridPropertyUI(
                 property, 
                 foldout, 
@@ -47,14 +47,14 @@ namespace CustomNamespace.Editor
                 
                 if (valueProperty != null)
                 {
-                    PropertyField valueField = new PropertyField(valueProperty);
+                    PropertyField valueField = new(valueProperty);
                     valueField.BindProperty(valueProperty);
                     foldout.Add(valueField);
                 }
                 
                 if (eventProperty != null)
                 {
-                    PropertyField eventField = new PropertyField(eventProperty);
+                    PropertyField eventField = new(eventProperty);
                     eventField.BindProperty(eventProperty);
                     foldout.Add(eventField);
                 }

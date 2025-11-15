@@ -2,22 +2,23 @@
 using CustomNamespace.GenericDatatypes;
 using UnityEngine;
 using UnityEngine.Pool;
+using UnityEngine.Serialization;
 using Object = UnityEngine.Object;
 
 [Serializable]
 public class Quiver : IObjectPool<Arrow>
 {
-    [SerializeField] Observer<uint> m_currentAmmo;
     [SerializeField] bool m_collectionCheck = true;
     [SerializeField] int m_defaultCapacity = 10;
     [SerializeField] int m_maxSize = 100;
-    [SerializeField] Arrow m_arrowPrefab;
+    [field: FormerlySerializedAs("m_arrowPrefab")] [field: SerializeField] public Arrow ArrowPrefab { get; protected set; }
+    public uint CurrentAmmo { get; private set; }
     
     ObjectPool<Arrow> m_pool;
     public void ReleaseAndAddBack(Arrow arrow)
     {
         Release(arrow);
-        m_currentAmmo.Value++;
+        CurrentAmmo++;
     }
     public Quiver()
     {
@@ -26,11 +27,11 @@ public class Quiver : IObjectPool<Arrow>
 
     public void Setup(ILevelDataProvider levelData)
     {
-        m_currentAmmo = new Observer<uint>(0);
+        CurrentAmmo = new Observer<uint>(0);
         m_pool = new ObjectPool<Arrow>(
             () =>
             {
-                GameObject arrow = Object.Instantiate(m_arrowPrefab.gameObject);
+                GameObject arrow = Object.Instantiate(ArrowPrefab.gameObject);
                 arrow.SetActive(false);
                 return arrow.GetComponent<Arrow>();
             },
@@ -41,12 +42,12 @@ public class Quiver : IObjectPool<Arrow>
             m_defaultCapacity,
             m_maxSize
         );
-        m_currentAmmo.Value = levelData.GetArrowCounts(m_arrowPrefab);
+        CurrentAmmo = levelData.GetArrowCounts(ArrowPrefab);
     }
     void OnGet(Arrow arrow)
     {
         arrow.gameObject.SetActive(true);
-        m_currentAmmo.Value--;
+        CurrentAmmo--;
     }
 
     void OnRelease(Arrow arrow)
@@ -66,7 +67,7 @@ public class Quiver : IObjectPool<Arrow>
 
     public PooledObject<Arrow> Get(out Arrow arrow)
     {
-        if (m_currentAmmo > 0) return m_pool.Get(out arrow);
+        if (CurrentAmmo > 0) return m_pool.Get(out arrow);
         arrow = null;
         return default;
     }

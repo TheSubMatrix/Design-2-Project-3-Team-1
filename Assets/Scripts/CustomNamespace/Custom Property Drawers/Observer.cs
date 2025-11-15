@@ -26,7 +26,7 @@ namespace CustomNamespace.GenericDatatypes
         }
 
         public static implicit operator T(Observer<T> observer) => observer.Value;
-
+        
         public Observer(T value, UnityAction<T> callback = null)
         {
             m_onValueChanged = new UnityEvent<T>();
@@ -42,10 +42,10 @@ namespace CustomNamespace.GenericDatatypes
         {
             if (Equals(m_value, value)) return;
             m_value = value;
-            Invoke();
+            Notify();
         }
 
-        void Invoke()
+        public void Notify()
         {
             m_onValueChanged?.Invoke(m_value);
         }
@@ -93,5 +93,22 @@ namespace CustomNamespace.GenericDatatypes
             m_value = default;
         }
 
+    }
+    public static class ObserverExtensions
+    {
+        /// <summary>
+        /// Updates the observer's value using a builder pattern function and forces notification
+        /// </summary>
+        /// <typeparam name="T">The type of the observed value</typeparam>
+        /// <param name="observer">The observer to update</param>
+        /// <param name="builder">A function that takes the current value and returns the modified value</param>
+        /// <returns>The observer instance for further chaining</returns>
+        public static Observer<T> Update<T>(this Observer<T> observer, Func<T, T> builder)
+        {
+            T updatedValue = builder(observer.Value);
+            observer.SetValueWithoutNotify(updatedValue);
+            observer.Notify();
+            return observer;
+        }
     }
 }
