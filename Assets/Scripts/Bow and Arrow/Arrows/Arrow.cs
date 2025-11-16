@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using AudioSystem;
 using UnityEngine;
 using UnityEngine.Serialization;
+using VFXSystem;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class Arrow : MonoBehaviour
@@ -24,7 +25,7 @@ public class Arrow : MonoBehaviour
     Collider2D m_ignoredCollider;
     bool m_isIgnoringCollision;
     readonly List<Vector2> m_trajectoryPoints = new();
-
+    [SerializeField] VFXData m_impactVFX;
     [field: FormerlySerializedAs("<Name>k__BackingField")] [field:SerializeField] public string NameForUI { get; protected set; }
     [field:SerializeField] public Sprite SpriteForUI { get; protected set; }
 

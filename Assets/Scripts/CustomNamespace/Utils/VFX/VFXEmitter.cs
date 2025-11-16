@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Reflection;
-using CustomNamespace.Extensions;
+using CustomNamespace.Extensions; 
 using UnityEngine;
 using UnityEngine.VFX;
 
@@ -11,7 +11,6 @@ namespace VFXSystem
     {
         public VFXData VFXData { get; private set; }
         public VisualEffectAsset Asset { get; private set; }
-        
         VisualEffect m_visualEffect;
         Coroutine m_playVFXCoroutine;
         Transform m_cachedTransform;
@@ -19,7 +18,7 @@ namespace VFXSystem
         Vector3 m_cachedPosition;
         Quaternion m_cachedRotation;
         bool m_followRotation;
-
+        
         void Awake()
         {
             m_visualEffect = gameObject.GetOrAddComponent<VisualEffect>();
@@ -112,12 +111,8 @@ namespace VFXSystem
 
         IEnumerator WaitForVFXToFinishAsync()
         {
-            // Wait for the effect to finish playing
             yield return new WaitWhile(() => m_visualEffect.aliveParticleCount > 0);
-            
-            // Add a small buffer to ensure everything is cleaned up
             yield return new WaitForSeconds(0.1f);
-            
             VFXManager.Instance.ReturnToPool(this, Asset);
         }
 
@@ -130,51 +125,7 @@ namespace VFXSystem
                 m_visualEffect.visualEffectAsset = vfxData.Asset;
                 Asset = vfxData.Asset;
             }
-
-            // Apply all properties dynamically
-            foreach (VFXProperty property in vfxData.Properties)
-            {
-                property.ApplyToVisualEffect(m_visualEffect);
-            }
-
-            // Reset effect state
             m_visualEffect.Reinit();
-        }
-
-        // Generic property setter for runtime modifications
-        public void SetProperty(string propertyName, object value)
-        {
-            VFXProperty property = new VFXProperty(propertyName, value);
-            property.ApplyToVisualEffect(m_visualEffect);
-        }
-
-        // Get property value if needed
-        public T GetProperty<T>(string propertyName)
-        {
-            System.Type valueType = typeof(T);
-            
-            // Use reflection to find the appropriate Get method
-            MethodInfo[] methods = typeof(VisualEffect).GetMethods(BindingFlags.Public | BindingFlags.Instance);
-            
-            foreach (MethodInfo method in methods)
-            {
-                if (!method.Name.StartsWith("Get")) continue;
-                
-                ParameterInfo[] parameters = method.GetParameters();
-                if (parameters.Length != 1 || parameters[0].ParameterType != typeof(string)) continue;
-
-                if (method.ReturnType != valueType && !method.ReturnType.IsAssignableFrom(valueType)) continue;
-                try
-                {
-                    return (T)method.Invoke(m_visualEffect, new object[] { propertyName });
-                }
-                catch
-                {
-                    // Continue to next method
-                }
-            }
-            
-            return default;
         }
     }
 }

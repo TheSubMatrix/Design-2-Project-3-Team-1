@@ -314,8 +314,16 @@ MonoBehaviour:
     IgnoreListenerVolume: 0
     IgnoreListenerPause: 0
     RolloffMode: 0
+  m_impactVFX:
+    Asset: {fileID: 0}
+    Loop: 0
+    PlayedFrequently: 0
+    Properties: []
   <NameForUI>k__BackingField: Regular Arrow
   <SpriteForUI>k__BackingField: {fileID: 0}
+  references:
+    version: 2
+    RefIds: []
 --- !u!1 &4593540587966168292
 GameObject:
   m_ObjectHideFlags: 0

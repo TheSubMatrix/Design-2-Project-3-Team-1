@@ -11,14 +11,6 @@ namespace VFXSystem
         public VisualEffectAsset Asset;
         public bool Loop;
         public bool PlayedFrequently;
-        
-        [Header("Properties")]
-        public List<VFXProperty> Properties = new();
-
-        public VFXData WithProperty(string name, object value)
-        {
-            Properties.Add(new VFXProperty(name, value));
-            return this;
-        }
+        [ClassSelector, SerializeReference] public List<VFXProperty> Properties = new();
     }
 }

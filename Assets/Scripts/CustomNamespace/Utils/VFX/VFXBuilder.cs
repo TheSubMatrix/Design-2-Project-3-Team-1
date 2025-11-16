@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections.Generic;
+using UnityEngine.VFX;
 
 namespace VFXSystem
 {
@@ -16,7 +18,6 @@ namespace VFXSystem
         {
             m_vfxManager = vfxManager;
         }
-
         public VFXBuilder WithVFXData(VFXData vfxData)
         {
             m_vfxData = vfxData;
@@ -34,7 +35,7 @@ namespace VFXSystem
             m_rotation = rotation;
             return this;
         }
-
+        
         public VFXBuilder WithRotation(Vector3 eulerAngles)
         {
             m_rotation = Quaternion.Euler(eulerAngles);
@@ -52,7 +53,7 @@ namespace VFXSystem
             m_scale = Vector3.one * uniformScale;
             return this;
         }
-
+        
         public VFXBuilder AttachedTo(Transform attachmentTransform, bool followRotation = false)
         {
             m_transformToFollow = attachmentTransform;
@@ -67,30 +68,18 @@ namespace VFXSystem
 
             return this;
         }
-
-        public VFXBuilder WithProperty(string propertyName, object value)
-        {
-            if (m_vfxData == null)
-            {
-                Debug.LogError("VFXData must be set before adding properties");
-                return this;
-            }
-
-            m_vfxData.Properties.Add(new VFXProperty(propertyName, value));
-            return this;
-        }
-
+        
         public VFXEmitter Play()
         {
             VFXEmitter emitter = SetupVFX();
-            emitter.Play();
+            emitter?.Play();
             return emitter;
         }
 
         public VFXEmitter InvokeEvent(string eventName)
         {
             VFXEmitter emitter = SetupVFX();
-            emitter.InvokeEvent(eventName);
+            emitter?.InvokeEvent(eventName);
             return emitter;
         }
 
@@ -114,7 +103,7 @@ namespace VFXSystem
                 return null;
             }
 
-            emitter.Initialize(m_vfxData);
+            emitter.Initialize(m_vfxData); 
             emitter.transform.position = m_position;
             emitter.transform.rotation = m_rotation;
             
@@ -122,9 +111,7 @@ namespace VFXSystem
             {
                 emitter.transform.localScale = m_scale.Value;
             }
-            
             emitter.SetTransformToFollow(m_transformToFollow, m_followRotation);
-            
             if (m_vfxData.PlayedFrequently)
             {
                 m_vfxManager.FrequentEmitters.Enqueue(emitter);
