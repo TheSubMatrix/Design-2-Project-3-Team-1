@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.VFX;
 
-[RequireComponent(typeof(BoxCollider2D), typeof(VisualEffect), typeof(AreaEffector2D)), ExecuteAlways]
+[RequireComponent(typeof(BoxCollider2D), typeof(VisualEffect), typeof(AreaEffector2D)), ExecuteInEditMode]
 public class WindArea : MonoBehaviour
 {
     BoxCollider2D m_collider;
