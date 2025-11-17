@@ -1,11 +1,10 @@
 {
-    "name": "Player",
+    "name": "Tutorial",
     "rootNamespace": "",
     "references": [
-        "GUID:feed37f66159d4147ba92c09dde5e08a",
-        "GUID:75469ad4d38634e559750d17036d5f7c",
-        "GUID:a3aab014a8e3ef4438300f4c5a6e46fd",
-        "GUID:f6a0da6c76f2acf47af6e835216b3f47",
+        "GUID:14f656c09b30f8f43bc9c0202721f06e",
+        "GUID:4aa2160a994391d4da6097cb47aeb3c1",
+        "GUID:304a36b356bec2746a1ed1678658faf5",
         "GUID:6af97dccfc1dd8748a23e6e573e1435a"
     ],
     "includePlatforms": [],

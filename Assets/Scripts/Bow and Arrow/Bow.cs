@@ -8,6 +8,8 @@ using UnityEngine.VFX;
 
 public class Bow : MonoBehaviour
 {
+    [Provide]
+    Bow ProvideBow() { return this; }
     [FormerlySerializedAs("m_arrowPools")]
     [Header("Arrow & Trajectory")]
     [SerializeField] List<Quiver> m_quivers;

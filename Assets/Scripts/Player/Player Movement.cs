@@ -1,9 +1,14 @@
+using CustomNamespace.DependencyInjection;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
-
-public class PlayerMovement : MonoBehaviour
+public  class PlayerMovement : MonoBehaviour, IDependencyProvider, IPlayerMovementProvider
 {
+    [Provide]
+    IPlayerMovementProvider ProvidePlayerMovement()
+    {
+        return this;
+    }
     [Header("Assign in Inspector")]
     [SerializeField, RequiredField] InputActionReference m_moveAction;
     [SerializeField, RequiredField] InputActionReference m_jumpAction;
