@@ -1,24 +1,14 @@
 ﻿using System;
 using UnityEngine;
 
-/// <summary>
-/// Attribute to conditionally show/hide fields in the Inspector based on another field's value.
-/// Supports any comparable value type.
-/// </summary>
-[AttributeUsage(AttributeTargets.Field)]
+[AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
 public class ConditionalVisibilityAttribute : PropertyAttribute
 {
-    public string ConditionalFieldName { get; private set; }
-    public object RequiredValue { get; private set; }
+    public object[] Expression { get; }
 
-    /// <summary>
-    /// Show this field only when the conditional field matches the required value.
-    /// </summary>
-    /// <param name="conditionalFieldName">Name of the field to check</param>
-    /// <param name="requiredValue">Value that the conditional field must equal</param>
-    public ConditionalVisibilityAttribute(string conditionalFieldName, object requiredValue)
+    // Expression-based constructor supporting full conditional logic
+    public ConditionalVisibilityAttribute(params object[] expression)
     {
-        ConditionalFieldName = conditionalFieldName;
-        RequiredValue = requiredValue;
+        Expression = expression;
     }
 }
