@@ -44,8 +44,6 @@ MonoBehaviour:
             Value: 0
           - Key: {fileID: 2378414848884382480, guid: 965fa06bcfa06204382de651e1860780, type: 3}
             Value: 0
-          - Key: {fileID: 0}
-            Value: 0
           m_stagingEntry:
             Key: {fileID: 0}
             Value: 0
@@ -71,7 +69,7 @@ MonoBehaviour:
           m_stagingEntry:
             Key: {fileID: 7059951787267099606, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
             Value: 0
-        m_nextLevel: Level Six
+        m_nextLevel: Chapter 2
     - Key: Level Six
       Value:
         m_arrowCounts:
@@ -174,8 +172,34 @@ MonoBehaviour:
             Key: {fileID: 7059951787267099606, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
             Value: 0
         m_nextLevel: Level One
+    - Key: Level Thirteen
+      Value:
+        m_arrowCounts:
+          m_list:
+          - Key: {fileID: 7059951787267099606, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
+            Value: 5
+          - Key: {fileID: 2867152283576972626, guid: 965fa06bcfa06204382de651e1860780, type: 3}
+            Value: 5
+          - Key: {fileID: 6961176001319935979, guid: 3d8111a3af23f824ca26b465236a2b2e, type: 3}
+            Value: 6
+          m_stagingEntry:
+            Key: {fileID: 6961176001319935979, guid: 3d8111a3af23f824ca26b465236a2b2e, type: 3}
+            Value: 0
+        m_nextLevel: Chapter 4
+    - Key: Chapter 2
+      Value:
+        m_arrowCounts:
+          m_list:
+          - Key: {fileID: 7059951787267099606, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
+            Value: 5
+          - Key: {fileID: 2867152283576972626, guid: 965fa06bcfa06204382de651e1860780, type: 3}
+            Value: 5
+          m_stagingEntry:
+            Key: {fileID: 2867152283576972626, guid: 965fa06bcfa06204382de651e1860780, type: 3}
+            Value: 0
+        m_nextLevel: Level Six
     m_stagingEntry:
-      Key: Chapter 1
+      Key: Chapter 2
       Value:
         m_arrowCounts:
           m_list: []
