@@ -13,7 +13,7 @@ public class ButtonClickArrow : MonoBehaviour
 
     [FormerlySerializedAs("offsetX")] [Header("Settings")]
     public float m_offsetX = 50f;       
-    [FormerlySerializedAs("speed")] public float m_speed = 1400f;       
+    [FormerlySerializedAs("Speed")] public float m_speed = 1400f;       
 
     Coroutine m_moveRoutine;
 
