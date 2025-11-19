@@ -138,8 +138,13 @@ MonoBehaviour:
     IgnoreListenerVolume: 0
     IgnoreListenerPause: 0
     RolloffMode: 0
+  m_impactVFX:
+    Asset: {fileID: 0}
+    Loop: 0
+    PlayedFrequently: 0
+    Properties: []
   <NameForUI>k__BackingField: Bouncy Arrow
-  <SpriteForUI>k__BackingField: {fileID: 0}
+  <SpriteForUI>k__BackingField: {fileID: 21300000, guid: 65484b7c005f39b4da49014c605cb723, type: 3}
   m_bounceSound:
     Clip: {fileID: 0}
     MixerGroup: {fileID: 0}
@@ -158,3 +163,6 @@ MonoBehaviour:
     IgnoreListenerVolume: 0
     IgnoreListenerPause: 0
     RolloffMode: 0
+  references:
+    version: 2
+    RefIds: []

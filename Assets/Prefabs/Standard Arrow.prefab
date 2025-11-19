@@ -319,8 +319,8 @@ MonoBehaviour:
     Loop: 0
     PlayedFrequently: 0
     Properties: []
-  <NameForUI>k__BackingField: Regular Arrow
-  <SpriteForUI>k__BackingField: {fileID: 0}
+  <NameForUI>k__BackingField: Standard Arrow
+  <SpriteForUI>k__BackingField: {fileID: 21300000, guid: d1a6d6341e246bf4aa6e5045963a0268, type: 3}
   references:
     version: 2
     RefIds: []

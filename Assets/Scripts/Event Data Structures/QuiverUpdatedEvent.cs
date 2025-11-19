@@ -1,16 +1,14 @@
 using UnityEngine;
 
-public class BowQuiverUpdatedEvent : MonoBehaviour
+public struct QuiverUpdatedEvent : IEvent
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public uint Arrows { get; }
+    public Sprite Sprite { get; }
+    public string Name { get; }
+    public QuiverUpdatedEvent(uint arrows, Sprite sprite, string name)
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        Arrows = arrows;
+        Sprite = sprite;
+        Name = name;
     }
 }
