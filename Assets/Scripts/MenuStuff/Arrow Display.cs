@@ -1,23 +1,22 @@
-using System.Linq;
-using CustomNamespace.DependencyInjection;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ArrowDisplay : MonoBehaviour
 {
-    [SerializeField] string m_arrowName;
     [SerializeField] Image m_arrowImage;
     [SerializeField] TMP_Text m_arrowCountText;
     RectTransform m_currentRectTransform;
     EventBinding<QuiverUpdatedEvent> m_quiverUpdatedBinding;
     EventBinding<QuiverSelectionChangedEvent> m_selectionChangedBinding;
     string m_arrowCountStartingString = "";
-    string m_lastSelectedArrow = "";
+    Arrow m_trackedArrow;
+    Arrow m_lastSelectedArrow;
+    
 
-    public void UpdateTrackedArrowName(string arrowName)
+    public void UpdateTrackedArrowName(Arrow trackedArrow)
     {
-        m_arrowName = arrowName;
+        m_trackedArrow = trackedArrow;
     }
     void Awake()
     {
@@ -38,18 +37,18 @@ public class ArrowDisplay : MonoBehaviour
     }
     void UpdateArrowDisplay(QuiverUpdatedEvent quiverUpdatedEvent)
     {
-        if(quiverUpdatedEvent.Name != m_arrowName) return;
+        if(quiverUpdatedEvent.TrackedArrow != m_trackedArrow) return;
         m_arrowImage.sprite = quiverUpdatedEvent.Sprite;
-        m_arrowCountText.text = m_arrowCountStartingString + quiverUpdatedEvent.Arrows;
+        m_arrowCountText.text = m_arrowCountStartingString + quiverUpdatedEvent.ArrowCount;
     }
 
     void UpdateSelectionDisplay(QuiverSelectionChangedEvent quiverSelectionChangedEvent)
     {
-        if (quiverSelectionChangedEvent.Selected == m_arrowName && quiverSelectionChangedEvent.Selected != m_lastSelectedArrow)
+        if (quiverSelectionChangedEvent.Selected == m_trackedArrow && quiverSelectionChangedEvent.Selected != m_lastSelectedArrow)
         {
             m_currentRectTransform.localScale *= 1.1f;
         }
-        if (quiverSelectionChangedEvent.Selected != m_arrowName)
+        if (quiverSelectionChangedEvent.Selected != m_trackedArrow)
         {
             m_currentRectTransform.localScale = Vector3.one;
         }

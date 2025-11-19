@@ -2,7 +2,8 @@
     "name": "EventDataStructures",
     "rootNamespace": "",
     "references": [
-        "GUID:1e8b965862d0631489816768b0c8f383"
+        "GUID:1e8b965862d0631489816768b0c8f383",
+        "GUID:304a36b356bec2746a1ed1678658faf5"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

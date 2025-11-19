@@ -17,7 +17,7 @@ public class ArrowDisplayManager : MonoBehaviour
         {
             if (m_displaysByName.ContainsKey(kvp.Key.name)) continue;
             ArrowDisplay display = Instantiate(m_displayPrefab, transform).GetComponent<ArrowDisplay>();
-            display.UpdateTrackedArrowName(kvp.Key.name);
+            display.UpdateTrackedArrowName(kvp.Key);
             m_displaysByName.Add(kvp.Key.name, display);
         }
     }

@@ -1,9 +1,9 @@
 ﻿public struct QuiverSelectionChangedEvent : IEvent
 {
-    public QuiverSelectionChangedEvent(string selected)
+    public QuiverSelectionChangedEvent(Arrow selected)
     {
         Selected = selected;
     }
 
-    public string Selected { get; }
+    public Arrow Selected { get; }
 }
