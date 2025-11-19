@@ -3,75 +3,136 @@ using UnityEngine.UI;
 using System.Collections;
 using System;
 using AudioSystem;
-using UnityEngine.Serialization;
 
 public class ButtonClickArrow : MonoBehaviour
 {
     [Header("References")]
-    public RectTransform m_arrow;       
+    public Image m_arrowImage;
+
+    [Header("Audio")]
     public SoundData m_clickSound; 
 
-    [FormerlySerializedAs("offsetX")] [Header("Settings")]
-    public float m_offsetX = 50f;       
-    [FormerlySerializedAs("Speed")] public float m_speed = 1400f;       
+    [Header("Settings")]
+    [Tooltip("Additional spacing between arrow tip and button (in Pixels)")]
+    public float m_additionalOffset = 10f;
+    [Tooltip("Speed in Pixels per second")]
+    public float m_speed = 2500f; 
+    [Tooltip("Extra distance to start off-screen (in Pixels)")]
+    public float m_extraOffscreenDistance = 100f;
 
+    RectTransform m_rectTransform;
     Coroutine m_moveRoutine;
 
-    public void MoveArrowToButton(RectTransform target, System.Action onComplete)
+    void Awake()
     {
-        SoundManager.Instance.CreateSound().WithSoundData(m_clickSound).WithRandomPitch().Play();
+        m_rectTransform = GetComponent<RectTransform>();
+        
+        if (m_rectTransform == null)
+            Debug.LogError("ButtonClickArrow: Missing RectTransform!");
+
+        if (m_arrowImage == null)
+            m_arrowImage = GetComponent<Image>();
+    }
+
+    void Start()
+    {
+        if (m_arrowImage != null) m_arrowImage.enabled = false;
+    }
+
+    public void MoveToButton(RectTransform target, Action onComplete = null)
+    {
+        if (m_clickSound != null && SoundManager.Instance != null)
+        {
+            SoundManager.Instance.CreateSound()
+                .WithSoundData(m_clickSound)
+                .WithRandomPitch()
+                .Play();
+        }
+
         if (m_moveRoutine != null) StopCoroutine(m_moveRoutine);
         m_moveRoutine = StartCoroutine(MoveArrowRoutine(target, onComplete));
     }
 
-    IEnumerator MoveArrowRoutine(RectTransform target, System.Action onComplete)
+    IEnumerator MoveArrowRoutine(RectTransform target, Action onComplete)
     {
-        if (!m_arrow || !target) yield break;
+        if (!m_rectTransform || !target || !m_arrowImage)
+            yield break;
 
-        m_arrow.gameObject.SetActive(true);
-        Canvas canvas = m_arrow.GetComponentInParent<Canvas>();
-        RectTransform canvasRect = canvas.GetComponent<RectTransform>();
-        Camera cam = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
-        Vector2 targetScreenPoint = RectTransformUtility.WorldToScreenPoint(cam, target.position);
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            m_arrow.parent as RectTransform, 
-            targetScreenPoint, 
-            cam, 
-            out Vector2 targetLocal
-        );
+        Canvas rootCanvas = GetComponentInParent<Canvas>();
+        if (rootCanvas && rootCanvas.rootCanvas)
+            rootCanvas = rootCanvas.rootCanvas;
+        m_arrowImage.enabled = true;
+        float scaleFactor = m_rectTransform.lossyScale.x;
+        if (scaleFactor == 0) scaleFactor = 1f;
+
+        float worldOffset = m_additionalOffset * scaleFactor;
+        float worldSpeed = m_speed * scaleFactor;
+        float worldExtraDist = m_extraOffscreenDistance * scaleFactor;
+
+        Vector3[] targetCorners = new Vector3[4];
+        target.GetWorldCorners(targetCorners);
+        Vector3 targetLeftEdgeWorld = (targetCorners[0] + targetCorners[1]) * 0.5f;
+
+        float localTipX = m_rectTransform.rect.width * (1f - m_rectTransform.pivot.x);
+        float localTipY = m_rectTransform.rect.height * (0.5f - m_rectTransform.pivot.y);
+        Vector3 localTipPos = new Vector3(localTipX, localTipY, 0f);
+
+        Vector3 pivotWorldPos = m_rectTransform.position;
+        Vector3 tipWorldPos = m_rectTransform.TransformPoint(localTipPos);
+        Vector3 tipOffsetWorld = tipWorldPos - pivotWorldPos;
+
+        Vector3 canvasRight = Vector3.right;
+        float canvasWidthWorld = 1920f * scaleFactor; // Fallback
+
+        if (rootCanvas)
+        {
+            Transform ct = rootCanvas.transform;
+            canvasRight = ct.right.normalized; // Direction of "Right" in world space
+            
+            RectTransform canvasRect = rootCanvas.transform as RectTransform;
+            if (canvasRect)
+            {
+                // rect.width is pixels, multiply by scale to get World Width
+                canvasWidthWorld = canvasRect.rect.width * canvasRect.lossyScale.x;
+            }
+        }
+
+        // Apply the calculated position
+        Vector3 finalWorldPos = targetLeftEdgeWorld 
+                                - tipOffsetWorld 
+                                - (canvasRight * worldOffset); // Use scaled offset
         
-        targetLocal.x -= m_offsetX;
+        float startDist = (canvasWidthWorld / 1.5f) + worldExtraDist; // Use scaled extra distance
+        Vector3 startWorldPos = finalWorldPos - (canvasRight * startDist);
 
-        // Calculate canvas width for off-screen start position
-        float canvasWidth;
-        if (canvas.renderMode == RenderMode.ScreenSpaceOverlay)
-        {
-            canvasWidth = Screen.width / canvas.scaleFactor;
-        }
-        else
-        {
-            canvasWidth = canvasRect.rect.width;
-        }
+        // Match Z depth to ensure no clipping behind background
+        startWorldPos.z = finalWorldPos.z;
 
-        // Start position (off-screen to the left)
-        Vector2 startLocal = targetLocal;
-        startLocal.x -= canvasWidth;
+        // Snap to start
+        m_rectTransform.position = startWorldPos;
 
-        m_arrow.localPosition = startLocal;
         yield return null;
 
-        float distance = Vector2.Distance(startLocal, targetLocal);
-        float duration = Mathf.Max(0.01f, distance / m_speed);
-        float t = 0f;
+        // --- 3. ANIMATE ---
 
-        while (t < 1f)
+        const float closeEnough = 0.05f; // Tolerance
+        
+        // Loop until close
+        while (Vector3.Distance(m_rectTransform.position, finalWorldPos) > closeEnough)
         {
-            t += Time.deltaTime / duration;
-            m_arrow.localPosition = Vector2.Lerp(startLocal, targetLocal, Mathf.SmoothStep(0f, 1f, t));
+            m_rectTransform.position = Vector3.MoveTowards(
+                m_rectTransform.position,
+                finalWorldPos,
+                worldSpeed * Time.deltaTime // Use scaled speed
+            );
+
             yield return null;
         }
 
-        m_arrow.localPosition = targetLocal;
+        // Snap exactly to final
+        m_rectTransform.position = finalWorldPos;
+
         onComplete?.Invoke();
+        m_moveRoutine = null;
     }
 }

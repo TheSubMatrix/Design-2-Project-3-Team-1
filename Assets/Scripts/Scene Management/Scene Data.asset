@@ -50,8 +50,6 @@ MonoBehaviour:
           m_list:
           - Key: {fileID: 7059951787267099606, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
             Value: 5
-          - Key: {fileID: 2867152283576972626, guid: 965fa06bcfa06204382de651e1860780, type: 3}
-            Value: 0
           m_stagingEntry:
             Key: {fileID: 2867152283576972626, guid: 965fa06bcfa06204382de651e1860780, type: 3}
             Value: 0
