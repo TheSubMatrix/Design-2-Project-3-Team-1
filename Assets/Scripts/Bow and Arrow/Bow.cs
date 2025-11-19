@@ -42,6 +42,11 @@ public class Bow : MonoBehaviour
     [Inject]
     void InitializeQuivers(ILevelDataProvider levelData)
     {
+        m_quivers = new List<Quiver>();
+        foreach (KeyValuePair<Arrow, uint> kvp in levelData.GetArrowCounts())
+        {
+            m_quivers.Add(new Quiver(kvp.Key, kvp.Value));
+        }
         foreach (Quiver pool in m_quivers) pool.Setup(levelData);
     }
     void Start()

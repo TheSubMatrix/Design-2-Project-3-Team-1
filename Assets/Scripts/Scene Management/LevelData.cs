@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
@@ -13,5 +14,10 @@ public class LevelData
     public string GetNextLevel()
     {
         return m_nextLevel;
+    }
+
+    public Dictionary<Arrow, uint> GetArrowCounts()
+    {
+        return m_arrowCounts;
     }
 }

@@ -1,7 +1,8 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public interface ILevelDataProvider
 {
-    uint GetArrowCounts(Arrow arrow);
+    Dictionary<Arrow, uint> GetArrowCounts();
     string GetNextLevel();
 }

@@ -1,4 +1,5 @@
-using System;
+using System.Linq;
+using CustomNamespace.DependencyInjection;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,12 +13,17 @@ public class ArrowDisplay : MonoBehaviour
     EventBinding<QuiverUpdatedEvent> m_quiverUpdatedBinding;
     EventBinding<QuiverSelectionChangedEvent> m_selectionChangedBinding;
     string m_arrowCountStartingString = "";
+    string m_lastSelectedArrow = "";
+
+    public void UpdateTrackedArrowName(string arrowName)
+    {
+        m_arrowName = arrowName;
+    }
     void Awake()
     {
-        m_arrowCountStartingString = m_arrowCountText.text;
         m_currentRectTransform = GetComponent<RectTransform>();
+        m_arrowCountStartingString = m_arrowCountText.text;
     }
-
     void OnEnable()
     {
         m_quiverUpdatedBinding = new EventBinding<QuiverUpdatedEvent>(UpdateArrowDisplay);
@@ -39,14 +45,15 @@ public class ArrowDisplay : MonoBehaviour
 
     void UpdateSelectionDisplay(QuiverSelectionChangedEvent quiverSelectionChangedEvent)
     {
-        if (quiverSelectionChangedEvent.Selected == m_arrowName)
+        if (quiverSelectionChangedEvent.Selected == m_arrowName && quiverSelectionChangedEvent.Selected != m_lastSelectedArrow)
         {
             m_currentRectTransform.localScale *= 1.1f;
         }
-        else
+        if (quiverSelectionChangedEvent.Selected != m_arrowName)
         {
             m_currentRectTransform.localScale = Vector3.one;
         }
+        m_lastSelectedArrow = quiverSelectionChangedEvent.Selected;
     }
     
 }

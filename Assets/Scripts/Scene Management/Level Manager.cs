@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using CustomNamespace.DependencyInjection;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -45,8 +46,13 @@ public class LevelManager : MonoBehaviour, IDependencyProvider, ILevelDataProvid
         if (m_currentLevelData != null) return this;
         LoadCurrentLevelData();
         return this;
-    } 
-    
+    }
+
+    public Dictionary<Arrow, uint> GetArrowCounts()
+    {
+        return m_currentLevelData.GetArrowCounts();
+    }
+
     public uint GetArrowCounts(Arrow arrow)
     {
         return m_currentLevelData?.GetArrowCounts(arrow) ?? 0;
