@@ -85,7 +85,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 345
   m_fireSound:
-    Clip: {fileID: 0}
+    Clip: {fileID: 8300000, guid: 13992c43feffffa4d9594b4f69d64fea, type: 3}
     MixerGroup: {fileID: 0}
     Loop: 0
     PlayOnAwake: 0
@@ -103,7 +103,7 @@ MonoBehaviour:
     IgnoreListenerPause: 0
     RolloffMode: 0
   m_hitSound:
-    Clip: {fileID: 0}
+    Clip: {fileID: 8300000, guid: 3172e3198dd27c04a8e982a52dca958e, type: 3}
     MixerGroup: {fileID: 0}
     Loop: 0
     PlayOnAwake: 0
@@ -121,7 +121,7 @@ MonoBehaviour:
     IgnoreListenerPause: 0
     RolloffMode: 0
   m_embedSound:
-    Clip: {fileID: 0}
+    Clip: {fileID: 8300000, guid: 3172e3198dd27c04a8e982a52dca958e, type: 3}
     MixerGroup: {fileID: 0}
     Loop: 0
     PlayOnAwake: 0
@@ -138,6 +138,11 @@ MonoBehaviour:
     IgnoreListenerVolume: 0
     IgnoreListenerPause: 0
     RolloffMode: 0
+  m_impactVFX:
+    Asset: {fileID: 0}
+    Loop: 0
+    PlayedFrequently: 0
+    Properties: []
   <NameForUI>k__BackingField: Rebound Arrow
   <SpriteForUI>k__BackingField: {fileID: 0}
   m_bouncePhysicsMaterial: {fileID: 6200000, guid: 1355ca1832820084a9394796fb0c1bd9, type: 2}
@@ -160,3 +165,6 @@ MonoBehaviour:
     IgnoreListenerVolume: 0
     IgnoreListenerPause: 0
     RolloffMode: 0
+  references:
+    version: 2
+    RefIds: []
