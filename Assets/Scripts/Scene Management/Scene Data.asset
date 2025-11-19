@@ -40,10 +40,6 @@ MonoBehaviour:
           m_list:
           - Key: {fileID: 7059951787267099606, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
             Value: 5
-          - Key: {fileID: 0}
-            Value: 0
-          - Key: {fileID: 0}
-            Value: 0
           m_stagingEntry:
             Key: {fileID: 0}
             Value: 0
@@ -119,7 +115,7 @@ MonoBehaviour:
           m_stagingEntry:
             Key: {fileID: 6961176001319935979, guid: 3d8111a3af23f824ca26b465236a2b2e, type: 3}
             Value: 0
-        m_nextLevel: MainMenu
+        m_nextLevel: Level Ten
     - Key: Colin Test Scene
       Value:
         m_arrowCounts:
