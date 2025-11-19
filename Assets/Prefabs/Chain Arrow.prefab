@@ -144,7 +144,7 @@ MonoBehaviour:
     PlayedFrequently: 0
     Properties: []
   <NameForUI>k__BackingField: Chain Arrow
-  <SpriteForUI>k__BackingField: {fileID: 0}
+  <SpriteForUI>k__BackingField: {fileID: 21300000, guid: 8c056995d6126c145b03ebf31944743d, type: 3}
   m_linkLength: 0.5
   m_linkWidth: 0.2
   m_linkMass: 1

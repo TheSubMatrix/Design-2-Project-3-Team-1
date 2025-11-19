@@ -1,3 +1,16 @@
 {
-	"name": "EventDataStructures"
+    "name": "EventDataStructures",
+    "rootNamespace": "",
+    "references": [
+        "GUID:1e8b965862d0631489816768b0c8f383"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

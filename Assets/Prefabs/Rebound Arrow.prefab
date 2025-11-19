@@ -144,7 +144,7 @@ MonoBehaviour:
     PlayedFrequently: 0
     Properties: []
   <NameForUI>k__BackingField: Rebound Arrow
-  <SpriteForUI>k__BackingField: {fileID: 0}
+  <SpriteForUI>k__BackingField: {fileID: 21300000, guid: d4a8bed846915c141ad9bc20a3fe9b30, type: 3}
   m_bouncePhysicsMaterial: {fileID: 6200000, guid: 1355ca1832820084a9394796fb0c1bd9, type: 2}
   m_standardPhysicsMaterial: {fileID: 6200000, guid: fa52a17bf7bf52244be571c6549b084d, type: 2}
   m_bounceSound:
