@@ -85,7 +85,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 345
   m_fireSound:
-    Clip: {fileID: 8300000, guid: 13992c43feffffa4d9594b4f69d64fea, type: 3}
+    Clip: {fileID: 0}
     MixerGroup: {fileID: 0}
     Loop: 0
     PlayOnAwake: 0
@@ -103,7 +103,7 @@ MonoBehaviour:
     IgnoreListenerPause: 0
     RolloffMode: 0
   m_hitSound:
-    Clip: {fileID: 8300000, guid: 6499ea5bc1c2347b483d35a8a7a426e5, type: 3}
+    Clip: {fileID: 0}
     MixerGroup: {fileID: 0}
     Loop: 0
     PlayOnAwake: 0
@@ -121,7 +121,7 @@ MonoBehaviour:
     IgnoreListenerPause: 0
     RolloffMode: 0
   m_embedSound:
-    Clip: {fileID: 8300000, guid: 6499ea5bc1c2347b483d35a8a7a426e5, type: 3}
+    Clip: {fileID: 0}
     MixerGroup: {fileID: 0}
     Loop: 0
     PlayOnAwake: 0

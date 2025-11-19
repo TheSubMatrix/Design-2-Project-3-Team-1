@@ -999,7 +999,7 @@ GameObject:
   - component: {fileID: 149114075}
   - component: {fileID: 149114074}
   - component: {fileID: 149114073}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Floor (12)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11667,7 +11667,7 @@ GameObject:
   - component: {fileID: 2116583472}
   - component: {fileID: 2116583471}
   - component: {fileID: 2116583470}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Floor (11)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
