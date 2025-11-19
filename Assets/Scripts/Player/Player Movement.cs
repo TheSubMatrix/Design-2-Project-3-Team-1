@@ -5,6 +5,8 @@ using UnityEngine.Serialization;
 public  class PlayerMovement : MonoBehaviour, IDependencyProvider, IPlayerMovementProvider
 {
     [Provide]
+    // ReSharper disable once UnusedMember.Local
+    //This is used by the Dependency Injection Framework
     IPlayerMovementProvider ProvidePlayerMovement()
     {
         return this;

@@ -21,23 +21,24 @@ public class ModelRotator : MonoBehaviour
         [Tooltip("Whether to consider the offset from the Axis vector")]
         public bool UseOffset;
 
-        [Tooltip("Point on the Axis to rotate around (only used if UseOffset is true)"), ConditionalVisibility(nameof(UseOffset), true)]
+        [Tooltip("Point on the Axis to rotate around (only used if UseOffset is true)"), ShowIf(nameof(UseOffset))]
         public Vector3 OffsetPoint = Vector3.zero;
     
-        [Tooltip("Whether the offset point is in world space or local space"), ConditionalVisibility(nameof(UseOffset), true)]
+        [Tooltip("Whether the offset point is in world space or local space"), ShowIf(nameof(UseOffset))]
         public Space OffsetSpace = Space.Self;
     
         [Header("Debug Visualization")]
         [Tooltip("Enable debug visualization for this axis")]
         public bool ShowDebug = true;
-    
-        [Tooltip("Color for the debug axis line"), ConditionalVisibility(nameof(ShowDebug), true)]
+        
+        [Tooltip("Color for the debug axis line"), ShowIf(nameof(ShowDebug))]
         public Color DebugColor = Color.red;
     
-        [Tooltip("Length of the debug axis line (in each direction from center)"), ConditionalVisibility(nameof(ShowDebug), true)]
+        [Tooltip("Length of the debug axis line (in each direction from center)"), ShowIf(nameof(ShowDebug))]
         public float DebugAxisLength = 2f;
-    
-        [Tooltip("Radius of the debug pivot sphere"), ConditionalVisibility(nameof(ShowDebug), "==", true, "&&" ,nameof(UseOffset), "==", true)]
+
+        bool DebugAndOffset() => ShowDebug && UseOffset;
+        [Tooltip("Radius of the debug pivot sphere"), ShowIf(nameof(DebugAndOffset))]
         public float DebugSphereRadius = 0.1f;
     }
     

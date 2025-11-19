@@ -2,9 +2,10 @@ using UnityEngine;
 
 public class HUDManager : MonoBehaviour
 {
-    public void UpdateSelectedArrow(BowUIData data)
+
+    public void UpdateSelectedArrow(string arrowToUpdate, Sprite newSprite, uint newCount)
     {
-        Debug.Log(data.CurrentAmmo);
+        
     }
     
 }

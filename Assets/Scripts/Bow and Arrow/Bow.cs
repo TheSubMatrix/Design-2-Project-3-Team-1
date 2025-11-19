@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using CustomNamespace.DependencyInjection;
 using CustomNamespace.GenericDatatypes;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 using UnityEngine.VFX;
@@ -25,8 +26,7 @@ public class Bow : MonoBehaviour
     [SerializeField] InputActionReference m_fireAction;
     [FormerlySerializedAs("m_cancelAction")] [SerializeField] InputActionReference m_prepareShotAction;
     [SerializeField] InputActionReference m_swapArrowAction;
-    [Header("Events")]
-    [SerializeField] Observer<BowUIData> m_bowUI;
+    [Header("Events")] [SerializeField] UnityEvent<string, Sprite, uint> OnArrowCountChanged = new();
     
     GraphicsBuffer m_trajectoryBuffer;
     Vector3[] m_trajectoryData;
@@ -46,11 +46,10 @@ public class Bow : MonoBehaviour
     }
     void Start()
     {
-        m_bowUI.Value ??= new BowUIData();
-        m_bowUI.Update(data => data
-            .WithArrowTypeName(m_quivers[m_currentArrowSelection].ArrowPrefab.NameForUI)
-            .WithArrowUISprite(m_quivers[m_currentArrowSelection].ArrowPrefab.SpriteForUI)
-            .WithAmmo(m_quivers[m_currentArrowSelection].CurrentAmmo));
+        foreach (Quiver pool in m_quivers)
+        {
+            OnArrowCountChanged.Invoke(pool.ArrowPrefab.NameForUI, pool.ArrowPrefab.SpriteForUI, pool.CurrentAmmo);
+        }
         m_trajectoryBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, (int)m_trajectoryPointCount, sizeof(float) * 3);
         m_trajectoryData = new Vector3[m_trajectoryPointCount];
         m_trajectoryEffect.SetGraphicsBuffer("Trajectory Buffer", m_trajectoryBuffer);
@@ -131,7 +130,6 @@ public class Bow : MonoBehaviour
         m_currentChargeTime = 0f;
         m_trajectoryEffect.Reinit();
         m_trajectoryEffect.SetUInt("Valid Point Count", 0);
-        m_bowUI.Update(data => data.WithAmmo(m_quivers[m_currentArrowSelection].CurrentAmmo));
     }
     void OnShotCancelled(InputAction.CallbackContext context)
     {
@@ -172,9 +170,6 @@ public class Bow : MonoBehaviour
         if (m_isCharging) return;
         float inputY = context.ReadValue<Vector2>().y;
         m_currentArrowSelection = (m_currentArrowSelection + Mathf.RoundToInt(inputY) + m_quivers.Count) % m_quivers.Count;
-        m_bowUI.Update(data => data
-            .WithArrowTypeName(m_quivers[m_currentArrowSelection].ArrowPrefab.NameForUI)
-            .WithArrowUISprite(m_quivers[m_currentArrowSelection].ArrowPrefab.SpriteForUI)
-            .WithAmmo(m_quivers[m_currentArrowSelection].CurrentAmmo));
+        OnArrowCountChanged.Invoke(m_quivers[m_currentArrowSelection].ArrowPrefab.NameForUI, m_quivers[m_currentArrowSelection].ArrowPrefab.SpriteForUI, m_quivers[m_currentArrowSelection].CurrentAmmo);
     }
 }

@@ -1,14 +1,15 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
+using System;
 
-[AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
-public class ConditionalVisibilityAttribute : PropertyAttribute
+[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+public class ShowIfAttribute : PropertyAttribute
 {
-    public object[] Expression { get; }
+    public string ConditionName { get; private set; }
+    public bool Invert { get; private set; }
 
-    // Expression-based constructor supporting full conditional logic
-    public ConditionalVisibilityAttribute(params object[] expression)
+    public ShowIfAttribute(string conditionName, bool invert = false)
     {
-        Expression = expression;
+        ConditionName = conditionName;
+        Invert = invert;
     }
 }
