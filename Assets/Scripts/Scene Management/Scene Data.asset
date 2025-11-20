@@ -141,7 +141,7 @@ MonoBehaviour:
           m_stagingEntry:
             Key: {fileID: 6961176001319935979, guid: 3d8111a3af23f824ca26b465236a2b2e, type: 3}
             Value: 0
-        m_nextLevel: 
+        m_nextLevel: Level Eleven
     - Key: Level Eleven
       Value:
         m_arrowCounts:
@@ -155,7 +155,7 @@ MonoBehaviour:
           m_stagingEntry:
             Key: {fileID: 2867152283576972626, guid: 965fa06bcfa06204382de651e1860780, type: 3}
             Value: 0
-        m_nextLevel: 
+        m_nextLevel: Level Twelve
     - Key: Chapter 1
       Value:
         m_arrowCounts:
@@ -179,7 +179,7 @@ MonoBehaviour:
           m_stagingEntry:
             Key: {fileID: 6961176001319935979, guid: 3d8111a3af23f824ca26b465236a2b2e, type: 3}
             Value: 0
-        m_nextLevel: Chapter 4
+        m_nextLevel: MainMenu
     - Key: Chapter 2
       Value:
         m_arrowCounts:
