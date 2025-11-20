@@ -73,15 +73,11 @@ public class Arrow : MonoBehaviour
     {
         CompletedTrajectory = false;
         StuckInWall = false;
-        if (m_arrowCollider != null)
-        {
-            m_arrowCollider.enabled = false;
-        }
-    
         RB.AddForce(direction.normalized * m_fireForce * powerPercentage, ForceMode2D.Impulse);
         if (playerCollider == null) return;
         m_ignoredCollider = playerCollider;
-        m_isIgnoringCollision = false;
+        Physics2D.IgnoreCollision(m_arrowCollider, m_ignoredCollider, true);
+        m_isIgnoringCollision = true;
         SoundManager.Instance.CreateSound().WithSoundData(m_fireSound).WithRandomPitch().WithPosition(transform.position).Play();
     }
 
@@ -97,16 +93,6 @@ public class Arrow : MonoBehaviour
 
     void OnTriggerExit2D(Collider2D other)
     {
-        if (m_arrowCollider != null && !m_arrowCollider.enabled)
-        {
-            m_arrowCollider.enabled = true;
-            if (m_ignoredCollider != null)
-            {
-                Physics2D.IgnoreCollision(m_arrowCollider, m_ignoredCollider, true);
-                m_isIgnoringCollision = true;
-            }
-        }
-    
         if (!m_isIgnoringCollision || other != m_ignoredCollider) return;
         Physics2D.IgnoreCollision(m_arrowCollider, m_ignoredCollider, false);
         m_isIgnoringCollision = false;
