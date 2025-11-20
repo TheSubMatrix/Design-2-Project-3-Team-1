@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System;
 using System.Linq;
 using System.Text;
@@ -5,7 +6,6 @@ using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
-
 [CustomPropertyDrawer(typeof(SerializableGuid))]
 public class SerializableGuidDrawer : PropertyDrawer {
     static readonly string[] s_GuidParts = { "Part1", "Part2", "Part3", "Part4" };
@@ -118,3 +118,4 @@ public class SerializableGuidDrawer : PropertyDrawer {
             .ToString();
     }
 }
+#endif
