@@ -138,6 +138,8 @@ MonoBehaviour:
     IgnoreListenerVolume: 0
     IgnoreListenerPause: 0
     RolloffMode: 0
+  m_maxCollisionAngle: 90
+  m_launchGracePeriod: 0.1
   m_impactVFX:
     Asset: {fileID: 0}
     Loop: 0
@@ -145,8 +147,7 @@ MonoBehaviour:
     Properties: []
   <NameForUI>k__BackingField: Rebound Arrow
   <SpriteForUI>k__BackingField: {fileID: 21300000, guid: d4a8bed846915c141ad9bc20a3fe9b30, type: 3}
-  m_bouncePhysicsMaterial: {fileID: 6200000, guid: 1355ca1832820084a9394796fb0c1bd9, type: 2}
-  m_standardPhysicsMaterial: {fileID: 6200000, guid: fa52a17bf7bf52244be571c6549b084d, type: 2}
+  m_bounciness: 0.8
   m_bounceSound:
     Clip: {fileID: 0}
     MixerGroup: {fileID: 0}

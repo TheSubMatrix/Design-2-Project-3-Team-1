@@ -5,14 +5,19 @@ public class BounceArrow : Arrow
 {
     bool m_isBouncy;
     [SerializeField] SoundData m_bounceSound;
+
     protected override void OnCollisionEnter2D(Collision2D collision)
     {
         if (!CompletedTrajectory)
         {
+            if (!IsValidCollision(collision)) return;
+
             OnImpact(collision);
-            CompletedTrajectory = true;
+            CompletedTrajectory = true; 
         }
+
         if (!m_isBouncy || collision.rigidbody == null || collision.rigidbody.bodyType == RigidbodyType2D.Static) return;
+
         collision.rigidbody.linearVelocity = Vector2.up * 10;
         SoundManager.Instance.CreateSound().WithSoundData(m_bounceSound).WithPosition(transform.position).WithRandomPitch().Play();
     }

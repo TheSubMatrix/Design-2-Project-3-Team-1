@@ -19,6 +19,9 @@ public class Arrow : MonoBehaviour
     [SerializeField] SoundData m_fireSound;
     [SerializeField] SoundData m_hitSound;
     [SerializeField] SoundData m_embedSound;
+    [SerializeField] float m_launchGracePeriod = 0.15f; 
+    float m_launchTime;
+    
     protected bool CompletedTrajectory;
     bool m_isPreview;
     Collider2D m_arrowCollider;
@@ -71,9 +74,13 @@ public class Arrow : MonoBehaviour
 
     public virtual void Fire(Vector2 direction, float powerPercentage, Collider2D playerCollider = null)
     {
+
+        m_launchTime = Time.time; 
+
         CompletedTrajectory = false;
         StuckInWall = false;
         RB.AddForce(direction.normalized * m_fireForce * powerPercentage, ForceMode2D.Impulse);
+        
         if (playerCollider == null) return;
         m_ignoredCollider = playerCollider;
         Physics2D.IgnoreCollision(m_arrowCollider, m_ignoredCollider, true);
@@ -81,7 +88,7 @@ public class Arrow : MonoBehaviour
         SoundManager.Instance.CreateSound().WithSoundData(m_fireSound).WithRandomPitch().WithPosition(transform.position).Play();
     }
 
-    void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         if (CompletedTrajectory || m_isPreview) return;
 
@@ -100,8 +107,22 @@ public class Arrow : MonoBehaviour
 
     protected virtual void OnCollisionEnter2D(Collision2D collision)
     {
-        if(CompletedTrajectory){return;}
+        if(CompletedTrajectory || !IsValidCollision(collision)){return;}
         OnImpact(collision);
+    }
+
+    protected bool IsValidCollision(Collision2D collision)
+    {
+        Vector2 arrowDirection = transform.right.normalized;
+        if (RB.linearVelocity.sqrMagnitude > 0.001f)
+        {
+            arrowDirection = RB.linearVelocity.normalized;
+        }
+
+        if (collision.contactCount <= 0) return true;
+        Vector2 contactNormal = collision.GetContact(0).normal;
+        if (!(Time.time < m_launchTime + m_launchGracePeriod)) return true;
+        return !(Vector2.Dot(arrowDirection, contactNormal) > 0);
     }
 
     protected virtual void OnImpact(Collision2D collision)
@@ -125,6 +146,7 @@ public class Arrow : MonoBehaviour
         StuckInWall = true;
         CompletedTrajectory = true;
     }
+    
     protected virtual void OnHit(Collision2D collision)
     {
         if (collision.gameObject.TryGetComponent(out IDamageable damageable))
@@ -210,4 +232,3 @@ public class Arrow : MonoBehaviour
         return m_trajectoryPoints;
     }
 }
-
