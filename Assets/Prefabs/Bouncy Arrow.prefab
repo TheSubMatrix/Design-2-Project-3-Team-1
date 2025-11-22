@@ -8,6 +8,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 699530006110604059, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -1899062759181292732, guid: 566891be970d3fa44944a4cace842496, type: 3}
     - target: {fileID: 2865682433228862123, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -48,10 +52,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3098657338989682703, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
+      propertyPath: m_Size.y
+      value: 0.08
+      objectReference: {fileID: 0}
+    - target: {fileID: 3836979025403963635, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
+      propertyPath: m_Size.y
+      value: 0.08
+      objectReference: {fileID: 0}
     - target: {fileID: 3921954414467067104, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
       propertyPath: m_Name
       value: Bouncy Arrow
       objectReference: {fileID: 0}
+    - target: {fileID: 4018425895955753182, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: c6187b0498e12d9458393d9cfbef5664, type: 2}
     m_RemovedComponents:
     - {fileID: 7059951787267099606, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
     m_RemovedGameObjects: []
@@ -138,6 +154,7 @@ MonoBehaviour:
     IgnoreListenerVolume: 0
     IgnoreListenerPause: 0
     RolloffMode: 0
+  m_launchGracePeriod: 0.15
   m_impactVFX:
     Asset: {fileID: 0}
     Loop: 0

@@ -8,6 +8,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 699530006110604059, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 565864325233728745, guid: ed5bcb691c2dc414e81fb99c2a193c88, type: 3}
     - target: {fileID: 2865682433228862123, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -48,10 +52,30 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3098657338989682703, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
+      propertyPath: m_Size.x
+      value: 1.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 3098657338989682703, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
+      propertyPath: m_Size.y
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3836979025403963635, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
+      propertyPath: m_Size.x
+      value: 1.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 3836979025403963635, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
+      propertyPath: m_Size.y
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 3921954414467067104, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
       propertyPath: m_Name
       value: Rebound Arrow
       objectReference: {fileID: 0}
+    - target: {fileID: 4018425895955753182, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: c0c76a275daabc642a69a74bb770000c, type: 2}
     m_RemovedComponents:
     - {fileID: 7059951787267099606, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
     m_RemovedGameObjects: []
@@ -138,7 +162,6 @@ MonoBehaviour:
     IgnoreListenerVolume: 0
     IgnoreListenerPause: 0
     RolloffMode: 0
-  m_maxCollisionAngle: 90
   m_launchGracePeriod: 0.1
   m_impactVFX:
     Asset: {fileID: 0}
@@ -148,6 +171,7 @@ MonoBehaviour:
   <NameForUI>k__BackingField: Rebound Arrow
   <SpriteForUI>k__BackingField: {fileID: 21300000, guid: d4a8bed846915c141ad9bc20a3fe9b30, type: 3}
   m_bounciness: 0.8
+  m_minBounceSpeed: 5
   m_bounceSound:
     Clip: {fileID: 0}
     MixerGroup: {fileID: 0}

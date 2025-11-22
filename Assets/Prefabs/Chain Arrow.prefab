@@ -8,6 +8,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 699530006110604059, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -1330245360732626174, guid: 8b20abda35669a1468399ce977c03576, type: 3}
     - target: {fileID: 2865682433228862123, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -52,6 +56,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chain Arrow
       objectReference: {fileID: 0}
+    - target: {fileID: 4018425895955753182, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4018425895955753182, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 92b568f9ffe8ba644ac1824980bed1dc, type: 2}
+    - target: {fileID: 4018425895955753182, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9737e13ccf6990d46a2ef5fed8e09b78, type: 2}
+    - target: {fileID: 4018425895955753182, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
+      propertyPath: 'm_Materials.Array.data[2]'
+      value: 
+      objectReference: {fileID: 2100000, guid: b0ffe7f98fda7034fa22b677b29f3e92, type: 2}
     m_RemovedComponents:
     - {fileID: 7059951787267099606, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
     m_RemovedGameObjects: []
@@ -138,6 +158,7 @@ MonoBehaviour:
     IgnoreListenerVolume: 0
     IgnoreListenerPause: 0
     RolloffMode: 0
+  m_launchGracePeriod: 0.15
   m_impactVFX:
     Asset: {fileID: 0}
     Loop: 0

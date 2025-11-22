@@ -8,7 +8,7 @@ public class WindArea : MonoBehaviour
     BoxCollider2D m_collider;
     VisualEffect m_windEffect;
     AreaEffector2D m_windEffector;
-    [SerializeField, Range(0,1)]float m_particleSpeedScale = 1f;
+    [SerializeField]float m_particleSpeedScale = 1f;
     void Awake()
     {
         m_collider ??= GetComponent<BoxCollider2D>();
