@@ -1,8 +1,8 @@
 {
-    "name": "CustomNamespace.Utils",
+    "name": "CustomNamespace.Timers",
     "rootNamespace": "",
     "references": [
-        "GUID:ecd059b573046fe409f5d0e442af6dc3"
+        "GUID:815a13231799719459be40aec0116d9c"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

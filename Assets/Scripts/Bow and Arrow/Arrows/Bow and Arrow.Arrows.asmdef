@@ -2,10 +2,10 @@
     "name": "BowandArrow.Arrows",
     "rootNamespace": "",
     "references": [
-        "CustomNamespace.Utils.Audio",
         "CustomNamespace.GenericDatatypes",
         "Health",
-        "CustomNamespace.Utils.VFX"
+        "CustomNamespace.Audio",
+        "CustomNamespace.VFX"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
