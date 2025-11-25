@@ -28,7 +28,7 @@ public class Bow : MonoBehaviour
     [SerializeField] InputActionReference m_swapArrowAction;
     QuiverUpdatedEvent m_quiversUpdatedEvent;
     GraphicsBuffer m_trajectoryBuffer;
-    Vector3[] m_trajectoryData;
+    Vector4[] m_trajectoryData;
     bool m_isCharging;
     float m_currentChargeTime;
     float m_currentPower;
@@ -55,8 +55,8 @@ public class Bow : MonoBehaviour
             EventBus<QuiverUpdatedEvent>.Raise(new QuiverUpdatedEvent(pool.CurrentAmmo, pool.ArrowPrefab.SpriteForUI, pool.ArrowPrefab));
         }
         EventBus<QuiverSelectionChangedEvent>.Raise(new QuiverSelectionChangedEvent(m_quivers[m_currentArrowSelection].ArrowPrefab));
-        m_trajectoryBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, (int)m_trajectoryPointCount, sizeof(float) * 3);
-        m_trajectoryData = new Vector3[m_trajectoryPointCount];
+        m_trajectoryBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, (int)m_trajectoryPointCount, sizeof(float) * 4); // 4 floats now
+        m_trajectoryData = new Vector4[m_trajectoryPointCount];
         m_trajectoryEffect.SetGraphicsBuffer("Trajectory Buffer", m_trajectoryBuffer);
         m_trajectoryEffect.SetUInt("Valid Point Count", 0);
     }
@@ -154,9 +154,9 @@ public class Bow : MonoBehaviour
     }
     void UpdateTrajectoryVFX()
     {
-        List<Vector2> points = m_previewArrow.CalculateTrajectory(m_arrowSpawnPoint, m_currentPower);
-        
-        if (points.Count == 0)
+        List<Vector4> trajectoryData = m_previewArrow.CalculateTrajectory(m_arrowSpawnPoint, m_currentPower);
+    
+        if (trajectoryData.Count == 0)
         {
             m_trajectoryEffect.SetUInt("Valid Point Count", 0);
             return;
@@ -164,13 +164,13 @@ public class Bow : MonoBehaviour
 
         for (int i = 0; i < m_trajectoryPointCount; i++)
         {
-            if (i < points.Count)
-                m_trajectoryData[i] = new Vector3(points[i].x, points[i].y, 0f);
+            if (i < trajectoryData.Count)
+                m_trajectoryData[i] = trajectoryData[i];
             else
-                m_trajectoryData[i] = m_trajectoryData[points.Count - 1];
+                m_trajectoryData[i] = m_trajectoryData[trajectoryData.Count - 1];
         }
         m_trajectoryBuffer.SetData(m_trajectoryData);
-        m_trajectoryEffect.SetUInt("Valid Point Count", (uint)points.Count);
+        m_trajectoryEffect.SetUInt("Valid Point Count", (uint)trajectoryData.Count);
         m_trajectoryEffect.SendEvent("Show");
     }
 

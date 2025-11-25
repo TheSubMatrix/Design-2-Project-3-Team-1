@@ -21,17 +21,16 @@ public class Arrow : MonoBehaviour
     [SerializeField] SoundData m_embedSound;
     [SerializeField] float m_launchGracePeriod = 0.15f; 
     float m_launchTime;
-    
     protected bool CompletedTrajectory;
     bool m_isPreview;
     Collider2D m_arrowCollider;
     Collider2D m_ignoredCollider;
     bool m_isIgnoringCollision;
-    readonly List<Vector2> m_trajectoryPoints = new();
+    readonly List<Vector4> m_trajectoryPoints = new();
+    readonly List<float> m_cumulativeDistances = new();
     [SerializeField] VFXData m_impactVFX;
     [field: FormerlySerializedAs("<Name>k__BackingField")] [field:SerializeField] public string NameForUI { get; protected set; }
     [field:SerializeField] public Sprite SpriteForUI { get; protected set; }
-
     void Awake()
     {
         RB = GetComponent<Rigidbody2D>();
@@ -171,62 +170,80 @@ public class Arrow : MonoBehaviour
             m_arrowCollider.enabled = true;
         }
     }
-
-    public List<Vector2> CalculateTrajectory(Transform startTransform, float powerPercentage = 1f)
+    
+    public List<Vector4> CalculateTrajectory(Transform startTransform, float powerPercentage = 1f)
     {
         m_trajectoryPoints.Clear();
+        m_cumulativeDistances.Clear();
 
         Vector2 startPos = startTransform.position;
         Vector2 startVelocity = startTransform.right.normalized * (m_fireForce * powerPercentage);
         float gravityScale = RB?.gravityScale * RB?.mass ?? 1f;
         float gravity = Mathf.Abs(Physics2D.gravity.y) * gravityScale;
-        
-
         Vector2 previousPoint = startPos;
+        float totalDistance = 0f;
+        m_trajectoryPoints.Add(new Vector4(startPos.x, startPos.y, 0f, 0f));
+        m_cumulativeDistances.Add(0f);
 
-        for (int i = 0; i < m_trajectoryPointCount; i++)
+        for (int i = 1; i < m_trajectoryPointCount; i++)
         {
             float time = i * m_trajectoryPointTime;
-            
-            // Calculate position using kinematic equations
+
             Vector2 point = startPos + startVelocity * time;
             point.y -= 0.5f * gravity * time * time;
 
-            // Only do raycasts after the first point
-            if (i > 0)
+            Vector2 delta = point - previousPoint;
+            float distance = delta.magnitude;
+
+            if (distance > 0.001f)
             {
-                Vector2 delta = point - previousPoint;
-                float distance = delta.magnitude;
+                RaycastHit2D hit = Physics2D.Raycast(
+                    previousPoint,
+                    delta.normalized,
+                    distance,
+                    m_trajectoryTracingCollisionMask
+                );
 
-                if (distance > 0.001f)
+                if (hit.collider is not null)
                 {
-                    RaycastHit2D hit = Physics2D.Raycast(
-                        previousPoint, 
-                        delta.normalized, 
-                        distance, 
-                        m_trajectoryTracingCollisionMask
-                    );
-
-                    if (hit.collider is not null)
+                    if (m_ignoredCollider is not null && hit.collider == m_ignoredCollider)
                     {
-                        // Check if we hit the player (ignore it during preview)
-                        if (m_ignoredCollider is not null && hit.collider == m_ignoredCollider)
-                        {
-                            // Continue trajectory through player
-                            m_trajectoryPoints.Add(point);
-                            previousPoint = point;
-                            continue;
-                        }
-
-                        // Hit something else - end trajectory here
-                        m_trajectoryPoints.Add(hit.point);
-                        break;
+                        totalDistance += distance;
+                        m_trajectoryPoints.Add(new Vector4(point.x, point.y, 0f, 0f));
+                        m_cumulativeDistances.Add(totalDistance);
+                        previousPoint = point;
+                        continue;
                     }
+
+                    float hitDistance = Vector2.Distance(previousPoint, hit.point);
+                    totalDistance += hitDistance;
+                    m_trajectoryPoints.Add(new Vector4(hit.point.x, hit.point.y, 0f, 0f));
+                    m_cumulativeDistances.Add(totalDistance);
+                    break;
                 }
+                
+                totalDistance += distance;
             }
 
-            m_trajectoryPoints.Add(point);
+            m_trajectoryPoints.Add(new Vector4(point.x, point.y, 0f, 0f));
+            m_cumulativeDistances.Add(totalDistance);
             previousPoint = point;
+        }
+
+        const float desiredDotSpacing = 0.5f;
+        
+        for (int i = 0; i < m_trajectoryPoints.Count; i++)
+        {
+            float uvCoordinate = m_cumulativeDistances[i] / desiredDotSpacing;
+            float normalizedDistance = totalDistance > 0 ? m_cumulativeDistances[i] / totalDistance : 0f;
+            
+            
+            m_trajectoryPoints[i] = new Vector4(
+                m_trajectoryPoints[i].x,
+                m_trajectoryPoints[i].y,
+                uvCoordinate,
+                normalizedDistance
+            );
         }
 
         return m_trajectoryPoints;
