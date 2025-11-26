@@ -4,6 +4,8 @@ using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 public  class PlayerMovement : MonoBehaviour, IDependencyProvider, IPlayerMovementProvider
 {
+    static readonly int s_speed = Animator.StringToHash("Speed");
+
     [Provide]
     // ReSharper disable once UnusedMember.Local
     //This is used by the Dependency Injection Framework
@@ -30,7 +32,7 @@ public  class PlayerMovement : MonoBehaviour, IDependencyProvider, IPlayerMoveme
     [SerializeField] float m_snapDistance = 0.1f;
     [SerializeField] float m_maxSnapSpeed = 100f;
     [SerializeField] LayerMask m_snapLayers;
-    
+    [SerializeField] Animator m_characterAnimator;
     Rigidbody2D m_connectedRB;
     Rigidbody2D m_previousConnectedRB;
     Vector2 m_connectionWorldPosition;
@@ -80,7 +82,6 @@ public  class PlayerMovement : MonoBehaviour, IDependencyProvider, IPlayerMoveme
         if (m_desiresJump)
         {
             Jump();
-            m_stepsSinceLastGrounded = 0;
             m_desiresJump = false;
         }
         m_playerRB.linearVelocity = m_modifiedVelocity;
@@ -113,6 +114,7 @@ public  class PlayerMovement : MonoBehaviour, IDependencyProvider, IPlayerMoveme
         float currentVelocity = Vector2.Dot(relativeVelocity, projectedVelocity);
         float newVelocity = Mathf.MoveTowards(currentVelocity, m_desiredMoveDirection.x, rateOfChange * Time.deltaTime);
         m_modifiedVelocity += projectedVelocity * (newVelocity - currentVelocity);
+        m_characterAnimator.SetFloat(s_speed, currentVelocity);
     }
     void EvaluateCollision(Collision2D other)
     {
@@ -214,10 +216,6 @@ public  class PlayerMovement : MonoBehaviour, IDependencyProvider, IPlayerMoveme
         if (IsGrounded)
         {
             m_jumpDirection = m_contactNormal;
-        }
-        else if (OnSteep)
-        {
-            m_jumpDirection = m_steepNormal;
         }
         else
         {

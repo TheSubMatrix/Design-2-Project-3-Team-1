@@ -79,8 +79,8 @@ BlendTree:
     m_CycleOffset: 0
     m_DirectBlendParameter: X
     m_Mirror: 0
-  m_BlendParameter: X
-  m_BlendParameterY: Y
+  m_BlendParameter: X Aim
+  m_BlendParameterY: Y Aim
   m_MinThreshold: 0.25
   m_MaxThreshold: 1
   m_UseAutomaticThresholds: 1
@@ -126,8 +126,8 @@ BlendTree:
     m_CycleOffset: 0
     m_DirectBlendParameter: X
     m_Mirror: 0
-  m_BlendParameter: X
-  m_BlendParameterY: Y
+  m_BlendParameter: X Aim
+  m_BlendParameterY: Y Aim
   m_MinThreshold: 0
   m_MaxThreshold: 1
   m_UseAutomaticThresholds: 1

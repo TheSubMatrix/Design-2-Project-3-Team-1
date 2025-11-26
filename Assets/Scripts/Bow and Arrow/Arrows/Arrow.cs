@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using AudioSystem;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -29,6 +30,7 @@ public class Arrow : MonoBehaviour
     readonly List<Vector4> m_trajectoryPoints = new();
     readonly List<float> m_cumulativeDistances = new();
     [SerializeField] VFXData m_impactVFX;
+    Vector2 m_launchDirection;
     [field: FormerlySerializedAs("<Name>k__BackingField")] [field:SerializeField] public string NameForUI { get; protected set; }
     [field:SerializeField] public Sprite SpriteForUI { get; protected set; }
     void Awake()
@@ -73,7 +75,7 @@ public class Arrow : MonoBehaviour
 
     public virtual void Fire(Vector2 direction, float powerPercentage, Collider2D playerCollider = null)
     {
-
+        m_launchDirection = direction;
         m_launchTime = Time.time; 
 
         CompletedTrajectory = false;
@@ -112,16 +114,10 @@ public class Arrow : MonoBehaviour
 
     protected bool IsValidCollision(Collision2D collision)
     {
-        Vector2 arrowDirection = transform.right.normalized;
-        if (RB.linearVelocity.sqrMagnitude > 0.001f)
-        {
-            arrowDirection = RB.linearVelocity.normalized;
-        }
-
-        if (collision.contactCount <= 0) return true;
-        Vector2 contactNormal = collision.GetContact(0).normal;
+        if (collision.contactCount <= 0) return false;
+        Vector2 contactNormal = collision.contacts.Aggregate(Vector2.zero, (current, contact) => current + contact.normal).normalized;
         if (!(Time.time < m_launchTime + m_launchGracePeriod)) return true;
-        return !(Vector2.Dot(arrowDirection, contactNormal) > 0);
+        return !(Vector2.Dot(m_launchDirection, contactNormal) > 0);
     }
 
     protected virtual void OnImpact(Collision2D collision)
