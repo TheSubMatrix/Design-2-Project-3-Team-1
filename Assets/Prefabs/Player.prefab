@@ -352,8 +352,8 @@ MonoBehaviour:
   m_leftRotation: 90
   m_rightRotation: 270
   m_characterAnimator: {fileID: 6410564889654146594}
-  m_xAimAnimationParameter: X
-  m_yAimAnimationParameter: Y
+  m_xAimAnimationParameter: X Aim
+  m_yAimAnimationParameter: Y Aim
 --- !u!1 &5917579403353439116
 GameObject:
   m_ObjectHideFlags: 0

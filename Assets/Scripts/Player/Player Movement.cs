@@ -215,7 +215,7 @@ public  class PlayerMovement : MonoBehaviour, IDependencyProvider, IPlayerMoveme
     {
         if (IsGrounded)
         {
-            m_jumpDirection = m_contactNormal;
+            m_jumpDirection = OnSteep ? m_steepNormal : m_contactNormal;
         }
         else
         {
