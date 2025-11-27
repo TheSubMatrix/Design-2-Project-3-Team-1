@@ -50,7 +50,7 @@ public class LevelManager : MonoBehaviour, IDependencyProvider, ILevelDataProvid
 
     public Dictionary<Arrow, uint> GetArrowCounts()
     {
-        return m_currentLevelData.GetArrowCounts();
+        return m_currentLevelData?.GetArrowCounts();
     }
 
     public uint GetArrowCounts(Arrow arrow)

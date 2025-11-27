@@ -1,16 +1,19 @@
 using System.Collections.Generic;
 using CustomNamespace.DependencyInjection;
-using CustomNamespace.GenericDatatypes;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 using UnityEngine.VFX;
 
-public class Bow : MonoBehaviour
+public class Bow : MonoBehaviour, IDependencyProvider, IBowEventProvider
 {
     [Provide]
-    Bow ProvideBow() { return this; }
+    // ReSharper disable once UnusedMember.Local
+    // This actually gets called by the DI system
+    IBowEventProvider ProvideBow()
+    {
+        return this;
+    }
     [FormerlySerializedAs("m_arrowPools")]
     [Header("Arrow & Trajectory")]
     [SerializeField] List<Quiver> m_quivers;
@@ -34,7 +37,10 @@ public class Bow : MonoBehaviour
     float m_currentPower;
     int m_currentArrowSelection;
     Arrow m_previewArrow;
-    
+    public event IBowEventProvider.OnBowFire OnBowFireEvent;
+    public event IBowEventProvider.OnBowCharge OnBowChargeEvent;
+    public event IBowEventProvider.OnBowChargeCancel OnBowChargeCancelEvent;
+    public event IBowEventProvider.OnBowArrowSelectionChanged OnBowArrowSelectionChangedEvent;
     
     // ReSharper disable once UnusedMember.Local
     // This actually gets called by the DI system
@@ -42,6 +48,7 @@ public class Bow : MonoBehaviour
     void InitializeQuivers(ILevelDataProvider levelData)
     {
         m_quivers = new List<Quiver>();
+        if(levelData.GetArrowCounts() == null){return;}
         foreach (KeyValuePair<Arrow, uint> kvp in levelData.GetArrowCounts())
         {
             m_quivers.Add(new Quiver(kvp.Key, kvp.Value));
@@ -50,6 +57,11 @@ public class Bow : MonoBehaviour
     }
     void Start()
     {
+        if (m_quivers == null || m_quivers.Count == 0)
+        {
+            return;
+        }
+        m_currentArrowSelection = Mathf.Clamp(m_currentArrowSelection, 0, m_quivers.Count - 1);
         foreach (Quiver pool in m_quivers)
         {
             EventBus<QuiverUpdatedEvent>.Raise(new QuiverUpdatedEvent(pool.CurrentAmmo, pool.ArrowPrefab.SpriteForUI, pool.ArrowPrefab));
@@ -111,6 +123,10 @@ public class Bow : MonoBehaviour
 
     void StartCharging(InputAction.CallbackContext context)
     {
+        if (m_quivers == null || m_quivers.Count == 0)
+        {
+            return;
+        }
         m_isCharging = true;
         m_quivers[m_currentArrowSelection].Get(out m_previewArrow);
         m_currentPower = 0f;
@@ -123,6 +139,7 @@ public class Bow : MonoBehaviour
         m_previewArrow.transform.position = m_arrowSpawnPoint.position;
         m_previewArrow.transform.rotation = m_arrowSpawnPoint.rotation;
         m_previewArrow.SetPreview(true, m_playerCollider);
+        OnBowChargeEvent?.Invoke();
         EventBus<QuiverUpdatedEvent>.Raise(new QuiverUpdatedEvent(m_quivers[m_currentArrowSelection].CurrentAmmo, m_quivers[m_currentArrowSelection].ArrowPrefab.SpriteForUI, m_quivers[m_currentArrowSelection].ArrowPrefab));
     }
 
@@ -137,6 +154,7 @@ public class Bow : MonoBehaviour
         m_currentChargeTime = 0f;
         m_trajectoryEffect.Reinit();
         m_trajectoryEffect.SetUInt("Valid Point Count", 0);
+        OnBowFireEvent?.Invoke();
         EventBus<QuiverUpdatedEvent>.Raise(new QuiverUpdatedEvent(m_quivers[m_currentArrowSelection].CurrentAmmo, m_quivers[m_currentArrowSelection].ArrowPrefab.SpriteForUI, m_quivers[m_currentArrowSelection].ArrowPrefab));
     }
     void OnShotCancelled(InputAction.CallbackContext context)
@@ -150,6 +168,7 @@ public class Bow : MonoBehaviour
         m_currentChargeTime = 0f;
         m_trajectoryEffect.Reinit();
         m_trajectoryEffect.SetUInt("Valid Point Count", 0);
+        OnBowChargeCancelEvent?.Invoke();
         EventBus<QuiverUpdatedEvent>.Raise(new QuiverUpdatedEvent(m_quivers[m_currentArrowSelection].CurrentAmmo, m_quivers[m_currentArrowSelection].ArrowPrefab.SpriteForUI, m_quivers[m_currentArrowSelection].ArrowPrefab));
     }
     void UpdateTrajectoryVFX()
@@ -176,9 +195,14 @@ public class Bow : MonoBehaviour
 
     void SwapArrow(InputAction.CallbackContext context)
     {
+        if (m_quivers == null || m_quivers.Count == 0)
+        {
+            return;
+        }
         if (m_isCharging) return;
         float inputY = context.ReadValue<Vector2>().y;
         m_currentArrowSelection = (m_currentArrowSelection + Mathf.RoundToInt(inputY) + m_quivers.Count) % m_quivers.Count;
+        OnBowArrowSelectionChangedEvent?.Invoke();
         EventBus<QuiverSelectionChangedEvent>.Raise(new QuiverSelectionChangedEvent(m_quivers[m_currentArrowSelection].ArrowPrefab));
     }
 }

@@ -48,7 +48,7 @@ BlendTree:
   m_Name: Move Left
   m_Childs:
   - serializedVersion: 2
-    m_Motion: {fileID: -203655887218126122, guid: 625fe4b9046f92b4a83d0b19e06c0c0d, type: 3}
+    m_Motion: {fileID: -203655887218126122, guid: 3fdd324c98e21534a9a617d859321488, type: 3}
     m_Threshold: 0.25
     m_Position: {x: 1, y: 0}
     m_TimeScale: 1
@@ -111,7 +111,7 @@ BlendTree:
     m_DirectBlendParameter: X
     m_Mirror: 0
   - serializedVersion: 2
-    m_Motion: {fileID: -203655887218126122, guid: 3fdd324c98e21534a9a617d859321488, type: 3}
+    m_Motion: {fileID: -203655887218126122, guid: 625fe4b9046f92b4a83d0b19e06c0c0d, type: 3}
     m_Threshold: 0.6666667
     m_Position: {x: -1, y: 0}
     m_TimeScale: 1
@@ -225,7 +225,7 @@ AnimatorStateMachine:
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: 6213651665416805353}
-    m_Position: {x: 310, y: 120, z: 0}
+    m_Position: {x: 440, y: 120, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []

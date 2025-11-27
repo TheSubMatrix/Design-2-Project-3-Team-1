@@ -2,14 +2,14 @@ using CustomNamespace.DependencyInjection;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
-public  class PlayerMovement : MonoBehaviour, IDependencyProvider, IPlayerMovementProvider
+public  class PlayerMovement : MonoBehaviour, IDependencyProvider, IPlayerMovementEventProvider
 {
     static readonly int s_speed = Animator.StringToHash("Speed");
 
     [Provide]
     // ReSharper disable once UnusedMember.Local
     //This is used by the Dependency Injection Framework
-    IPlayerMovementProvider ProvidePlayerMovement()
+    IPlayerMovementEventProvider ProvidePlayerMovement()
     {
         return this;
     }
@@ -50,7 +50,8 @@ public  class PlayerMovement : MonoBehaviour, IDependencyProvider, IPlayerMoveme
     bool IsGrounded => m_groundedContacts > 0;
     bool OnSteep => m_steepContacts > 0;
     float GroundDotProduct => Mathf.Cos(m_groundAngle * Mathf.Deg2Rad);
-    
+    public event IPlayerMovementEventProvider.OnMove OnMoveEvent;
+    public event IPlayerMovementEventProvider.OnJump OnJumpEvent;
     void OnEnable()
     {
         m_moveAction.action.Enable();
@@ -70,6 +71,10 @@ public  class PlayerMovement : MonoBehaviour, IDependencyProvider, IPlayerMoveme
     void OnMove(InputAction.CallbackContext context)
     {
         m_desiredMoveDirection = context.ReadValue<Vector2>() * m_moveSpeed;
+        if (m_desiredMoveDirection.sqrMagnitude > 0.01f)
+        {
+            OnMoveEvent?.Invoke();
+        }
     }
     void OnJump(InputAction.CallbackContext context)
     {
@@ -221,6 +226,7 @@ public  class PlayerMovement : MonoBehaviour, IDependencyProvider, IPlayerMoveme
         {
             return;
         }
+        OnJumpEvent?.Invoke();
         m_jumpDirection = (m_jumpDirection + Vector2.up).normalized;
         m_stepsSinceLastJump = 0;
         float jumpSpeed = Mathf.Sqrt(2f * Physics2D.gravity.magnitude * m_jumpHeight);
@@ -231,4 +237,5 @@ public  class PlayerMovement : MonoBehaviour, IDependencyProvider, IPlayerMoveme
         }
         m_modifiedVelocity += m_contactNormal * jumpSpeed;
     }
+    
 }

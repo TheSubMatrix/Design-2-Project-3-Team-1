@@ -13,6 +13,7 @@ public class ArrowDisplayManager : MonoBehaviour
     //This is used by the Dependency Injection Framework
     void OnReceivedLevelData(ILevelDataProvider levelData)
     {
+        if(levelData.GetArrowCounts() == null){return;}
         foreach (KeyValuePair<Arrow, uint> kvp in levelData.GetArrowCounts())
         {
             if (m_displaysByName.ContainsKey(kvp.Key.name)) continue;
