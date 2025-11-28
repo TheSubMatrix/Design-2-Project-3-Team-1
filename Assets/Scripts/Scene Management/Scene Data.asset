@@ -228,8 +228,18 @@ MonoBehaviour:
             Key: {fileID: 7059951787267099606, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
             Value: 0
         m_nextLevel: 
+    - Key: Help Scene Updated
+      Value:
+        m_arrowCounts:
+          m_list:
+          - Key: {fileID: 7059951787267099606, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
+            Value: 10
+          m_stagingEntry:
+            Key: {fileID: 7059951787267099606, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
+            Value: 0
+        m_nextLevel: Main Menu
     m_stagingEntry:
-      Key: NewCreditsScene
+      Key: Help Scene Updated
       Value:
         m_arrowCounts:
           m_list: []

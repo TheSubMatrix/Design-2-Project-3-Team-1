@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using UnityEngine;
+
 
 public class TutorialStep
 {
@@ -55,23 +59,31 @@ public class TutorialStep
         
         IsRunning = false;
     }
+    static TDelegate CreateHandler<TDelegate>(Action onComplete) where TDelegate : Delegate
+    {
+        MethodInfo invoke = typeof(TDelegate).GetMethod("Invoke");
+        ParameterInfo[] parameters = invoke?.GetParameters();
+        Expression<TDelegate> lambda = Expression.Lambda<TDelegate>(
+            Expression.Call(Expression.Constant(onComplete), nameof(Action.Invoke), null),
+            (parameters ?? Array.Empty<ParameterInfo>()).Select(p => Expression.Parameter(p.ParameterType, p.Name))
+        );
+
+        return lambda.Compile();
+    }
     public static TutorialStep Create<T>(
-        Action<T> subscribe, 
+        Action<T> subscribe,
         Action<T> unsubscribe,
-        Func<Action, T> converter, 
-        Func<IEnumerator> onStepStarted, 
-        Func<IEnumerator> onStepEnded) where T : Delegate
+        Func<IEnumerator> onStepStarted,
+        Func<IEnumerator> onStepEnded)
+        where T : Delegate
     {
         TutorialStep step = new TutorialStep(onStepStarted, onStepEnded);
-        T typedDelegate = converter(OnComplete);
-        step.m_enableListening = Enable;
-        step.m_disableListening = Disable;
+
+        T handler = CreateHandler<T>(step.Complete);
+
+        step.m_enableListening = () => subscribe(handler);
+        step.m_disableListening = () => unsubscribe(handler);
+
         return step;
-
-        void Enable() => subscribe(typedDelegate);
-
-        void Disable() => unsubscribe(typedDelegate);
-
-        void OnComplete() => step.Complete();
     }
 }

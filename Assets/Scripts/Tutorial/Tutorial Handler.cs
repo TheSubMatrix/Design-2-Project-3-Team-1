@@ -20,8 +20,19 @@ public class TutorialHandler : MonoBehaviour
         m_steps.Add(TutorialStep.Create<IPlayerMovementEventProvider.OnMove>(
             subscribe: (handler) => m_playerMovement.OnMoveEvent += handler,
             unsubscribe: (handler) => m_playerMovement.OnMoveEvent -= handler,
-            converter: (completeAction) => () => completeAction(),
             onStepStarted: () => m_textDisplay.ShowTextCoroutine("Use WASD to move"),
+            onStepEnded: () => m_textDisplay.HideTextCoroutine()
+        ));
+        m_steps.Add(TutorialStep.Create<IBowEventProvider.OnBowCharge>(
+            subscribe: (handler) => m_bow.OnBowChargeEvent += handler,
+            unsubscribe: (handler) => m_bow.OnBowChargeEvent -= handler,
+            onStepStarted: () => m_textDisplay.ShowTextCoroutine("Hold right click to charge"),
+            onStepEnded: () => m_textDisplay.HideTextCoroutine()
+        ));
+        m_steps.Add(TutorialStep.Create<IBowEventProvider.OnBowFire>(
+            subscribe: (handler) => m_bow.OnBowFireEvent += handler,
+            unsubscribe: (handler) => m_bow.OnBowFireEvent -= handler,
+            onStepStarted: () => m_textDisplay.ShowTextCoroutine("While holding right click, press left click to fire"),
             onStepEnded: () => m_textDisplay.HideTextCoroutine()
         ));
     }
