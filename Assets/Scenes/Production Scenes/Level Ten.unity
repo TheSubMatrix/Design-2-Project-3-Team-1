@@ -1238,6 +1238,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3037840593541350497, guid: 48873508e6c51044187bc4b5bb7eed5a, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4875203072067103139, guid: 48873508e6c51044187bc4b5bb7eed5a, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0

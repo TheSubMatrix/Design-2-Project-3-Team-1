@@ -12,6 +12,10 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: -1330245360732626174, guid: 8b20abda35669a1468399ce977c03576, type: 3}
+    - target: {fileID: 1213777338584963055, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
+      propertyPath: m_Asset
+      value: 
+      objectReference: {fileID: 8926484042661614526, guid: b4896156f40f49247ba355889165a3e4, type: 3}
     - target: {fileID: 2865682433228862123, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -50,6 +54,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2865682433228862123, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3501075615206020460, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
+      propertyPath: m_CastShadows
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3921954414467067104, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
@@ -177,7 +185,7 @@ MonoBehaviour:
   m_physicsMaterial: {fileID: 0}
   m_jointBreakForce: 0
   m_jointBreakTorque: 0
-  m_linkPrefab: {fileID: 0}
+  m_linkPrefab: {fileID: 1408183739877240062, guid: beda8696280a7144a82b6db536c3ba61, type: 3}
   m_poolInitialSize: 20
   references:
     version: 2
