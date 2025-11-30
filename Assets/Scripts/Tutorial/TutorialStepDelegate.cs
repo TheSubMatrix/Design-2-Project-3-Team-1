@@ -12,35 +12,35 @@ public class TutorialStepDelegate<TDelegate> : TutorialStep where TDelegate : De
         Action<TDelegate> subscribe,
         Action<TDelegate> unsubscribe,
         Func<IEnumerator> onStepStarted,
-        Func<IEnumerator> onStepEnded)
-        : base(onStepStarted, onStepEnded)
+        Func<IEnumerator> onStepEnded,
+        float minimumTimeBeforeTransition = 0)
+        : base(onStepStarted, onStepEnded, minimumTimeBeforeTransition)
     {
         m_subscribe = subscribe;
         m_unsubscribe = unsubscribe;
         m_handler = DelegateHelper.CreateHandler<TDelegate>(new Action(Complete));
     }
 
-    protected override void OnStepStarted()
-    {
-        m_subscribe(m_handler);
-    }
-
     protected override void OnStepEnded()
     {
         m_unsubscribe(m_handler);
     }
-
-    protected override IEnumerator WaitForCompletion()
-    {
-        yield return new WaitUntil(() => IsCompleted);
-    }
-
-    public static TutorialStepDelegate<TDelegate> Create(
+    
+    public static TutorialStepDelegate<TDelegate> CreateAndInitialize(
         Action<TDelegate> subscribe,
         Action<TDelegate> unsubscribe,
         Func<IEnumerator> onStepStarted = null,
-        Func<IEnumerator> onStepEnded = null)
+        Func<IEnumerator> onStepEnded = null,
+        float minimumTimeBeforeTransition = 0
+        )
     {
-        return new TutorialStepDelegate<TDelegate>(subscribe, unsubscribe, onStepStarted, onStepEnded);
+        TutorialStepDelegate<TDelegate> step = new TutorialStepDelegate<TDelegate>(subscribe, unsubscribe, onStepStarted, onStepEnded, minimumTimeBeforeTransition);
+        Initialize(step);
+        return step;
+    }
+
+    static void Initialize(TutorialStepDelegate<TDelegate> step)
+    {
+        step.m_subscribe(step.m_handler);
     }
 }

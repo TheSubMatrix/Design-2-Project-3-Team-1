@@ -18,7 +18,11 @@ namespace CustomNamespace.GenericDatatypes
         
         [SerializeField] T m_value;
         [SerializeField] UnityEvent<T> m_onValueChanged;
-        
+
+        public UnityEvent<T> GetUnderlyingUnityEvent()
+        {
+            return m_onValueChanged;
+        }
         public T Value
         {
             get => m_value;

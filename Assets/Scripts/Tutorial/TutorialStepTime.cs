@@ -4,28 +4,20 @@ using UnityEngine;
 
 public class TutorialStepTime : TutorialStep
 {
-    readonly float m_duration;
-
+    
     private TutorialStepTime(
         float duration,
         Func<IEnumerator> onStepStarted,
         Func<IEnumerator> onStepEnded)
-        : base(onStepStarted, onStepEnded)
+        : base(onStepStarted, onStepEnded, duration)
     {
-        m_duration = duration;
+        
     }
 
-    protected override IEnumerator WaitForCompletion()
+    protected override bool CheckCompletionState()
     {
-        float elapsed = 0f;
-        while (elapsed < m_duration && !IsCompleted)
-        {
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
-        IsCompleted = true;
+        return true;
     }
-
     public static TutorialStepTime Create(
         float duration,
         Func<IEnumerator> onStepStarted = null,

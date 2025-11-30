@@ -1,13 +1,22 @@
 using System;
 using AudioSystem;
+using CustomNamespace.DependencyInjection;
 using CustomNamespace.GenericDatatypes;
 using UnityEngine;
 using UnityEngine.Events;
 [RequireComponent(typeof(Collider2D))]
-public class BallTrigger : MonoBehaviour
+public class BallTrigger : MonoBehaviour, IGoalEventProvider, IDependencyProvider
 {
+    [Provide]
+    // ReSharper disable once UnusedMember.Local
+    //This is called by the DI system
+    IGoalEventProvider ProvideEvents()
+    {
+        return this;
+    }
+    
     [SerializeField] LayerMask m_triggerLayers;
-    [SerializeField] Observer<bool> m_isTriggered;
+    [SerializeField] Observer<bool> m_isTriggered = new(false);
     [SerializeField] SoundData m_triggerOn;
     [SerializeField] SoundData m_triggerOff;
     void OnTriggerEnter2D(Collider2D other)
@@ -22,4 +31,6 @@ public class BallTrigger : MonoBehaviour
         SoundManager.Instance.CreateSound().WithSoundData(m_triggerOff).WithRandomPitch().WithPosition(transform.position).Play();
         m_isTriggered.Value = false;
     }
+
+    public UnityEvent<bool> OnGoalStateChanged => m_isTriggered.GetUnderlyingUnityEvent();
 }

@@ -1,28 +1,26 @@
 ﻿using System;
 using System.Collections;
+using UnityEngine;
 using UnityEngine.Events;
 
 public abstract class TutorialStep
 {
     public bool IsRunning { get; private set; }
-    
     protected bool IsCompleted;
-
+    protected readonly float MinimumTimeBeforeCompleted = 0;
     readonly Func<IEnumerator> m_onStepStarted;
     readonly Func<IEnumerator> m_onStepEnded;
-        
-    protected TutorialStep(Func<IEnumerator> onStepStarted, Func<IEnumerator> onStepEnded)
+
+    protected TutorialStep(Func<IEnumerator> onStepStarted, Func<IEnumerator> onStepEnded, float minimumTimeBeforeCompleted = 0)
     {
         m_onStepStarted = onStepStarted;
         m_onStepEnded = onStepEnded;
+        MinimumTimeBeforeCompleted = minimumTimeBeforeCompleted;
     }
 
     protected virtual void Complete()
     {
-        if(IsRunning)
-        {
-            IsCompleted = true;
-        }
+        IsCompleted = true;
     }
     
     public void ForceComplete()
@@ -35,16 +33,18 @@ public abstract class TutorialStep
 
     public IEnumerator ExecuteAsync()
     {
-        IsCompleted = false;
         IsRunning = true;
         
         if (m_onStepStarted != null)
             yield return m_onStepStarted.Invoke();
         
         OnStepStarted();
-        
-        yield return WaitForCompletion();
-        
+        float currentTime = 0;
+        while (!CheckCompletionState() || currentTime < MinimumTimeBeforeCompleted)
+        {
+            yield return null;
+            currentTime += Time.deltaTime;
+        }
         OnStepEnded();
         
         if (m_onStepEnded != null)
@@ -62,9 +62,9 @@ public abstract class TutorialStep
     /// Called when the step ends, after completion
     /// </summary>
     protected virtual void OnStepEnded() { }
-
-    /// <summary>
-    /// Returns the coroutine that waits for this step to complete
-    /// </summary>
-    protected abstract IEnumerator WaitForCompletion();
+    
+    protected virtual bool CheckCompletionState()
+    {
+        return IsCompleted;
+    }
 }
