@@ -830,7 +830,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ae7a879a624b14e45b7c00ab885fa8f5, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.1
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ae7a879a624b14e45b7c00ab885fa8f5, type: 3}
       propertyPath: m_LocalPosition.z
@@ -872,6 +872,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kbold_Rig (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: ae7a879a624b14e45b7c00ab885fa8f5, type: 3}
+      propertyPath: m_Avatar
+      value: 
+      objectReference: {fileID: 9000000, guid: ba503fc65449bd845a68fa681f1a6d60, type: 3}
     - target: {fileID: 5866666021909216657, guid: ae7a879a624b14e45b7c00ab885fa8f5, type: 3}
       propertyPath: m_Controller
       value: 
