@@ -865,7 +865,7 @@ GameObject:
   - component: {fileID: 216216727}
   - component: {fileID: 216216726}
   - component: {fileID: 216216725}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Floor (18)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1779,6 +1779,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2261034751974949064, guid: 883ea62a6855e5844b16dc970bdcd9b6, type: 3}
+      propertyPath: m_isTriggered.m_onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 866552870}
+    - target: {fileID: 2261034751974949064, guid: 883ea62a6855e5844b16dc970bdcd9b6, type: 3}
+      propertyPath: m_isTriggered.m_onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: UpdateDesiredVisibility
+      objectReference: {fileID: 0}
+    - target: {fileID: 2261034751974949064, guid: 883ea62a6855e5844b16dc970bdcd9b6, type: 3}
+      propertyPath: m_isTriggered.m_onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: CreditsBox, Menus
+      objectReference: {fileID: 0}
     - target: {fileID: 5101756970612960397, guid: 883ea62a6855e5844b16dc970bdcd9b6, type: 3}
       propertyPath: m_Name
       value: Goal (5)
@@ -2256,6 +2268,7 @@ GameObject:
   - component: {fileID: 866552867}
   - component: {fileID: 866552866}
   - component: {fileID: 866552869}
+  - component: {fileID: 866552870}
   m_Layer: 5
   m_Name: Credits Panel 1
   m_TagString: Untagged
@@ -2341,10 +2354,23 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 866552864}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &866552870
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 866552864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aa85715601756143b73d0fb43a6006d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_fadeTime: 0.5
 --- !u!1 &869430085
 GameObject:
   m_ObjectHideFlags: 0
@@ -3057,6 +3083,7 @@ GameObject:
   - component: {fileID: 1153034886}
   - component: {fileID: 1153034885}
   - component: {fileID: 1153034884}
+  - component: {fileID: 1153034888}
   m_Layer: 5
   m_Name: Credits Panel 2
   m_TagString: Untagged
@@ -3092,7 +3119,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1153034882}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
@@ -3146,6 +3173,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1153034882}
   m_CullTransparentMesh: 1
+--- !u!114 &1153034888
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1153034882}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aa85715601756143b73d0fb43a6006d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_fadeTime: 0.5
 --- !u!1 &1244733813
 GameObject:
   m_ObjectHideFlags: 0
@@ -3295,7 +3335,7 @@ GameObject:
   - component: {fileID: 1246702585}
   - component: {fileID: 1246702584}
   - component: {fileID: 1246702583}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Floor (21)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4016,6 +4056,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2261034751974949064, guid: 883ea62a6855e5844b16dc970bdcd9b6, type: 3}
+      propertyPath: m_isTriggered.m_onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1153034888}
+    - target: {fileID: 2261034751974949064, guid: 883ea62a6855e5844b16dc970bdcd9b6, type: 3}
+      propertyPath: m_isTriggered.m_onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: UpdateDesiredVisibility
+      objectReference: {fileID: 0}
+    - target: {fileID: 2261034751974949064, guid: 883ea62a6855e5844b16dc970bdcd9b6, type: 3}
+      propertyPath: m_isTriggered.m_onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: CreditsBox, Menus
+      objectReference: {fileID: 0}
     - target: {fileID: 5101756970612960397, guid: 883ea62a6855e5844b16dc970bdcd9b6, type: 3}
       propertyPath: m_Name
       value: Goal (6)
