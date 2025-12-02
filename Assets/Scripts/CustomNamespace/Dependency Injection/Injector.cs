@@ -110,9 +110,13 @@ namespace CustomNamespace.DependencyInjection {
                 
                 Type returnType = method.ReturnType;
                 object providedInstance = method.Invoke(provider, null);
-                if (providedInstance != null) {
-                    m_registry.Add(returnType, providedInstance);
-                } else {
+                if (providedInstance != null)
+                {
+                    if (m_registry.TryAdd(returnType, providedInstance)) continue;
+                    Debug.LogWarning($"There is already a dependency provider registered for the type {returnType.Name}");
+                }
+                else 
+                {
                     throw new Exception($"Provider method '{method.Name}' in class '{provider.GetType().Name}' returned null when providing type '{returnType.Name}'.");
                 }
             }
