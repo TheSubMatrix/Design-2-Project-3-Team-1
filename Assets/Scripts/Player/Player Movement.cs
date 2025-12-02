@@ -110,6 +110,7 @@ public  class PlayerMovement : MonoBehaviour, IDependencyProvider, IPlayerMoveme
         m_groundedContacts = 0;
         m_steepContacts = 0;
         m_contactNormal = Vector2.up;
+        m_steepNormal = Vector2.up;
         m_previousConnectedRB = m_connectedRB;
         m_connectedRB = null;
         m_connectionVelocity = Vector2.zero;
@@ -134,7 +135,7 @@ public  class PlayerMovement : MonoBehaviour, IDependencyProvider, IPlayerMoveme
             if (contact.normal.y >= GroundDotProduct)
             {
                 m_groundedContacts += 1;
-                m_contactNormal = contact.normal;
+                m_contactNormal += contact.normal;
                 m_connectedRB = other.rigidbody;
             }
             else if (contact.normal.y > -0.01f)
@@ -183,6 +184,7 @@ public  class PlayerMovement : MonoBehaviour, IDependencyProvider, IPlayerMoveme
         if (m_steepContacts <= 1) return false;
         m_steepNormal.Normalize();
         if (!(m_steepNormal.y >= GroundDotProduct)) return false;
+        m_steepContacts = 0;
         m_groundedContacts = 1;
         m_contactNormal = m_steepNormal;
         return true;
@@ -224,24 +226,31 @@ public  class PlayerMovement : MonoBehaviour, IDependencyProvider, IPlayerMoveme
 
     void Jump()
     {
+        Vector2 jumpDirection;
         if (IsGrounded)
         {
-            m_jumpDirection = OnSteep ? m_steepNormal : m_contactNormal;
+            jumpDirection = m_contactNormal;
+        }
+        else if (OnSteep)
+        {
+            jumpDirection = m_steepNormal;
         }
         else
         {
             return;
         }
+    
         OnJumpEvent?.Invoke();
-        m_jumpDirection = (m_jumpDirection + Vector2.up).normalized;
+        jumpDirection = (jumpDirection + Vector2.up).normalized;
         m_stepsSinceLastJump = 0;
+    
         float jumpSpeed = Mathf.Sqrt(2f * Physics2D.gravity.magnitude * m_jumpHeight);
-        float alignedSpeed = Vector2.Dot(m_modifiedVelocity, m_jumpDirection);
+        float alignedSpeed = Vector2.Dot(m_modifiedVelocity, jumpDirection);
         if (alignedSpeed > 0)
         {
             jumpSpeed = Mathf.Max(jumpSpeed - alignedSpeed, 0);
         }
-        m_modifiedVelocity += m_jumpDirection * jumpSpeed;
+        m_modifiedVelocity += jumpDirection * jumpSpeed;
     }
     
 }
