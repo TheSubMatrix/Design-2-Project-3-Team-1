@@ -33,9 +33,9 @@ public class LightAnimator : MonoBehaviour {
     Light m_light;
     
     // For noise function
-    private float m_lastNoiseValue;
-    private float m_nextNoiseValue;
-    private float m_lastNoiseTime;
+    float m_lastNoiseValue;
+    float m_nextNoiseValue;
+    float m_lastNoiseTime;
     
     void Start () 
     {

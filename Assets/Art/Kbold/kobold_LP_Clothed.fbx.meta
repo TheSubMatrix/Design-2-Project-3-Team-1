@@ -3,7 +3,12 @@ guid: 69b45f1842f96e8488496c036d20003d
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Kbold_Mat
+    second: {fileID: 2100000, guid: f665767fb3e04f943959fb42ef7f1136, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

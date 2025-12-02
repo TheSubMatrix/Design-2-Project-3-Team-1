@@ -1,3 +1,4 @@
+using AudioSystem;
 using CustomNamespace.GenericDatatypes;
 using UnityEngine;
 
@@ -7,7 +8,8 @@ public class Health : MonoBehaviour, IDamageable
     [SerializeField] Observer<uint> m_maxHealth = new Observer<uint>(100);
     [SerializeField] Observer<bool> m_isDead;
     [SerializeField] Observer<bool> m_isInvulnerable;
-    
+    [SerializeField] SoundData m_deathSound;
+    [SerializeField] SoundData m_damageSound;
     void Start()
     {
         m_health.Value = m_maxHealth.Value;
@@ -18,10 +20,17 @@ public class Health : MonoBehaviour, IDamageable
         if(m_isInvulnerable.Value || m_isDead.Value) return;
         
         m_health.Value = m_health.Value > amount ? m_health.Value - amount : 0;
-        
-        if(m_health.Value <= 0)
+
+        if (m_health.Value <= 0)
         {
             m_isDead.Value = true;
+            SoundManager.Instance.CreateSound().WithSoundData(m_deathSound).WithRandomPitch()
+                .WithPosition(transform.position).Play();
+        }
+        else
+        {
+            SoundManager.Instance.CreateSound().WithSoundData(m_damageSound).WithRandomPitch()
+                .WithPosition(transform.position).Play();
         }
     }
 
