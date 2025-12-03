@@ -3,23 +3,24 @@ using UnityEngine.UI;
 using System.Collections;
 using System;
 using AudioSystem;
+using UnityEngine.Serialization;
 
 public class ButtonClickArrow : MonoBehaviour
 {
     [Header("References")]
-    public Image m_arrowImage;
+    [SerializeField] Image m_arrowImage;
 
-    [Header("Audio")]
-    public SoundData m_clickSound; 
-
+    [FormerlySerializedAs("m_clickSound")] [Header("Audio")]
+    [SerializeField] SoundData m_impactSound; 
+    [SerializeField] SoundData m_clickSound;
     [Header("Settings")]
     [Tooltip("Additional spacing between arrow tip and button (in Pixels)")]
-    public float m_additionalOffset = 10f;
+    [SerializeField] float m_additionalOffset = 10f;
     [Tooltip("Speed in Pixels per second")]
-    public float m_speed = 2500f; 
+    [SerializeField] float m_speed = 2500f; 
     [Tooltip("Extra distance to start off-screen (in Pixels)")]
-    public float m_extraOffscreenDistance = 100f;
-
+    [SerializeField] float m_extraOffscreenDistance = 100f;
+    [SerializeField] float m_transitionDelay = 0.5f;
     RectTransform m_rectTransform;
     Coroutine m_moveRoutine;
 
@@ -41,15 +42,14 @@ public class ButtonClickArrow : MonoBehaviour
 
     public void MoveToButton(RectTransform target, Action onComplete = null)
     {
-        if (m_clickSound != null && SoundManager.Instance != null)
+        if (m_moveRoutine != null) StopCoroutine(m_moveRoutine);
+        if (m_clickSound != null && SoundManager.Instance)
         {
             SoundManager.Instance.CreateSound()
                 .WithSoundData(m_clickSound)
                 .WithRandomPitch()
                 .Play();
         }
-
-        if (m_moveRoutine != null) StopCoroutine(m_moveRoutine);
         m_moveRoutine = StartCoroutine(MoveArrowRoutine(target, onComplete));
     }
 
@@ -131,7 +131,14 @@ public class ButtonClickArrow : MonoBehaviour
 
         // Snap exactly to final
         m_rectTransform.position = finalWorldPos;
-
+        if (m_impactSound != null && SoundManager.Instance)
+        {
+            SoundManager.Instance.CreateSound()
+                .WithSoundData(m_impactSound)
+                .WithRandomPitch()
+                .Play();
+        }
+        yield return new WaitForSeconds(m_transitionDelay);
         onComplete?.Invoke();
         m_moveRoutine = null;
     }

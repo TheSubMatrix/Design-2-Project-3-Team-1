@@ -208,8 +208,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_arrowImage: {fileID: 20996251}
-  m_clickSound:
+  m_impactSound:
     Clip: {fileID: 8300000, guid: c4b5e6cfd3a8a47bcb572154256c35e9, type: 3}
+    MixerGroup: {fileID: -7245304972095319532, guid: 778da360bf7beae40b5a03c0e088a921, type: 2}
+    Loop: 0
+    PlayOnAwake: 1
+    PlayedFrequently: 0
+    Volume: 1
+    Pitch: 1
+    PanStereo: 0
+    SpatialBlend: 0
+    ReverbZoneMix: 1
+    DopplerLevel: 1
+    Spread: 0
+    MinDistance: 1
+    MaxDistance: 500
+    IgnoreListenerVolume: 0
+    IgnoreListenerPause: 0
+    RolloffMode: 0
+  m_clickSound:
+    Clip: {fileID: 8300000, guid: 13992c43feffffa4d9594b4f69d64fea, type: 3}
     MixerGroup: {fileID: -7245304972095319532, guid: 778da360bf7beae40b5a03c0e088a921, type: 2}
     Loop: 0
     PlayOnAwake: 1
