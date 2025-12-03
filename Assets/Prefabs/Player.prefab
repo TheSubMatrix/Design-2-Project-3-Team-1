@@ -792,6 +792,42 @@ MonoBehaviour:
     m_onValueChanged:
       m_PersistentCalls:
         m_Calls: []
+  m_deathSound:
+    Clip: {fileID: 8300000, guid: be20513f3bd634e7f86d2cec25e6fcbc, type: 3}
+    MixerGroup: {fileID: 0}
+    Loop: 0
+    PlayOnAwake: 0
+    PlayedFrequently: 0
+    Volume: 1
+    Pitch: 1
+    PanStereo: 0
+    SpatialBlend: 0
+    ReverbZoneMix: 1
+    DopplerLevel: 1
+    Spread: 0
+    MinDistance: 1
+    MaxDistance: 500
+    IgnoreListenerVolume: 0
+    IgnoreListenerPause: 0
+    RolloffMode: 0
+  m_damageSound:
+    Clip: {fileID: 8300000, guid: 12628228e238a4736ab7b82e9ad9aca3, type: 3}
+    MixerGroup: {fileID: 0}
+    Loop: 0
+    PlayOnAwake: 0
+    PlayedFrequently: 0
+    Volume: 1
+    Pitch: 1
+    PanStereo: 0
+    SpatialBlend: 0
+    ReverbZoneMix: 1
+    DopplerLevel: 1
+    Spread: 0
+    MinDistance: 1
+    MaxDistance: 500
+    IgnoreListenerVolume: 0
+    IgnoreListenerPause: 0
+    RolloffMode: 0
 --- !u!114 &2692133034290599511
 MonoBehaviour:
   m_ObjectHideFlags: 0
