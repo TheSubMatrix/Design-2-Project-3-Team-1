@@ -15,7 +15,7 @@ PrefabInstance:
     - target: {fileID: 1213777338584963055, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
       propertyPath: m_Asset
       value: 
-      objectReference: {fileID: 8926484042661614526, guid: b4896156f40f49247ba355889165a3e4, type: 3}
+      objectReference: {fileID: 0}
     - target: {fileID: 2865682433228862123, guid: 09384af96f0878443bafef3fc5a4762e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -114,7 +114,7 @@ MonoBehaviour:
     m_Bits: 345
   m_fireSound:
     Clip: {fileID: 8300000, guid: 13992c43feffffa4d9594b4f69d64fea, type: 3}
-    MixerGroup: {fileID: 0}
+    MixerGroup: {fileID: -7245304972095319532, guid: 778da360bf7beae40b5a03c0e088a921, type: 2}
     Loop: 0
     PlayOnAwake: 0
     PlayedFrequently: 0
@@ -132,7 +132,7 @@ MonoBehaviour:
     RolloffMode: 0
   m_hitSound:
     Clip: {fileID: 8300000, guid: 6499ea5bc1c2347b483d35a8a7a426e5, type: 3}
-    MixerGroup: {fileID: 0}
+    MixerGroup: {fileID: -7245304972095319532, guid: 778da360bf7beae40b5a03c0e088a921, type: 2}
     Loop: 0
     PlayOnAwake: 0
     PlayedFrequently: 0

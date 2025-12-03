@@ -48,8 +48,8 @@ MonoBehaviour:
   m_musicMixerGroup: {fileID: -4409922144973907691, guid: 778da360bf7beae40b5a03c0e088a921, type: 2}
   m_sfxMixerGroup: {fileID: -7245304972095319532, guid: 778da360bf7beae40b5a03c0e088a921, type: 2}
   m_transitionSound:
-    Clip: {fileID: 0}
-    MixerGroup: {fileID: 0}
+    Clip: {fileID: 8300000, guid: be20513f3bd634e7f86d2cec25e6fcbc, type: 3}
+    MixerGroup: {fileID: 5859537828784729666, guid: 778da360bf7beae40b5a03c0e088a921, type: 2}
     Loop: 0
     PlayOnAwake: 0
     PlayedFrequently: 0
