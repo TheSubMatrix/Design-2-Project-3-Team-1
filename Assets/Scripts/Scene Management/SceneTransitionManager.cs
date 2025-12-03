@@ -32,7 +32,7 @@ public class SceneTransitionManager : PersistentSingleton<SceneTransitionManager
         SoundManager.Instance.CreateSound().WithSoundData(m_transitionSound).WithRandomPitch().Play();
         m_sfxMixerGroup.audioMixer.GetFloat("Sound Effect Volume", out float sfxVolume);
         m_musicMixerGroup.audioMixer.GetFloat("Music Volume", out float musicVolume);
-        yield return FadeDeathAndSounds( fadeDuration / 2, 0.5f, 0, 0);
+        yield return FadeDeathAndSounds(fadeDuration / 2, 0.5f, -80f, -80f); // Fade to silence (-80dB)
         yield return SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
         yield return FadeDeathAndSounds( fadeDuration / 2, 1f, sfxVolume, musicVolume);
         m_deathTransitionMaterial.SetFloat(s_TransitionTime, 0);
@@ -40,19 +40,25 @@ public class SceneTransitionManager : PersistentSingleton<SceneTransitionManager
     }
     IEnumerator FadeDeathAndSounds(float fadeDuration, float destinationFadePoint, float sfxDestinationVolume, float musicDestinationVolume)
     {
-        
         m_sfxMixerGroup.audioMixer.GetFloat("Sound Effect Volume", out float sfxVolume);
         m_musicMixerGroup.audioMixer.GetFloat("Music Volume", out float musicVolume);
         float currentFadePercent = m_deathTransitionMaterial.GetFloat(s_TransitionTime);
         float currentFadeTime = 0f;
+    
         while (currentFadeTime < fadeDuration)
         {
             currentFadeTime += Time.deltaTime;
-            m_sfxMixerGroup.audioMixer.SetFloat("Sound Effect Volume", Mathf.Lerp(sfxVolume, sfxDestinationVolume, currentFadePercent));
-            m_musicMixerGroup.audioMixer.SetFloat("Music Volume", Mathf.Lerp(musicVolume, musicDestinationVolume, currentFadePercent));
-            m_deathTransitionMaterial.SetFloat(s_TransitionTime, Mathf.SmoothStep(currentFadePercent, destinationFadePoint, currentFadeTime / fadeDuration));
+            float t = currentFadeTime / fadeDuration;
+        
+            m_sfxMixerGroup.audioMixer.SetFloat("Sound Effect Volume", Mathf.Lerp(sfxVolume, sfxDestinationVolume, t));
+            m_musicMixerGroup.audioMixer.SetFloat("Music Volume", Mathf.Lerp(musicVolume, musicDestinationVolume, t));
+            m_deathTransitionMaterial.SetFloat(s_TransitionTime, Mathf.SmoothStep(currentFadePercent, destinationFadePoint, t));
             yield return null;
         }
+    
+        // Ensure final values are set
+        m_sfxMixerGroup.audioMixer.SetFloat("Sound Effect Volume", sfxDestinationVolume);
+        m_musicMixerGroup.audioMixer.SetFloat("Music Volume", musicDestinationVolume);
     }
 
     void OnDestroy()
