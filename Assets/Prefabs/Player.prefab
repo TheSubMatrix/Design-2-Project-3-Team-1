@@ -905,6 +905,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -1934268713938070520, guid: ae7a879a624b14e45b7c00ab885fa8f5, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -386731530326178724, guid: ae7a879a624b14e45b7c00ab885fa8f5, type: 3}
+    - target: {fileID: -1934268713938070520, guid: ae7a879a624b14e45b7c00ab885fa8f5, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: f665767fb3e04f943959fb42ef7f1136, type: 2}
@@ -919,11 +923,15 @@ PrefabInstance:
     - target: {fileID: 5866666021909216657, guid: ae7a879a624b14e45b7c00ab885fa8f5, type: 3}
       propertyPath: m_Avatar
       value: 
-      objectReference: {fileID: 9000000, guid: ba503fc65449bd845a68fa681f1a6d60, type: 3}
+      objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: ae7a879a624b14e45b7c00ab885fa8f5, type: 3}
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 41aea296686a348429e6b49d538ad01a, type: 2}
+    - target: {fileID: 5866666021909216657, guid: ae7a879a624b14e45b7c00ab885fa8f5, type: 3}
+      propertyPath: m_WarningMessage
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: ae7a879a624b14e45b7c00ab885fa8f5, type: 3}
       propertyPath: m_ApplyRootMotion
       value: 0
