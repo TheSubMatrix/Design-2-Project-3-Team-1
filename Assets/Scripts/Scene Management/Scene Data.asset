@@ -179,7 +179,7 @@ MonoBehaviour:
           m_stagingEntry:
             Key: {fileID: 6961176001319935979, guid: 3d8111a3af23f824ca26b465236a2b2e, type: 3}
             Value: 0
-        m_nextLevel: MainMenu
+        m_nextLevel: Win Scene
     - Key: Chapter 2
       Value:
         m_arrowCounts:
@@ -243,7 +243,7 @@ MonoBehaviour:
             Value: 0
         m_nextLevel: MainMenu
     m_stagingEntry:
-      Key: Help Scene Updated
+      Key: Level Thirteen
       Value:
         m_arrowCounts:
           m_list: []
