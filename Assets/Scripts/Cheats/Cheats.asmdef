@@ -1,13 +1,13 @@
 {
-    "name": "SceneManagement",
+    "name": "Cheats",
     "rootNamespace": "",
     "references": [
-        "GUID:a3aab014a8e3ef4438300f4c5a6e46fd",
-        "GUID:2e07d35e76d608d41a7a13bcb7476334",
-        "GUID:feed37f66159d4147ba92c09dde5e08a",
-        "GUID:304a36b356bec2746a1ed1678658faf5",
         "GUID:6af97dccfc1dd8748a23e6e573e1435a",
-        "GUID:8562a297b7c2f624592c10c3eaf26cb3"
+        "GUID:8562a297b7c2f624592c10c3eaf26cb3",
+        "GUID:a3aab014a8e3ef4438300f4c5a6e46fd",
+        "GUID:f6a0da6c76f2acf47af6e835216b3f47",
+        "GUID:75469ad4d38634e559750d17036d5f7c",
+        "GUID:cebde7c958cb86e4ab4963b9b4041b99"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

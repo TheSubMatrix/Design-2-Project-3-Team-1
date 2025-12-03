@@ -968,6 +968,34 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Cheats",
+            "id": "5f692547-a631-4a84-a300-11f2f46d1236",
+            "actions": [
+                {
+                    "name": "Next Level",
+                    "type": "Button",
+                    "id": "78c0684b-6d98-4054-bf5a-4f3236d83734",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "5d9e5c56-193e-4092-b4d8-c74437f4e8ce",
+                    "path": "<Keyboard>/n",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Next Level",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [

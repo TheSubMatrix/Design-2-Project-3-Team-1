@@ -1,3 +1,16 @@
 {
-	"name": "DependencyInterfaces"
+    "name": "DependencyInterfaces",
+    "rootNamespace": "",
+    "references": [
+        "GUID:304a36b356bec2746a1ed1678658faf5"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }
