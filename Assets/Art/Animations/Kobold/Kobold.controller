@@ -48,10 +48,10 @@ BlendTree:
   m_Name: Move Left
   m_Childs:
   - serializedVersion: 2
-    m_Motion: {fileID: -182802749597354325, guid: 97c2bdf65aa62a9419c5324d36c9c9a0, type: 3}
+    m_Motion: {fileID: 5643075628297652324, guid: ad9061610a5d59e49a624ea67d7c5062, type: 3}
     m_Threshold: 0.25
     m_Position: {x: 1, y: 0}
-    m_TimeScale: 1
+    m_TimeScale: -1
     m_CycleOffset: 0
     m_DirectBlendParameter: X
     m_Mirror: 0
@@ -111,10 +111,10 @@ BlendTree:
     m_DirectBlendParameter: X
     m_Mirror: 0
   - serializedVersion: 2
-    m_Motion: {fileID: -182802749597354325, guid: 97c2bdf65aa62a9419c5324d36c9c9a0, type: 3}
+    m_Motion: {fileID: 5643075628297652324, guid: ad9061610a5d59e49a624ea67d7c5062, type: 3}
     m_Threshold: 0.6666667
     m_Position: {x: -1, y: 0}
-    m_TimeScale: 1
+    m_TimeScale: -1
     m_CycleOffset: 0
     m_DirectBlendParameter: X
     m_Mirror: 0
