@@ -3361,6 +3361,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kbold_Sleep
       objectReference: {fileID: 0}
+    - target: {fileID: 2222644384345846084, guid: 2f1596f2a5440d04185b35d4a3c2ca38, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f665767fb3e04f943959fb42ef7f1136, type: 2}
+    - target: {fileID: 2222644384345846084, guid: 2f1596f2a5440d04185b35d4a3c2ca38, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 754f7564bffb9a24480dfef8d4d4fe32, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
