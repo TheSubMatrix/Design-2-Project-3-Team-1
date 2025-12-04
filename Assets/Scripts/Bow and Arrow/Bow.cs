@@ -29,6 +29,9 @@ public class Bow : MonoBehaviour, IDependencyProvider, IBowEventProvider
     [SerializeField] InputActionReference m_fireAction;
     [FormerlySerializedAs("m_cancelAction")] [SerializeField] InputActionReference m_prepareShotAction;
     [SerializeField] InputActionReference m_swapArrowAction;
+    [Header("References")]
+    [SerializeField] Animator m_playerAnimator;
+    [SerializeField] string m_aimAnimatorVariableName = "Is Aiming";
     QuiverUpdatedEvent m_quiversUpdatedEvent;
     GraphicsBuffer m_trajectoryBuffer;
     Vector4[] m_trajectoryData;
@@ -128,6 +131,7 @@ public class Bow : MonoBehaviour, IDependencyProvider, IBowEventProvider
             return;
         }
         m_isCharging = true;
+        m_playerAnimator.SetBool(m_aimAnimatorVariableName, true);
         m_quivers[m_currentArrowSelection].Get(out m_previewArrow);
         m_currentPower = 0f;
         m_currentChargeTime = 0f;
@@ -147,6 +151,7 @@ public class Bow : MonoBehaviour, IDependencyProvider, IBowEventProvider
     {
         if (!m_isCharging || m_previewArrow == null) return;
         m_isCharging = false;
+        m_playerAnimator.SetBool(m_aimAnimatorVariableName, false);
         m_previewArrow.SetPreview(false);
         m_previewArrow.Fire(m_arrowSpawnPoint.right, m_currentPower, m_playerCollider);
         m_previewArrow = null;
@@ -161,6 +166,7 @@ public class Bow : MonoBehaviour, IDependencyProvider, IBowEventProvider
     {
         if (!m_isCharging || m_previewArrow == null) return;
         m_isCharging = false;
+        m_playerAnimator.SetBool(m_aimAnimatorVariableName, false);
         m_quivers[m_currentArrowSelection].ReleaseAndAddBack(m_previewArrow);
         m_previewArrow.SetPreview(false);
         m_previewArrow = null;
