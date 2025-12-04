@@ -2588,6 +2588,7 @@ MonoBehaviour:
   m_additionalOffset: 10
   m_speed: 2500
   m_extraOffscreenDistance: 100
+  m_transitionDelay: 0.5
 --- !u!114 &821759013
 MonoBehaviour:
   m_ObjectHideFlags: 0
