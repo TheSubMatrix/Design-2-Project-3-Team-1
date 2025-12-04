@@ -33,6 +33,7 @@ public class Arrow : MonoBehaviour
     Vector2 m_launchDirection;
     [field: FormerlySerializedAs("<Name>k__BackingField")] [field:SerializeField] public string NameForUI { get; protected set; }
     [field:SerializeField] public Sprite SpriteForUI { get; protected set; }
+    
     void Awake()
     {
         RB = GetComponent<Rigidbody2D>();
@@ -172,14 +173,15 @@ public class Arrow : MonoBehaviour
         }
     }
     
-    public List<Vector4> CalculateTrajectory(Transform startTransform, float powerPercentage = 1f)
+    public List<Vector4> CalculateTrajectory(Transform startTransform, float powerPercentage = 1f, Vector2? launchDirection = null)
     {
         m_trajectoryPoints.Clear();
         m_cumulativeDistances.Clear();
 
         Vector2 startPos = startTransform.position;
-        Vector2 startVelocity = startTransform.right.normalized * (m_fireForce * powerPercentage);
-        float gravityScale = RB?.gravityScale * RB?.mass ?? 1f;
+        Vector2 direction = launchDirection ?? (Vector2)startTransform.right;
+        Vector2 startVelocity = direction.normalized * (m_fireForce * powerPercentage);
+        float gravityScale = RB.gravityScale;
         float gravity = Mathf.Abs(Physics2D.gravity.y) * gravityScale;
         Vector2 previousPoint = startPos;
         float totalDistance = 0f;

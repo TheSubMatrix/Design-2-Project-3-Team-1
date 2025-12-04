@@ -152,8 +152,10 @@ public class Bow : MonoBehaviour, IDependencyProvider, IBowEventProvider
         if (!m_isCharging || m_previewArrow == null) return;
         m_isCharging = false;
         m_playerAnimator.SetBool(m_aimAnimatorVariableName, false);
+        
+        Vector2 fireDirection = m_arrowSpawnPoint.right;
         m_previewArrow.SetPreview(false);
-        m_previewArrow.Fire(m_arrowSpawnPoint.right, m_currentPower, m_playerCollider);
+        m_previewArrow.Fire(fireDirection, m_currentPower, m_playerCollider);
         m_previewArrow = null;
         m_currentPower = 0f;
         m_currentChargeTime = 0f;
@@ -162,6 +164,7 @@ public class Bow : MonoBehaviour, IDependencyProvider, IBowEventProvider
         OnBowFireEvent?.Invoke();
         EventBus<QuiverUpdatedEvent>.Raise(new QuiverUpdatedEvent(m_quivers[m_currentArrowSelection].CurrentAmmo, m_quivers[m_currentArrowSelection].ArrowPrefab.SpriteForUI, m_quivers[m_currentArrowSelection].ArrowPrefab));
     }
+    
     void OnShotCancelled(InputAction.CallbackContext context)
     {
         if (!m_isCharging || m_previewArrow == null) return;
@@ -177,9 +180,11 @@ public class Bow : MonoBehaviour, IDependencyProvider, IBowEventProvider
         OnBowChargeCancelEvent?.Invoke();
         EventBus<QuiverUpdatedEvent>.Raise(new QuiverUpdatedEvent(m_quivers[m_currentArrowSelection].CurrentAmmo, m_quivers[m_currentArrowSelection].ArrowPrefab.SpriteForUI, m_quivers[m_currentArrowSelection].ArrowPrefab));
     }
+    
     void UpdateTrajectoryVFX()
     {
-        List<Vector4> trajectoryData = m_previewArrow.CalculateTrajectory(m_arrowSpawnPoint, m_currentPower);
+        Vector2 fireDirection = m_arrowSpawnPoint.right;
+        List<Vector4> trajectoryData = m_previewArrow.CalculateTrajectory(m_arrowSpawnPoint, m_currentPower, fireDirection);
     
         if (trajectoryData.Count == 0)
         {
