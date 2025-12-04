@@ -139,6 +139,18 @@ PrefabInstance:
       propertyPath: m_playerRB
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 6410564889654146594, guid: 48873508e6c51044187bc4b5bb7eed5a, type: 3}
+      propertyPath: m_Avatar
+      value: 
+      objectReference: {fileID: 9000000, guid: 72a2024a85078d0499a699f1c6a8f7f9, type: 3}
+    - target: {fileID: 6410564889654146594, guid: 48873508e6c51044187bc4b5bb7eed5a, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6410564889654146594, guid: 48873508e6c51044187bc4b5bb7eed5a, type: 3}
+      propertyPath: m_WarningMessage
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 9024224268239612536, guid: 48873508e6c51044187bc4b5bb7eed5a, type: 3}
       propertyPath: m_Name
       value: Player
