@@ -923,7 +923,7 @@ PrefabInstance:
     - target: {fileID: 5866666021909216657, guid: ae7a879a624b14e45b7c00ab885fa8f5, type: 3}
       propertyPath: m_Avatar
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 9000000, guid: ad9061610a5d59e49a624ea67d7c5062, type: 3}
     - target: {fileID: 5866666021909216657, guid: ae7a879a624b14e45b7c00ab885fa8f5, type: 3}
       propertyPath: m_Controller
       value: 
@@ -1083,6 +1083,8 @@ MonoBehaviour:
   m_fireAction: {fileID: 1120369429361536294, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_prepareShotAction: {fileID: 1200050285633940590, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_swapArrowAction: {fileID: 397843700396680129, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  m_playerAnimator: {fileID: 0}
+  m_aimAnimatorVariableName: Is Aiming
 --- !u!2083052967 &8245384195352364310
 VisualEffect:
   m_ObjectHideFlags: 0

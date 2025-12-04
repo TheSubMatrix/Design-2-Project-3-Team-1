@@ -1,0 +1,91 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!319 &31900000
+AvatarMask:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: AimOffset
+  m_Mask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+  m_Elements:
+  - m_Path: 
+    m_Weight: 1
+  - m_Path: Armature
+    m_Weight: 0
+  - m_Path: Armature/Root
+    m_Weight: 0
+  - m_Path: Armature/Root/Hip.l
+    m_Weight: 0
+  - m_Path: Armature/Root/Hip.l/Thigh.l
+    m_Weight: 0
+  - m_Path: Armature/Root/Hip.l/Thigh.l/Shin.l
+    m_Weight: 0
+  - m_Path: Armature/Root/Hip.l/Thigh.l/Shin.l/Ankle.l
+    m_Weight: 0
+  - m_Path: Armature/Root/Hip.l/Thigh.l/Shin.l/Ankle.l/foot.l
+    m_Weight: 0
+  - m_Path: Armature/Root/Hip.l/Thigh.l/Shin.l/Ankle.l/foot.l/toes.l
+    m_Weight: 0
+  - m_Path: Armature/Root/Hip.r
+    m_Weight: 0
+  - m_Path: Armature/Root/Hip.r/Thigh.r
+    m_Weight: 0
+  - m_Path: Armature/Root/Hip.r/Thigh.r/Shin.r
+    m_Weight: 0
+  - m_Path: Armature/Root/Hip.r/Thigh.r/Shin.r/Ankle.r
+    m_Weight: 0
+  - m_Path: Armature/Root/Hip.r/Thigh.r/Shin.r/Ankle.r/foot.r
+    m_Weight: 0
+  - m_Path: Armature/Root/Hip.r/Thigh.r/Shin.r/Ankle.r/foot.r/toes.r
+    m_Weight: 0
+  - m_Path: Armature/Root/Ilium
+    m_Weight: 0
+  - m_Path: Armature/Root/Ilium/Tail01
+    m_Weight: 0
+  - m_Path: Armature/Root/Ilium/Tail01/Tail02
+    m_Weight: 0
+  - m_Path: Armature/Root/Ilium/Tail01/Tail02/Tail03
+    m_Weight: 0
+  - m_Path: Armature/Root/Ilium/Tail01/Tail02/Tail03/Tail04
+    m_Weight: 0
+  - m_Path: Armature/Root/Torso
+    m_Weight: 1
+  - m_Path: Armature/Root/Torso/Chest
+    m_Weight: 1
+  - m_Path: Armature/Root/Torso/Chest/Neck01
+    m_Weight: 1
+  - m_Path: Armature/Root/Torso/Chest/Neck01/Neck02
+    m_Weight: 1
+  - m_Path: Armature/Root/Torso/Chest/Neck01/Neck02/Neck03
+    m_Weight: 1
+  - m_Path: Armature/Root/Torso/Chest/Neck01/Neck02/Neck03/Head
+    m_Weight: 1
+  - m_Path: Armature/Root/Torso/Chest/Neck01/Neck02/Neck03/Head/Jaw
+    m_Weight: 1
+  - m_Path: Armature/Root/Torso/Chest/Neck01/Neck02/Neck03/Head/Lowereye.L
+    m_Weight: 1
+  - m_Path: Armature/Root/Torso/Chest/Neck01/Neck02/Neck03/Head/Lowereye.R
+    m_Weight: 1
+  - m_Path: Armature/Root/Torso/Chest/Neck01/Neck02/Neck03/Head/UpperEye.L
+    m_Weight: 1
+  - m_Path: Armature/Root/Torso/Chest/Neck01/Neck02/Neck03/Head/UpperEye.R
+    m_Weight: 1
+  - m_Path: Armature/Root/Torso/Chest/Shoulder.l
+    m_Weight: 1
+  - m_Path: Armature/Root/Torso/Chest/Shoulder.l/UpperArm.l
+    m_Weight: 1
+  - m_Path: Armature/Root/Torso/Chest/Shoulder.l/UpperArm.l/LowerArm.l
+    m_Weight: 1
+  - m_Path: Armature/Root/Torso/Chest/Shoulder.l/UpperArm.l/LowerArm.l/hand.l
+    m_Weight: 1
+  - m_Path: Armature/Root/Torso/Chest/Shoulder.r
+    m_Weight: 1
+  - m_Path: Armature/Root/Torso/Chest/Shoulder.r/UpperArm.r
+    m_Weight: 1
+  - m_Path: Armature/Root/Torso/Chest/Shoulder.r/UpperArm.r/LowerArm.r
+    m_Weight: 1
+  - m_Path: Armature/Root/Torso/Chest/Shoulder.r/UpperArm.r/LowerArm.r/hand.r
+    m_Weight: 1
+  - m_Path: LP
+    m_Weight: 0
