@@ -80,8 +80,13 @@ public class Arrow : MonoBehaviour
 
         CompletedTrajectory = false;
         StuckInWall = false;
+    
+        // Reset rotation to match launch direction
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0, 0, angle);
+    
         RB.AddForce(direction.normalized * m_fireForce * powerPercentage, ForceMode2D.Impulse);
-        
+    
         if (playerCollider == null) return;
         m_ignoredCollider = playerCollider;
         Physics2D.IgnoreCollision(m_arrowCollider, m_ignoredCollider, true);
